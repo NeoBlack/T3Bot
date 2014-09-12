@@ -3,7 +3,7 @@
 namespace T3Bot\Controller;
 
 class SlackCommandController {
-	const VERSION = '1.0.2';
+	const VERSION = '1.1.0';
 
 	/** @var string current command */
 	protected $command;
@@ -51,7 +51,9 @@ class SlackCommandController {
 				$this->sendResponse(SlackCommandController::VERSION);
 			break;
 			case 'Debug':
-				$this->sendResponse(print_r($_REQUEST, true));
+				if ($this->username == 'neoblack') {
+					$this->sendResponse(print_r($_REQUEST, true));
+				}
 			break;
 			default:
 				$commandClass	= '\\T3Bot\\Commands\\' . $this->command . 'Command';
