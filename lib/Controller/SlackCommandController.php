@@ -36,6 +36,7 @@ class SlackCommandController {
 	 * properties like username, message and params
 	 */
 	public function __construct() {
+		$this->token	= $_REQUEST['token'];
 		$this->message  = $_REQUEST['text'];
 		$this->username = $_REQUEST['user_name'];
 		$this->params	= explode(' ', $this->message);
@@ -66,6 +67,9 @@ class SlackCommandController {
 	 * public method to start processing the request
 	 */
 	public function process() {
+		if ($GLOBALS['config']['slack']['outgoingWebhookToken'] != $this->token) {
+			exit;
+		}
 		switch ($this->command) {
 			case 'Help':
 				$this->sendResponse($this->getHelp());

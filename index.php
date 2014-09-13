@@ -21,6 +21,8 @@ function __autoload($class) {
 	}
 }
 
+require_once('config/config.php');
+
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$slackCommandController = new \T3Bot\Controller\SlackCommandController();
