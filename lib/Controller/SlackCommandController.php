@@ -3,7 +3,7 @@
 namespace T3Bot\Controller;
 
 class SlackCommandController {
-	const VERSION = '1.1.0';
+	const VERSION = '1.1.2';
 
 	/** @var string current command */
 	protected $command;
@@ -21,13 +21,21 @@ class SlackCommandController {
 	protected $message;
 
 	public function __construct() {
-		$this->params	= explode(' ', $_REQUEST['text']);
 		$this->message  = $_REQUEST['text'];
 		$this->username = $_REQUEST['user_name'];
-		// first remove the first word which is the bot name
-		array_shift($this->params);
+		$this->params	= explode(' ', $this->message);
+		// if the first word is the bot name, the second parameter is the command
+		if (strtolower($this->params[0]) == strtolower($this->botName)) {
+			// first remove the first word which is the bot name
+			array_shift($this->params);
+			$this->command	= ucfirst(strtolower(array_shift($this->params)));
+		} else {
+			// the first word is the command and subcommand splitted by a :
+			$parts = explode(':', $this->params[0]);
+			$this->command  	= ucfirst(strtolower($parts[0]));
+			$this->params[0]	= $parts[1];
+		}
 		// second get the command, the rest are the params
-		$this->command	= ucfirst(strtolower(array_shift($this->params)));
 	}
 
 	/**
@@ -72,10 +80,7 @@ class SlackCommandController {
 	 * @return string
 	 */
 	protected function getHelp() {
-		return "*HELP*
-*{$this->botName} review help:* get help for the review command
-*{$this->botName} forge help:* get help for the forge command
-";
+		return "My Homepage: http://www.t3bot.de/ | Help for commands: http://wiki.typo3.org/T3Bot";
 	}
 
 	/**
@@ -92,8 +97,8 @@ class SlackCommandController {
 			'hallo'			=> "Hello @{$this->username}, nice to see you!",
 			'ciao'			=> "Bye, bye @{$this->username}, see you later!",
 			'cu'			=> "Bye, bye @{$this->username}, see you later!",
-			'thx'			=> "Your welcome @{$this->username}",
-			'thanks'		=> "Your welcome @{$this->username}",
+			'thx'			=> "You arw welcome @{$this->username}",
+			'thank'			=> "You are welcome @{$this->username}",
 			'drink'			=> "Coffee or beer @{$this->username}?",
 			'coffee'		=> "Here is a :coffee: for you @{$this->username}",
 			'beer'			=> "Here is a :t3beer: for you @{$this->username}",
@@ -101,6 +106,7 @@ class SlackCommandController {
 			'cola'			=> "Coke is unhealthy @{$this->username}",
 			'cookie'		=> "Here is a :cookie: for you @{$this->username}",
 			'typo3'			=> ":typo3: TYPO3 is the best open source CMS of world!",
+			'dark'			=> "sure, we have cookies :cookie:",
 		);
 		foreach ($responses as $keyword => $response) {
 			if (strpos($message, $keyword) !== false) {
