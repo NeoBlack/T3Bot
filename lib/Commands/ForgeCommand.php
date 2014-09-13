@@ -1,7 +1,18 @@
 <?php
+/**
+ * T3Bot
+ * @author Frank Nägler <typo3@naegler.net>
+ * @link http://www.t3bot.de
+ * @link http://wiki.typo3.org/T3Bot
+ */
 
 namespace T3Bot\Commands;
 
+/**
+ * Class ForgeCommand
+ *
+ * @package T3Bot\Commands
+ */
 class ForgeCommand extends \T3Bot\Commands\AbstractCommand {
 	protected $commandName = 'forge';
 

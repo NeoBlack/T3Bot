@@ -1,9 +1,20 @@
 <?php
+/**
+ * T3Bot
+ * @author Frank Nägler <typo3@naegler.net>
+ * @link http://www.t3bot.de
+ * @link http://wiki.typo3.org/T3Bot
+ */
 
 namespace T3Bot\Controller;
 
+/**
+ * Class SlackCommandController
+ *
+ * @package T3Bot\Controller
+ */
 class SlackCommandController {
-	const VERSION = '1.1.2';
+	const VERSION = '1.2.0';
 
 	/** @var string current command */
 	protected $command;
@@ -20,6 +31,10 @@ class SlackCommandController {
 	/** @var string the mssage which was send */
 	protected $message;
 
+	/**
+	 * the constructor parse the request and set some
+	 * properties like username, message and params
+	 */
 	public function __construct() {
 		$this->message  = $_REQUEST['text'];
 		$this->username = $_REQUEST['user_name'];
@@ -30,12 +45,12 @@ class SlackCommandController {
 			array_shift($this->params);
 			$this->command	= ucfirst(strtolower(array_shift($this->params)));
 		} else {
-			// the first word is the command and subcommand splitted by a :
+			// the first word is the command and subcommand splitted by a colon
+			// the rest are the params
 			$parts = explode(':', $this->params[0]);
 			$this->command  	= ucfirst(strtolower($parts[0]));
 			$this->params[0]	= $parts[1];
 		}
-		// second get the command, the rest are the params
 	}
 
 	/**
@@ -48,7 +63,7 @@ class SlackCommandController {
 	}
 
 	/**
-	 *
+	 * public method to start processing the request
 	 */
 	public function process() {
 		switch ($this->command) {
@@ -64,12 +79,16 @@ class SlackCommandController {
 				}
 			break;
 			default:
+				// each command is capsulated into a command class
+				// try to find this command class and call the process method
 				$commandClass	= '\\T3Bot\\Commands\\' . $this->command . 'Command';
 				if (class_exists($commandClass)) {
 					/** @var \T3Bot\Commands\AbstractCommand $commandInstance */
 					$commandInstance = new $commandClass;
 					$this->sendResponse($commandInstance->process($this->params));
 				} else {
+					// in case the command class not exists, try to scan
+					// the message and response with a nice text
 					$this->scanMessage();
 				}
 			break;
