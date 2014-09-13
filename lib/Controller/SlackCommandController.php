@@ -120,13 +120,13 @@ class SlackCommandController {
 
 		$responses = array(
 			'daddy'			=> 'My daddy is Frank Nägler aka @neoblack',
-			'n8'			=> 'Good night @'.$this->username.'!',
-			'nacht'			=> 'Good night @'.$this->username.'!',
-			'night'			=> 'Good night @'.$this->username.'!',
+			'n8'			=> 'Good night @'.$this->username.'! :sleeping:',
+			'nacht'			=> 'Good night @'.$this->username.'! :sleeping:',
+			'night'			=> 'Good night @'.$this->username.'! :sleeping:',
 			'hello'			=> 'Hello @'.$this->username.', nice to see you!',
 			'hallo'			=> 'Hello @'.$this->username.', nice to see you!',
-			'ciao'			=> 'Bye, bye @'.$this->username.', see you later!',
-			'cu'			=> 'Bye, bye @'.$this->username.', see you later!',
+			'ciao'			=> 'Bye, bye @'.$this->username.', cu later alligator! :wave:',
+			'cu'			=> 'Bye, bye @'.$this->username.', cu later alligator! :wave:',
 			'thx'			=> 'You are welcome @'.$this->username.'!',
 			'thank'			=> 'You are welcome @'.$this->username.'!',
 			'drink'			=> 'Coffee or beer @'.$this->username.'?',
