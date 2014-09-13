@@ -116,6 +116,8 @@ class SlackCommandController {
 	 */
 	protected function scanMessage() {
 		$message = strtolower($this->message);
+		$cats	 = array(':smiley_cat:', ':smile_cat:', ':heart_eyes_cat:', ':kissing_cat:', ':smirk_cat:', ':scream_cat:', ':crying_cat_face:', ':joy_cat:' ,':pouting_cat:');
+
 		$responses = array(
 			'daddy'			=> 'My daddy is Frank Nägler aka @neoblack',
 			'n8'			=> 'Good night @'.$this->username.'!',
@@ -135,6 +137,8 @@ class SlackCommandController {
 			'cookie'		=> 'Here is a :cookie: for you @'.$this->username.'!',
 			'typo3'			=> ':typo3: TYPO3 CMS is the best open source CMS of the world!',
 			'dark'			=> 'sure, we have cookies :cookie:',
+			'cat'			=> 'ok, here are some cat content ' . $cats[array_rand($cats)],
+			'love'			=> 'I love you too, @'.$this->username.':kiss:',
 		);
 		foreach ($responses as $keyword => $response) {
 			if (strpos($message, $keyword) !== false) {
