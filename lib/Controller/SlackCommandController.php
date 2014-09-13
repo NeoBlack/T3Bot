@@ -99,7 +99,7 @@ class SlackCommandController {
 	 * @return string
 	 */
 	protected function getHelp() {
-		return "My Homepage: http://www.t3bot.de/ | Help for commands: http://wiki.typo3.org/T3Bot";
+		return 'My Homepage: http://www.t3bot.de/ | Help for commands: http://wiki.typo3.org/T3Bot';
 	}
 
 	/**
@@ -108,24 +108,24 @@ class SlackCommandController {
 	protected function scanMessage() {
 		$message = strtolower($this->message);
 		$responses = array(
-			'daddy'			=> "My daddy is Frank Nägler aka @neoblack",
-			'n8'			=> "Good night @{$this->username}",
-			'nacht'			=> "Good night @{$this->username}",
-			'night'			=> "Good night @{$this->username}",
-			'hello'			=> "Hello @{$this->username}, nice to see you!",
-			'hallo'			=> "Hello @{$this->username}, nice to see you!",
-			'ciao'			=> "Bye, bye @{$this->username}, see you later!",
-			'cu'			=> "Bye, bye @{$this->username}, see you later!",
-			'thx'			=> "You arw welcome @{$this->username}",
-			'thank'			=> "You are welcome @{$this->username}",
-			'drink'			=> "Coffee or beer @{$this->username}?",
-			'coffee'		=> "Here is a :coffee: for you @{$this->username}",
-			'beer'			=> "Here is a :t3beer: for you @{$this->username}",
-			'coke'			=> "Coke is unhealthy @{$this->username}",
-			'cola'			=> "Coke is unhealthy @{$this->username}",
-			'cookie'		=> "Here is a :cookie: for you @{$this->username}",
-			'typo3'			=> ":typo3: TYPO3 is the best open source CMS of world!",
-			'dark'			=> "sure, we have cookies :cookie:",
+			'daddy'			=> 'My daddy is Frank Nägler aka @neoblack',
+			'n8'			=> 'Good night @{'.$this->username.'}',
+			'nacht'			=> 'Good night @{'.$this->username.'}',
+			'night'			=> 'Good night @{'.$this->username.'}',
+			'hello'			=> 'Hello @{'.$this->username.'}, nice to see you!',
+			'hallo'			=> 'Hello @{'.$this->username.'}, nice to see you!',
+			'ciao'			=> 'Bye, bye @{'.$this->username.'}, see you later!',
+			'cu'			=> 'Bye, bye @{'.$this->username.'}, see you later!',
+			'thx'			=> 'You are welcome @{'.$this->username.'}',
+			'thank'			=> 'You are welcome @{'.$this->username.'}',
+			'drink'			=> 'Coffee or beer @{'.$this->username.'}?',
+			'coffee'		=> 'Here is a :coffee: for you @{'.$this->username.'}',
+			'beer'			=> 'Here is a :t3beer: for you @{'.$this->username.'}',
+			'coke'			=> 'Coke is unhealthy @{'.$this->username.'}',
+			'cola'			=> 'Coke is unhealthy @{'.$this->username.'}',
+			'cookie'		=> 'Here is a :cookie: for you @{'.$this->username.'}',
+			'typo3'			=> ':typo3: TYPO3 CMS is the best open source CMS of the world!',
+			'dark'			=> 'sure, we have cookies :cookie:',
 		);
 		foreach ($responses as $keyword => $response) {
 			if (strpos($message, $keyword) !== false) {
