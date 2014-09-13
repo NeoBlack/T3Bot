@@ -58,9 +58,7 @@ Created: {$created} | Last update: {$updated}
 	 */
 	protected function processCount() {
 		$project = isset($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
-		$url = "https://review.typo3.org/changes/?q=is:open+project:{$project}";
-		$result = file_get_contents($url);
-		$result = json_decode(str_replace(")]}'\n", '', $result));
+		$result = $this->queryGerrit("is:open+project:{$project}");
 		$count  = count($result);
 		return "There are currently *{$count}* open reviews for project '{$project}' on https://review.typo3.org";
 	}
@@ -71,9 +69,7 @@ Created: {$created} | Last update: {$updated}
 	 * @return string
 	 */
 	protected function processRandom() {
-		$url = 'https://review.typo3.org/changes/?q=is:open+project:Packages/TYPO3.CMS';
-		$result = file_get_contents($url);
-		$result = json_decode(str_replace(")]}'\n", '', $result));
+		$result = $this->queryGerrit('is:open+project:Packages/TYPO3.CMS');
 		$item	= $result[array_rand($result)];
 		return $this->buildReviewMessage($item);
 	}
@@ -89,9 +85,7 @@ Created: {$created} | Last update: {$updated}
 		if ($username === null) {
 			return "hey, I need a username!";
 		}
-		$url = 'https://review.typo3.org/changes/?q=is:open+owner:"'.$username.'"+project:'.$project.'';
-		$results = file_get_contents($url);
-		$results = json_decode(str_replace(")]}'\n", '', $results));
+		$results = $this->queryGerrit('is:open+owner:"'.$username.'"+project:'.$project);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$results[0]->owner->name}*:");
 			foreach ($results as $item) {
@@ -113,9 +107,7 @@ Created: {$created} | Last update: {$updated}
 		if ($refId === null || $refId == 0) {
 			return "hey, I need a change number!";
 		}
-		$url = 'https://review.typo3.org/changes/?q=change:'.$refId;
-		$result = file_get_contents($url);
-		$result = json_decode(str_replace(")]}'\n", '', $result));
+		$result = $this->queryGerrit('change:'.$refId);
 		foreach ($result as $item) {
 			if ($item->_number == $refId) {
 				return $this->buildReviewMessage($item);
@@ -134,9 +126,7 @@ Created: {$created} | Last update: {$updated}
 		if ($query === null) {
 			return "hey, I need a query!";
 		}
-		$url = 'https://review.typo3.org/changes/?q=limit:10+'.$query;
-		$results = file_get_contents($url);
-		$results = json_decode(str_replace(")]}'\n", '', $results));
+		$results = $this->queryGerrit('limit:10+'.$query);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$query}*:");
 			foreach ($results as $item) {
@@ -145,5 +135,17 @@ Created: {$created} | Last update: {$updated}
 			return implode("\n", $listOfItems);
 		}
 		return "{$query} not found, sorry!";
+	}
+
+	/**
+	 * @param $query
+	 *
+	 * @return object|array
+	 */
+	protected function queryGerrit($query) {
+		$url = 'https://review.typo3.org/changes/?q=' . $query;
+		$result = file_get_contents($url);
+		$result = json_decode(str_replace(")]}'\n", '', $result));
+		return $result;
 	}
 }

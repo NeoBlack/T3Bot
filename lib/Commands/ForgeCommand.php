@@ -59,13 +59,22 @@ Created: {$created} | Last update: {$updated}
 		if ($issueNumber === null || $issueNumber == 0) {
 			return "hey, I need an issue number!";
 		}
-		$url = "https://forge.typo3.org/issues/{$issueNumber}.json";
-		$result = file_get_contents($url);
-		$result = json_decode($result);
+		$result = $this->queryForge("issues/{$issueNumber}");
 		if ($result) {
 			return $this->buildIssueMessage($result->issue);
 		} else {
 			return "Sorry not found!";
 		}
+	}
+
+	/**
+	 * @param $query
+	 *
+	 * @return mixed
+	 */
+	protected function queryForge($query) {
+		$url = "https://forge.typo3.org/{$query}.json";
+		$result = file_get_contents($url);
+		return json_decode($result);
 	}
 }
