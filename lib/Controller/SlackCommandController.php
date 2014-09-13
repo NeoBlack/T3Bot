@@ -99,7 +99,16 @@ class SlackCommandController {
 	 * @return string
 	 */
 	protected function getHelp() {
-		return "My Homepage: http://www.t3bot.de/ | Help for commands: http://wiki.typo3.org/T3Bot";
+		$links = array(
+			'My Homepage'		=> 'http://www.t3bot.de',
+			'Github'			=> 'https://github.com/NeoBlack/T3Bot',
+			'Help for Commands' => 'http://wiki.typo3.org/T3Bot'
+		);
+		$result = [];
+		foreach ($links as $text => $link) {
+			$result[] = ":link: <{$link}|{$text}>";
+		}
+		return implode(' | ', $result);
 	}
 
 	/**
