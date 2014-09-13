@@ -37,8 +37,8 @@ class ReviewCommand extends \T3Bot\Commands\AbstractCommand {
 		$created = substr($item->created, 0, 19);
 		$updated = substr($item->updated, 0, 19);
 		return "*{$item->subject}* by _{$item->owner->name}_
-Created: {$created} | Last update: {$updated}
-<https://review.typo3.org/{$item->_number}|Review #{$item->_number} now>
+Created: {$created} | Last update: {$updated} | ID: {$item->_number}
+<https://review.typo3.org/{$item->_number}|Review now>
 ";
 	}
 
