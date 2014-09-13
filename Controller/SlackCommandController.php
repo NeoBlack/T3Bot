@@ -74,6 +74,7 @@ class SlackCommandController {
 	protected function getHelp() {
 		return "*HELP*
 *{$this->botName} review help:* get help for the review command
+*{$this->botName} forge help:* get help for the forge command
 ";
 	}
 
