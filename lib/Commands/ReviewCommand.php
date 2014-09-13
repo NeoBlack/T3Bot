@@ -126,6 +126,11 @@ Created: {$created} | Last update: {$updated}
 		if ($query === null) {
 			return "hey, I need a query!";
 		}
+
+		$params = $this->params;
+		array_shift($params);
+		$query = implode('+', $params);
+		$query = str_replace(' ', '+', $query);
 		$results = $this->queryGerrit('limit:10+'.$query);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$query}*:");
