@@ -2,11 +2,14 @@
 
 $GLOBALS['config'] = array(
 	'slack'	=> array(
-		'outgoingWebhookToken' => '', // secret token, to secure the request was received from slack.com
-		'incomingWbhookToken'  => '', // secret token, to post into slack channel
+		// secret token, to secure the request was received from slack.com
+		'outgoingWebhookToken' => '',
+		// secret token, to post into slack channel
+		'incomingWbhookToken'  => '',
 	),
 	'gerrit' => array(
-		'webhookToken' => '', // secret token, to secure the request was received from gerrit
+		// secret token, to secure the request was received from gerrit
+		'webhookToken' => '',
 		'change-merged' => array(
 			'channels' => array('#random')
 		),

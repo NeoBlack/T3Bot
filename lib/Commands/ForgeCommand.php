@@ -13,7 +13,7 @@ namespace T3Bot\Commands;
  *
  * @package T3Bot\Commands
  */
-class ForgeCommand extends \T3Bot\Commands\AbstractCommand {
+class ForgeCommand extends AbstractCommand {
 	protected $commandName = 'forge';
 
 	/**

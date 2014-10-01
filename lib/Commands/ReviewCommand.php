@@ -13,7 +13,7 @@ namespace T3Bot\Commands;
  *
  * @package T3Bot\Commands
  */
-class ReviewCommand extends \T3Bot\Commands\AbstractCommand {
+class ReviewCommand extends AbstractCommand {
 	protected $commandName = 'review';
 
 	/**

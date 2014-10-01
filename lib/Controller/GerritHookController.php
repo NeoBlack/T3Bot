@@ -15,11 +15,10 @@ namespace T3Bot\Controller;
  */
 class GerritHookController {
 
-	public function __construct() {
-	}
-
 	/**
 	 * public method to start processing the request
+	 *
+	 * @param string $hook
 	 */
 	public function process($hook) {
 		if ($GLOBALS['config']['gerrit']['webhookToken'] != $_REQUEST['token']) {
@@ -27,10 +26,11 @@ class GerritHookController {
 		}
 		switch ($hook) {
 			case 'patchset-created':
-				// changeId=$CHANGE_ID&projectName=$PROJECT_NAME&branch=$BRANCH&commit=$COMMIT&patchset=$PATCHSET
+				// changeId=$CHANGE_ID&projectName=$PROJECT_NAME&branch=$BRANCH
+				//   &commit=$COMMIT&patchset=$PATCHSET
 				if (intval($_REQUEST['patchset']) == 1) {
 					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-						$item = $this->queryGerrit('change:'.$_REQUEST['changeId']);
+						$item = $this->queryGerrit('change:' . $_REQUEST['changeId']);
 						$item = $item[0];
 						$created = substr($item->created, 0, 19);
 						$updated = substr($item->updated, 0, 19);
@@ -61,6 +61,9 @@ class GerritHookController {
 					$payload->text = $text;
 					$this->postToSlack(json_encode($payload));
 				}
+			break;
+			default:
+				exit;
 			break;
 		}
 	}

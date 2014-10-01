@@ -39,7 +39,7 @@ abstract class AbstractCommand {
 	public function process(array $params = array()) {
 		$this->params = $params;
 		$command	  = isset($this->params[0]) ? $this->params[0] : 'help';
-		$method = 'process'.ucfirst(strtolower($command));
+		$method = 'process' . ucfirst(strtolower($command));
 		if (method_exists($this, $method)) {
 			return call_user_func(array($this, $method));
 		} else {

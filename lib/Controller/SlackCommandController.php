@@ -141,7 +141,7 @@ class SlackCommandController {
 			'cookie'		=> 'Here is a :cookie: for you @'.$this->username.'!',
 			'typo3'			=> ':typo3: TYPO3 CMS is the best open source CMS of the world!',
 			'dark'			=> 'sure, we have cookies :cookie:',
-			'cat'			=> 'ok, here are some cat content ' . $cats[array_rand($cats)],
+			'cat'			=> 'ok, here is some cat content ' . $cats[array_rand($cats)],
 			'love'			=> 'I love you too, @'.$this->username.':kiss:',
 		);
 		foreach ($responses as $keyword => $response) {

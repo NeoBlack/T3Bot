@@ -8,7 +8,7 @@
 
 /**
  * autoloader for T3Bot namespaced classes
- * @param $class the classname
+ * @param string $class the classname
  */
 function __autoload($class) {
 	$rootPath	= dirname(__FILE__) . '/../../../';
