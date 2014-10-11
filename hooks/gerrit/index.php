@@ -24,7 +24,6 @@ function __autoload($class) {
 
 require_once(dirname(__FILE__) . '/../../config/config.php');
 
-file_put_contents('gerrit.log', file_get_contents('gerrit.log') . "\n" . file_get_contents('php://input'));
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$slackCommandController = new \T3Bot\Controller\GerritHookController();
