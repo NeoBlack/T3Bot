@@ -5,7 +5,7 @@ $GLOBALS['config'] = array(
 		// secret token, to secure the request was received from slack.com
 		'outgoingWebhookToken' => '',
 		// secret token, to post into slack channel
-		'incomingWbhookToken'  => '',
+		'incomingWebhookToken'  => '',
 	),
 	'gerrit' => array(
 		// secret token, to secure the request was received from gerrit
