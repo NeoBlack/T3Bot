@@ -13,7 +13,7 @@ namespace T3Bot\Commands;
  *
  * @package T3Bot\Commands
  */
-class ReviewCommand extends \T3Bot\Commands\AbstractCommand {
+class ReviewCommand extends AbstractCommand {
 	protected $commandName = 'review';
 
 	/**
@@ -60,7 +60,16 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 		$project = isset($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
 		$result = $this->queryGerrit("is:open+project:{$project}");
 		$count  = count($result);
-		return "There are currently *{$count}* open reviews for project '{$project}' on https://review.typo3.org";
+		$result = $this->queryGerrit("label:Code-Review=-1+is:open+project:{$project}");
+		$countMinus1  = count($result);
+		$result = $this->queryGerrit("label:Code-Review=-2+is:open+project:{$project}");
+		$countMinus2  = count($result);
+
+		$returnString = '';
+		$returnString .= "There are currently *{$count}* open reviews for project '{$project}' on https://review.typo3.org \n";
+		$returnString .= "*{$countMinus1}* of *{$count}* open reviews voted with *-1* <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+project:Packages/TYPO3.CMS|Check now> \n";
+		$returnString .= "*{$countMinus2}* of *{$count}* open reviews voted with *-2* <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+project:Packages/TYPO3.CMS|Check now> \n";
+		return $returnString;
 	}
 
 	/**

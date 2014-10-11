@@ -8,26 +8,24 @@
 
 /**
  * autoloader for T3Bot namespaced classes
- * @param $class the classname
+ * @param string $class the classname
  */
 function __autoload($class) {
+	$rootPath	= dirname(__FILE__) . '/../../../';
 	$namespaceParts = explode('\\', $class);
 	if ($namespaceParts[0] == 'T3Bot') {
 		array_shift($namespaceParts);
-		$fileName  		= 'lib' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $namespaceParts) . '.php';
+		$fileName  		= $rootPath . 'lib' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $namespaceParts) . '.php';
 		if (file_exists($fileName)) {
 			require $fileName;
 		}
 	}
 }
 
-require_once('config/config.php');
+require_once(dirname(__FILE__) . '/../../../config/config.php');
 
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$slackCommandController = new \T3Bot\Controller\SlackCommandController();
 	$slackCommandController->process();
-} else {
-	// if it is no post, send the info.html page
-	echo file_get_contents('info.html');
 }
