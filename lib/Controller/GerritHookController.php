@@ -28,31 +28,30 @@ class GerritHookController {
 		if ($GLOBALS['config']['gerrit']['webhookToken'] != $json->token) {
 			exit;
 		}
+		if ($json->project !== 'Packages/TYPO3.CMS') {
+			// only core patches please...
+			exit;
+		}
 		switch ($hook) {
 			case 'patchset-created':
-				// changeId=$CHANGE_ID&projectName=$PROJECT_NAME&branch=$BRANCH
-				//   &commit=$COMMIT&patchset=$PATCHSET
-				//if (intval($json->patchset) == 1) {
-					$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
-					$patchSet = intval($json->patchset);
-					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-						$item = $this->queryGerrit('change:' . $patchId);
-						$item = $item[0];
-						$created = substr($item->created, 0, 19);
-						$updated = substr($item->updated, 0, 19);
+				$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
+				$patchSet = intval($json->patchset);
+				foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+					$item = $this->queryGerrit('change:' . $patchId);
+					$item = $item[0];
+					$created = substr($item->created, 0, 19);
+					$updated = substr($item->updated, 0, 19);
 
-						$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
-						$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number} | Patchset: {$patchSet}\n";
-						$text .= "<https://review.typo3.org/{$item->_number}|Review now>";
-						$payload = new \stdClass();
-						$payload->channel = $channel;
-						$payload->text = $text;
-						$this->postToSlack(json_encode($payload));
-					}
-				//}
+					$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
+					$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number} | Patchset: {$patchSet}\n";
+					$text .= "<https://review.typo3.org/{$item->_number}|Review now>";
+					$payload = new \stdClass();
+					$payload->channel = $channel;
+					$payload->text = $text;
+					$this->postToSlack(json_encode($payload));
+				}
 			break;
 			case 'change-merged':
-				// changeId=$CHANGE_ID&projectName=$PROJECT_NAME&branch=$BRANCH&submitter=$SUBMITTER&commit=$COMMIT
 				foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
 					$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
 					$item = $this->queryGerrit('change:' . $patchId);
