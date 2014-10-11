@@ -35,7 +35,6 @@ class ForgeCommand extends AbstractCommand {
 		return "*[{$item->tracker->name}] {$item->subject}* by _{$item->author->name}_
 *Project:* {$item->project->name} | *Category*: {$item->category->name} | *Status*: {$item->status->name}
 Created: {$created} | Last update: {$updated}
-{$item->description}
 <https://forge.typo3.org/issues/{$item->id}|View on Forge>
 ";
 	}
