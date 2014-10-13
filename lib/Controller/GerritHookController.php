@@ -90,7 +90,7 @@ class GerritHookController {
 	 * @param string $payload a json string
 	 */
 	protected function postToSlack($payload) {
-		$command = 'curl -X POST --data-urlencode ' . escapeshellarg('payload=' . $payload) . ' https://phile.slack.com/services/hooks/incoming-webhook?token=' . $GLOBALS['config']['slack']['incomingWebhookToken'];
+		$command = 'curl -X POST --data-urlencode ' . escapeshellarg('payload=' . $payload) . ' https://' . $GLOBALS['config']['slack']['apiHost'] . '/services/hooks/incoming-webhook?token=' . $GLOBALS['config']['slack']['incomingWebhookToken'];
 		exec($command);
 
 	}

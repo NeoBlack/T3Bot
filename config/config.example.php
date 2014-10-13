@@ -2,6 +2,8 @@
 
 $GLOBALS['config'] = array(
 	'slack'	=> array(
+		// slack api host
+		'apiHost' => 'typo3.slack.com',
 		// secret token, to secure the request was received from slack.com
 		'outgoingWebhookToken' => '',
 		// secret token, to post into slack channel
