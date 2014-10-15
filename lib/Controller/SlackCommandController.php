@@ -60,6 +60,9 @@ class SlackCommandController {
 	protected function sendResponse($response) {
 		$result = new \stdClass();
 		$result->text = $response;
+		if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
+			$result->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
+		}
 		echo json_encode($result);
 	}
 

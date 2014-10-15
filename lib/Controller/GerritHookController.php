@@ -49,7 +49,7 @@ class GerritHookController {
 						$payload = new \stdClass();
 						$payload->channel = $channel;
 						$payload->text = $text;
-						$this->postToSlack(json_encode($payload));
+						$this->postToSlack($payload);
 					}
 				}
 			break;
@@ -67,7 +67,7 @@ class GerritHookController {
 					$payload = new \stdClass();
 					$payload->channel = $channel;
 					$payload->text = $text;
-					$this->postToSlack(json_encode($payload));
+					$this->postToSlack($payload);
 				}
 			break;
 			default:
@@ -92,6 +92,10 @@ class GerritHookController {
 	 * @param string $payload a json string
 	 */
 	protected function postToSlack($payload) {
+		$payload = json_encode($payload);
+		if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
+			$payload->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
+		}
 		$command = 'curl -X POST --data-urlencode ' . escapeshellarg('payload=' . $payload) . ' https://' . $GLOBALS['config']['slack']['apiHost'] . '/services/hooks/incoming-webhook?token=' . $GLOBALS['config']['slack']['incomingWebhookToken'];
 		exec($command);
 

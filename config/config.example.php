@@ -8,6 +8,8 @@ $GLOBALS['config'] = array(
 		'outgoingWebhookToken' => '',
 		// secret token, to post into slack channel
 		'incomingWebhookToken'  => '',
+		// emoji icon as bot avatar
+		'botAvatar' => '',
 	),
 	'gerrit' => array(
 		// secret token, to secure the request was received from gerrit
