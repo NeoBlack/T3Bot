@@ -36,19 +36,21 @@ class GerritHookController {
 			case 'patchset-created':
 				$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
 				$patchSet = intval($json->patchset);
-				foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-					$item = $this->queryGerrit('change:' . $patchId);
-					$item = $item[0];
-					$created = substr($item->created, 0, 19);
-					$updated = substr($item->updated, 0, 19);
+				if ($patchSet == 1) {
+					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+						$item = $this->queryGerrit('change:' . $patchId);
+						$item = $item[0];
+						$created = substr($item->created, 0, 19);
+						$updated = substr($item->updated, 0, 19);
 
-					$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
-					$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number} | Patchset: {$patchSet}\n";
-					$text .= "<https://review.typo3.org/{$item->_number}|Review now>";
-					$payload = new \stdClass();
-					$payload->channel = $channel;
-					$payload->text = $text;
-					$this->postToSlack(json_encode($payload));
+						$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
+						$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number} | Patchset: {$patchSet}\n";
+						$text .= "<https://review.typo3.org/{$item->_number}|Review now>";
+						$payload = new \stdClass();
+						$payload->channel = $channel;
+						$payload->text = $text;
+						$this->postToSlack(json_encode($payload));
+					}
 				}
 			break;
 			case 'change-merged':
