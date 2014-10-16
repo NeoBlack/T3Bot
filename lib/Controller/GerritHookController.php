@@ -21,7 +21,6 @@ class GerritHookController {
 	 * @param string $hook
 	 */
 	public function process($hook) {
-		// JSON???
 		$entityBody = file_get_contents('php://input');
 		$json = json_decode($entityBody);
 
@@ -32,11 +31,13 @@ class GerritHookController {
 			// only core patches please...
 			exit;
 		}
+		$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
+		$patchSet = intval($json->patchset);
+		$branch = $json->branch;
+
 		switch ($hook) {
 			case 'patchset-created':
-				$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
-				$patchSet = intval($json->patchset);
-				if ($patchSet == 1) {
+				if ($patchSet == 1 && $branch == 'master') {
 					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
 						$item = $this->queryGerrit('change:' . $patchId);
 						$item = $item[0];
@@ -54,20 +55,21 @@ class GerritHookController {
 				}
 			break;
 			case 'change-merged':
-				foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-					$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
-					$item = $this->queryGerrit('change:' . $patchId);
-					$item = $item[0];
-					$created = substr($item->created, 0, 19);
-					$updated = substr($item->updated, 0, 19);
+				if ($branch == 'master') {
+					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+						$item = $this->queryGerrit('change:' . $patchId);
+						$item = $item[0];
+						$created = substr($item->created, 0, 19);
+						$updated = substr($item->updated, 0, 19);
 
-					$text = ':white_check_mark: *[MERGED] ' . $item->subject . "* by _{$item->owner->name}_\n";
-					$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number}\n";
-					$text .= "<https://review.typo3.org/{$item->_number}|Goto Review>";
-					$payload = new \stdClass();
-					$payload->channel = $channel;
-					$payload->text = $text;
-					$this->postToSlack($payload);
+						$text = ':white_check_mark: *[MERGED] ' . $item->subject . "* by _{$item->owner->name}_\n";
+						$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number}\n";
+						$text .= "<https://review.typo3.org/{$item->_number}|Goto Review>";
+						$payload = new \stdClass();
+						$payload->channel = $channel;
+						$payload->text = $text;
+						$this->postToSlack($payload);
+					}
 				}
 			break;
 			default:
