@@ -39,7 +39,8 @@ class SlackCommandController {
 		$this->token	= $_REQUEST['token'];
 		$this->message  = $_REQUEST['text'];
 		$this->username = $_REQUEST['user_name'];
-		$this->params	= explode(' ', $this->message);
+		$this->params	= explode(' ', preg_replace('/\s+/', ' ', $this->message));
+
 		// if the first word is the bot name, the second parameter is the command
 		if (strtolower($this->params[0]) == strtolower($this->botName)) {
 			// first remove the first word which is the bot name
