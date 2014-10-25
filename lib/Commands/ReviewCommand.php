@@ -23,7 +23,7 @@ class ReviewCommand extends AbstractCommand {
 		$this->helpCommands['help'] = 'shows this help';
 		$this->helpCommands['count [PROJECT=Packages/TYPO3.CMS]'] = 'shows the number of currently open reviews for [PROJECT]';
 		$this->helpCommands['random'] = 'shows a random open review';
-		$this->helpCommands['show <Ref-ID>'] = 'shows the review by given change number';
+		$this->helpCommands['show <Ref-ID> [<Ref-ID-2>, [<Ref-ID-n>]]'] = 'shows the review by given change number(s)';
 		$this->helpCommands['user <username> [PROJECT=Packages/TYPO3.CMS]'] = 'shows the open reviews by given username for [PROJECT]';
 		$this->helpCommands['query <searchQuery>'] = 'shows the results for given <searchQuery>, max limit is 10';
 	}
@@ -114,15 +114,29 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	protected function processShow() {
 		$refId = isset($this->params[1]) ? intval($this->params[1]) : null;
 		if ($refId === null || $refId == 0) {
-			return "hey, I need a change number!";
+			return "hey, I need at least one change number!";
 		}
-		$result = $this->queryGerrit('change:'.$refId);
-		foreach ($result as $item) {
-			if ($item->_number == $refId) {
-				return $this->buildReviewMessage($item);
+		if (count($this->params) > 2) {
+			$changeIds = array();
+			for ($i=1;$i<count($this->params); $i++) {
+				$changeIds[] = 'change:' . $this->params[$i];
+			}
+			$result = $this->queryGerrit(implode(' OR ', $changeIds));
+			$listOfItems = array();
+			foreach ($result as $item) {
+				$listOfItems[] = $this->buildReviewLine($item);
+			}
+			return implode("\n", $listOfItems);
+		} else {
+			$result = $this->queryGerrit('change:'.$refId);
+			foreach ($result as $item) {
+				if ($item->_number == $refId) {
+					return $this->buildReviewMessage($item);
+				} else {
+					return "{$refId} not found, sorry!";
+				}
 			}
 		}
-		return "{$refId} not found, sorry!";
 	}
 
 	/**
@@ -157,7 +171,7 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	 * @return object|array
 	 */
 	protected function queryGerrit($query) {
-		$url = 'https://review.typo3.org/changes/?q=' . $query;
+		$url = 'https://review.typo3.org/changes/?q=' . urlencode($query);
 		$result = file_get_contents($url);
 		$result = json_decode(str_replace(")]}'\n", '', $result));
 		return $result;
