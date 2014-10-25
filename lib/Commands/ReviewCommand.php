@@ -58,11 +58,11 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	 */
 	protected function processCount() {
 		$project = isset($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
-		$result = $this->queryGerrit("is:open+project:{$project}");
+		$result = $this->queryGerrit("is:open project:{$project}");
 		$count  = count($result);
-		$result = $this->queryGerrit("label:Code-Review=-1+is:open+project:{$project}");
+		$result = $this->queryGerrit("label:Code-Review=-1 is:open project:{$project}");
 		$countMinus1  = count($result);
-		$result = $this->queryGerrit("label:Code-Review=-2+is:open+project:{$project}");
+		$result = $this->queryGerrit("label:Code-Review=-2 is:open project:{$project}");
 		$countMinus2  = count($result);
 
 		$returnString = '';
@@ -78,7 +78,7 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	 * @return string
 	 */
 	protected function processRandom() {
-		$result = $this->queryGerrit('is:open+project:Packages/TYPO3.CMS');
+		$result = $this->queryGerrit('is:open project:Packages/TYPO3.CMS');
 		$item	= $result[array_rand($result)];
 		return $this->buildReviewMessage($item);
 	}
@@ -94,7 +94,7 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 		if ($username === null) {
 			return "hey, I need a username!";
 		}
-		$results = $this->queryGerrit('is:open+owner:"'.$username.'"+project:'.$project);
+		$results = $this->queryGerrit('is:open owner:"'.$username.'" project:'.$project);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$results[0]->owner->name}*:");
 			foreach ($results as $item) {
@@ -154,7 +154,7 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 		array_shift($params);
 		$query = implode('+', $params);
 		$query = str_replace(' ', '+', $query);
-		$results = $this->queryGerrit('limit:10+'.$query);
+		$results = $this->queryGerrit('limit:10 '.$query);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$query}*:");
 			foreach ($results as $item) {
