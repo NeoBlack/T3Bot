@@ -25,7 +25,8 @@ class ReviewCommand extends AbstractCommand {
 		$this->helpCommands['random'] = 'shows a random open review';
 		$this->helpCommands['show <Ref-ID> [<Ref-ID-2>, [<Ref-ID-n>]]'] = 'shows the review by given change number(s)';
 		$this->helpCommands['user <username> [PROJECT=Packages/TYPO3.CMS]'] = 'shows the open reviews by given username for [PROJECT]';
-		$this->helpCommands['query <searchQuery>'] = 'shows the results for given <searchQuery>, max limit is 10';
+		$this->helpCommands['query <searchQuery>'] = 'shows the results for given <searchQuery>, max limit is 50';
+		$this->helpCommands['merged <YYYY-MM-DD>'] = 'shows a count of merged patches on master since given date';
 	}
 
 	/**
@@ -145,16 +146,14 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	 * @return string
 	 */
 	protected function processQuery() {
-		$query = isset($this->params[1]) ? $this->params[1] : null;
-		if ($query === null) {
+		$queryParts = $this->params;
+		array_shift($queryParts);
+		$query = trim(implode(' ', $queryParts));
+		if (strlen($query) == 0) {
 			return "hey, I need a query!";
 		}
 
-		$params = $this->params;
-		array_shift($params);
-		$query = implode('+', $params);
-		$query = str_replace(' ', '+', $query);
-		$results = $this->queryGerrit('limit:10 '.$query);
+		$results = $this->queryGerrit('limit:50 ' . $query);
 		if (count($results) > 0) {
 			$listOfItems = array("*Here are the results for {$query}*:");
 			foreach ($results as $item) {
@@ -163,6 +162,34 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 			return implode("\n", $listOfItems);
 		}
 		return "{$query} not found, sorry!";
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function processMerged() {
+		$query = 'project:Packages/TYPO3.CMS status:merged after:###DATE### branch:master';
+
+		$date = $this->params[1];
+		if (!$this->isDateFormatCorrect($date)) {
+			return "hey, I need a date in the format YYYY-MM-DD!";
+		}
+		$query = str_replace('###DATE###', $date, $query);
+		$result = $this->queryGerrit($query);
+
+		$cnt = count($result);
+		return 'Good job folks, since ' . $date . ' you merged *' . $cnt . '* patches into master';
+
+	}
+
+	/**
+	 * check format of given date
+	 *
+	 * @param $date
+	 * @return bool
+	 */
+	protected function isDateFormatCorrect($date) {
+		return (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $date) === 1);
 	}
 
 	/**
