@@ -42,36 +42,32 @@ class GerritHookController {
 						$item = $this->queryGerrit('change:' . $patchId);
 						$item = $item[0];
 						$created = substr($item->created, 0, 19);
-						$updated = substr($item->updated, 0, 19);
 
 						$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
-						$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number} | Patchset: {$patchSet}\n";
-						$text .= "<https://review.typo3.org/{$item->_number}|Review now>";
+						$text .= "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
+						$text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
 						$payload = new \stdClass();
 						$payload->channel = $channel;
 						$payload->text = $text;
 						$this->postToSlack($payload);
 					}
 				}
-			break;
+				break;
 			case 'change-merged':
-				if ($branch == 'master') {
-					foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-						$item = $this->queryGerrit('change:' . $patchId);
-						$item = $item[0];
-						$created = substr($item->created, 0, 19);
-						$updated = substr($item->updated, 0, 19);
+				foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+					$item = $this->queryGerrit('change:' . $patchId);
+					$item = $item[0];
+					$created = substr($item->created, 0, 19);
 
-						$text = ':white_check_mark: *[MERGED] ' . $item->subject . "* by _{$item->owner->name}_\n";
-						$text .= "Created: {$created} | Last update: {$updated} | ID: {$item->_number}\n";
-						$text .= "<https://review.typo3.org/{$item->_number}|Goto Review>";
-						$payload = new \stdClass();
-						$payload->channel = $channel;
-						$payload->text = $text;
-						$this->postToSlack($payload);
-					}
+					$text = ':white_check_mark: *[MERGED] ' . $item->subject . "* by _{$item->owner->name}_\n";
+					$text .= "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
+					$text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
+					$payload = new \stdClass();
+					$payload->channel = $channel;
+					$payload->text = $text;
+					$this->postToSlack($payload);
 				}
-			break;
+				break;
 			default:
 				exit;
 			break;
