@@ -32,11 +32,15 @@ class ForgeCommand extends AbstractCommand {
 	protected function buildIssueMessage($item) {
 		$created = substr($item->created_on, 0, 19);
 		$updated = substr($item->updated_on, 0, 19);
-		return "*[{$item->tracker->name}] {$item->subject}* by _{$item->author->name}_
-*Project:* {$item->project->name} | *Category*: {$item->category->name} | *Status*: {$item->status->name}
-Created: {$created} | Last update: {$updated}
-<https://forge.typo3.org/issues/{$item->id}|View on Forge>
-";
+		$text  = $this->bold('[' . $item->tracker->name . '] ' . $item->subject) . ' by ' . $this->italic($item->author->name) . "\n";
+		$text .= 'Project: ' . $this->bold($item->project->name);
+		if (strlen(trim($item->category->name)) > 0) {
+			$text .= ' | Category: ' . $this->bold($item->category->name);
+		}
+		$text .= ' | Status: ' . $this->bold($item->status->name) . "\n";
+		$text .= ':calendar: Created: ' . $this->bold($created) . ' | Last update: ' . $this->bold($updated) . "\n";
+		$text .= '<https://forge.typo3.org/issues/' . $item->id . '|:arrow_right: View on Forge>';
+		return $text;
 	}
 
 	/**
@@ -75,5 +79,25 @@ Created: {$created} | Last update: {$updated}
 		$url = "https://forge.typo3.org/{$query}.json";
 		$result = file_get_contents($url);
 		return json_decode($result);
+	}
+
+	/**
+	 * make text bold
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function bold($string) {
+		return '*' . $string . '*';
+	}
+
+	/**
+	 * make text italic
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function italic($string) {
+		return '_' . $string . '_';
 	}
 }

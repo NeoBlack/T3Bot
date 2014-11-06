@@ -36,11 +36,12 @@ class ReviewCommand extends AbstractCommand {
 	 */
 	protected function buildReviewMessage($item) {
 		$created = substr($item->created, 0, 19);
-		$updated = substr($item->updated, 0, 19);
-		return "*{$item->subject}* by _{$item->owner->name}_
-Created: {$created} | Last update: {$updated} | ID: {$item->_number}
-<https://review.typo3.org/{$item->_number}|Review now>
-";
+		$branch = $item->branch;
+		$text  = $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
+		$text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created) . ' | ID: ' . $this->bold($item->_number) . "\n";
+		$text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
+
+		return $text;
 	}
 
 	/**
@@ -49,7 +50,7 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 	 * @return string
 	 */
 	protected function buildReviewLine($item) {
-		return "*{$item->subject}* <https://review.typo3.org/{$item->_number}|Review #{$item->_number} now>";
+		return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number . '|Review #' . $item->_number . ' now>';
 	}
 
 	/**
@@ -67,9 +68,9 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 		$countMinus2  = count($result);
 
 		$returnString = '';
-		$returnString .= "There are currently *{$count}* open reviews for project '{$project}' on https://review.typo3.org \n";
-		$returnString .= "*{$countMinus1}* of *{$count}* open reviews voted with *-1* <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+project:Packages/TYPO3.CMS|Check now> \n";
-		$returnString .= "*{$countMinus2}* of *{$count}* open reviews voted with *-2* <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+project:Packages/TYPO3.CMS|Check now> \n";
+		$returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project ' . $this->italic($project) . ' on https://review.typo3.org' . "\n";
+		$returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-1') . " <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+project:Packages/TYPO3.CMS|Check now> \n";
+		$returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-2') . " <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+project:Packages/TYPO3.CMS|Check now>";
 		return $returnString;
 	}
 
@@ -202,5 +203,25 @@ Created: {$created} | Last update: {$updated} | ID: {$item->_number}
 		$result = file_get_contents($url);
 		$result = json_decode(str_replace(")]}'\n", '', $result));
 		return $result;
+	}
+
+	/**
+	 * make text bold
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function bold($string) {
+		return '*' . $string . '*';
+	}
+
+	/**
+	 * make text italic
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function italic($string) {
+		return '_' . $string . '_';
 	}
 }
