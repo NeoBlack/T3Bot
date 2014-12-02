@@ -14,6 +14,11 @@ namespace T3Bot\Commands;
  * @package T3Bot\Commands
  */
 abstract class AbstractCommand {
+	const PROJECT_PHASE_DEVELOPMENT		= 'development';
+	const PROJECT_PHASE_STABILISATION	= 'stabilisation';
+	const PROJECT_PHASE_SOFT_FREEZE		= 'soft_freeze';
+	const PROJECT_PHASE_CODE_FREEZE		= 'code_freeze';
+
 	/**
 	 * @var
 	 */
@@ -86,7 +91,24 @@ abstract class AbstractCommand {
 	protected function buildReviewMessage($item) {
 		$created = substr($item->created, 0, 19);
 		$branch = $item->branch;
-		$text  = $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
+
+		switch ($GLOBALS['config']['projectPhase']) {
+			case self::PROJECT_PHASE_STABILISATION:
+				$text = ':warning: *stabilisation phase*' . "\n";
+				break;
+			case self::PROJECT_PHASE_SOFT_FREEZE:
+				$text = ':no_entry: *soft merge freeze*' . "\n";
+				break;
+			case self::PROJECT_PHASE_CODE_FREEZE:
+				$text = ':no_entry: *merge freeze*' . "\n";
+				break;
+			case self::PROJECT_PHASE_DEVELOPMENT:
+			default:
+				$text = '';
+				break;
+		}
+
+		$text .= $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
 		$text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created) . ' | ID: ' . $this->bold($item->_number) . "\n";
 		$text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
 

@@ -1,6 +1,9 @@
 <?php
 
 $GLOBALS['config'] = array(
+	// project phase
+	'projectPhase' => \T3Bot\Commands\AbstractCommand::PROJECT_PHASE_DEVELOPMENT,
+	// slack config
 	'slack'	=> array(
 		// slack api host
 		'apiHost' => 'typo3.slack.com',
