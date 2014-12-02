@@ -75,4 +75,63 @@ abstract class AbstractCommand {
 		}
 		return $result;
 	}
+
+	/**
+	 * build a review message
+	 *
+	 * @param object $item the review item
+	 *
+	 * @return string
+	 */
+	protected function buildReviewMessage($item) {
+		$created = substr($item->created, 0, 19);
+		$branch = $item->branch;
+		$text  = $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
+		$text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created) . ' | ID: ' . $this->bold($item->_number) . "\n";
+		$text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
+
+		return $text;
+	}
+
+	/**
+	 * build a review line
+	 *
+	 * @param object $item the review item
+	 *
+	 * @return string
+	 */
+	protected function buildReviewLine($item) {
+		return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number . '|Review #' . $item->_number . ' now>';
+	}
+
+	/**
+	 * query database
+	 *
+	 * @param string $query the SQL query
+	 * @return resource
+	 */
+	protected function dbQuery($query) {
+		return mysql_query($query, $GLOBALS['db_link']);
+	}
+
+	/**
+	 * make text bold
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function bold($string) {
+		return '*' . $string . '*';
+	}
+
+	/**
+	 * make text italic
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	protected function italic($string) {
+		return '_' . $string . '_';
+	}
+
 }

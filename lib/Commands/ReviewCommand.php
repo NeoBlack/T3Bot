@@ -30,30 +30,6 @@ class ReviewCommand extends AbstractCommand {
 	}
 
 	/**
-	 * @param $item
-	 *
-	 * @return string
-	 */
-	protected function buildReviewMessage($item) {
-		$created = substr($item->created, 0, 19);
-		$branch = $item->branch;
-		$text  = $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
-		$text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created) . ' | ID: ' . $this->bold($item->_number) . "\n";
-		$text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
-
-		return $text;
-	}
-
-	/**
-	 * @param $item
-	 *
-	 * @return string
-	 */
-	protected function buildReviewLine($item) {
-		return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number . '|Review #' . $item->_number . ' now>';
-	}
-
-	/**
 	 * process count
 	 *
 	 * @return string
@@ -203,25 +179,5 @@ class ReviewCommand extends AbstractCommand {
 		$result = file_get_contents($url);
 		$result = json_decode(str_replace(")]}'\n", '', $result));
 		return $result;
-	}
-
-	/**
-	 * make text bold
-	 *
-	 * @param $string
-	 * @return string
-	 */
-	protected function bold($string) {
-		return '*' . $string . '*';
-	}
-
-	/**
-	 * make text italic
-	 *
-	 * @param $string
-	 * @return string
-	 */
-	protected function italic($string) {
-		return '_' . $string . '_';
 	}
 }

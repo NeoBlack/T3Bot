@@ -80,24 +80,4 @@ class ForgeCommand extends AbstractCommand {
 		$result = file_get_contents($url);
 		return json_decode($result);
 	}
-
-	/**
-	 * make text bold
-	 *
-	 * @param $string
-	 * @return string
-	 */
-	protected function bold($string) {
-		return '*' . $string . '*';
-	}
-
-	/**
-	 * make text italic
-	 *
-	 * @param $string
-	 * @return string
-	 */
-	protected function italic($string) {
-		return '_' . $string . '_';
-	}
 }
