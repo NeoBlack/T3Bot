@@ -36,17 +36,17 @@ class ReviewCommand extends AbstractCommand {
 	 */
 	protected function processCount() {
 		$project = isset($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
-		$result = $this->queryGerrit("is:open project:{$project}");
+		$result = $this->queryGerrit("is:open branch:master project:{$project}");
 		$count  = count($result);
-		$result = $this->queryGerrit("label:Code-Review=-1 is:open project:{$project}");
+		$result = $this->queryGerrit("label:Code-Review=-1 is:open branch:master project:{$project}");
 		$countMinus1  = count($result);
-		$result = $this->queryGerrit("label:Code-Review=-2 is:open project:{$project}");
+		$result = $this->queryGerrit("label:Code-Review=-2 is:open branch:master project:{$project}");
 		$countMinus2  = count($result);
 
 		$returnString = '';
-		$returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project ' . $this->italic($project) . ' on https://review.typo3.org' . "\n";
-		$returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-1') . " <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+project:Packages/TYPO3.CMS|Check now> \n";
-		$returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-2') . " <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+project:Packages/TYPO3.CMS|Check now>";
+		$returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project ' . $this->italic($project) . ' and branch master on https://review.typo3.org' . "\n";
+		$returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-1') . " <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:master+project:Packages/TYPO3.CMS|Check now> \n";
+		$returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-2') . " <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:master+project:Packages/TYPO3.CMS|Check now>";
 		return $returnString;
 	}
 
