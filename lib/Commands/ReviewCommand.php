@@ -90,14 +90,26 @@ class ReviewCommand extends AbstractCommand {
 	 * @return string
 	 */
 	protected function processShow() {
-		$refId = isset($this->params[1]) ? intval($this->params[1]) : null;
-		if ($refId === null || $refId == 0) {
-			return "hey, I need at least one change number!";
+		$refId = isset($this->params[1]) ? intval($this->params[1]) : 0;
+		if ($refId === 0) {
+			if (preg_match('/^https:\/\/review.typo3.org\/#\/c\/(\d+)\/?$', $this->params[1], $matches)) {
+				$refId = (int)$matches[1];
+			} else {
+				return "hey, I need at least one change number!";
+			}
 		}
-		if (count($this->params) > 2) {
+		$paramsCount = count($this->params);
+		if ($paramsCount > 2) {
 			$changeIds = array();
-			for ($i=1;$i<count($this->params); $i++) {
-				$changeIds[] = 'change:' . $this->params[$i];
+			for ($i = 1; $i < $paramsCount; $i++) {
+				if ((int)$this->params[$i] !== 0) {
+					$changeIds[] = 'change:' . (int)$this->params[$i];
+				} elseif (preg_match('/^https:\/\/review.typo3.org\/#\/c\/(\d+)\/?$', $this->params[$i], $matches)) {
+					$changeIds[] = 'change:' . $matches[1];
+				}
+			}
+			if (empty($changeIds)) {
+				return "hey, I need at least one valid change number!";
 			}
 			$result = $this->queryGerrit(implode(' OR ', $changeIds));
 			$listOfItems = array();
