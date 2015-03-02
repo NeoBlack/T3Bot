@@ -90,8 +90,14 @@ class ReviewCommand extends AbstractCommand {
 	 * @return string
 	 */
 	protected function processShow() {
-		$refId = isset($this->params[1]) ? intval($this->params[1]) : null;
-		if ($refId === null || $refId == 0) {
+		$urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([0-9]*)(?:.*)*/i';
+		$refId = isset($this->params[1]) ? $this->params[1] : NULL;
+		if (preg_match_all($urlPattern, $refId, $matches)) {
+			$refId = (int)$matches[1][0];
+		} else {
+			$refId = (int)$refId;
+		}
+		if ($refId === NULL || $refId == 0) {
 			return "hey, I need at least one change number!";
 		}
 		if (count($this->params) > 2) {
