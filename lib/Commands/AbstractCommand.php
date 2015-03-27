@@ -60,7 +60,7 @@ abstract class AbstractCommand {
 	protected function getHelp() {
 		$result = "*HELP*\n";
 		foreach ($this->helpCommands as $command => $helpText) {
-			$result .= "*{$this->commandName} {$command}*: {$helpText} \n";
+			$result .= "*{$this->commandName}:{$command}*: {$helpText} \n";
 		}
 		return $result;
 	}
