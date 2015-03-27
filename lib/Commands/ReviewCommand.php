@@ -44,9 +44,9 @@ class ReviewCommand extends AbstractCommand {
 		$countMinus2  = count($result);
 
 		$returnString = '';
-		$returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project ' . $this->italic($project) . ' and branch master on https://review.typo3.org' . "\n";
-		$returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-1') . " <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:master+project:Packages/TYPO3.CMS|Check now> \n";
-		$returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-2') . " <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:master+project:Packages/TYPO3.CMS|Check now>";
+		$returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project ' . $this->italic($project) . ' and branch master on <https://review.typo3.org/#/q/project:' . $project . '+status:open+branch:master|https://review.typo3.org>' . "\n";
+		$returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-1') . " <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:master+project:{$project}|Check now> \n";
+		$returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with ' . $this->bold('-2') . " <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:master+project:{$project}|Check now>";
 		return $returnString;
 	}
 
