@@ -127,16 +127,6 @@ abstract class AbstractCommand {
 	}
 
 	/**
-	 * query database
-	 *
-	 * @param string $query the SQL query
-	 * @return resource
-	 */
-	protected function dbQuery($query) {
-		return mysql_query($query, $GLOBALS['db_link']);
-	}
-
-	/**
 	 * make text bold
 	 *
 	 * @param $string
@@ -156,4 +146,14 @@ abstract class AbstractCommand {
 		return '_' . $string . '_';
 	}
 
+	/**
+	 * @return \mysqli
+	 */
+	protected function getDatabaseConnection() {
+		if (empty($GLOBALS['DB'])) {
+			$dbConfig = $GLOBALS['config']['db'];
+			$GLOBALS['DB'] = new \mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['schema']);
+		}
+		return $GLOBALS['DB'];
+	}
 }
