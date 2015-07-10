@@ -7,6 +7,7 @@
  */
 
 namespace T3Bot\Controller;
+use T3Bot\Slack\Message;
 
 /**
  * Class SlackCommandController
@@ -59,12 +60,16 @@ class SlackCommandController {
 	 * @param $response
 	 */
 	protected function sendResponse($response) {
-		$result = new \stdClass();
-		$result->text = $response;
-		if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
-			$result->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
+		if ($response instanceof Message) {
+			echo $response->getJSON();
+		} else {
+			$result = new \stdClass();
+			$result->text = $response;
+			if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
+				$result->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
+			}
+			echo json_encode($result);
 		}
-		echo json_encode($result);
 	}
 
 	/**

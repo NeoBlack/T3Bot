@@ -7,6 +7,7 @@
  */
 
 namespace T3Bot\Controller;
+use T3Bot\Slack\Message;
 
 /**
  * Class GerritHookController
@@ -43,12 +44,21 @@ class GerritHookController {
 						$item = $item[0];
 						$created = substr($item->created, 0, 19);
 
-						$text = ':bangbang: *[NEW] ' . $item->subject . "* by _{$item->owner->name}_\n";
-						$text .= "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
+						$message = new Message();
+						$message->setText(' ');
+						$attachment = new Message\Attachment();
+
+						$attachment->setColor(Message\Attachment::COLOR_NOTICE);
+						$attachment->setTitle('[NEW] ' . $item->subject);
+						$attachment->setAuthorName($item->owner->name);
+
+						$text = "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
 						$text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
-						$payload = new \stdClass();
+						$attachment->setText($text);
+						$attachment->setFallback($text);
+						$message->addAttachment($attachment);
+						$payload = json_decode($message->getJSON());
 						$payload->channel = $channel;
-						$payload->text = $text;
 						$this->postToSlack($payload);
 					}
 				}
@@ -59,12 +69,21 @@ class GerritHookController {
 					$item = $item[0];
 					$created = substr($item->created, 0, 19);
 
-					$text = ':white_check_mark: *[MERGED] ' . $item->subject . "* by _{$item->owner->name}_\n";
-					$text .= "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
+					$message = new Message();
+					$message->setText(' ');
+					$attachment = new Message\Attachment();
+
+					$attachment->setColor(Message\Attachment::COLOR_GOOD);
+					$attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
+					$attachment->setAuthorName($item->owner->name);
+
+					$text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
 					$text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
-					$payload = new \stdClass();
+					$attachment->setText($text);
+					$attachment->setFallback($text);
+					$message->addAttachment($attachment);
+					$payload = json_decode($message->getJSON());
 					$payload->channel = $channel;
-					$payload->text = $text;
 					$this->postToSlack($payload);
 				}
 				break;

@@ -7,6 +7,7 @@
  */
 
 namespace T3Bot\Commands;
+use T3Bot\Slack\Message;
 
 /**
  * Class AbstractCommand
@@ -91,28 +92,40 @@ abstract class AbstractCommand {
 	protected function buildReviewMessage($item) {
 		$created = substr($item->created, 0, 19);
 		$branch = $item->branch;
+		$text = '';
 
+		$message = new Message();
+		$attachment = new Message\Attachment();
 		switch ($GLOBALS['config']['projectPhase']) {
 			case self::PROJECT_PHASE_STABILISATION:
-				$text = ':warning: *stabilisation phase*' . "\n";
+				$attachment->setColor(Message\Attachment::COLOR_WARNING);
+				$attachment->setPretext(':warning: *stabilisation phase*');
 				break;
 			case self::PROJECT_PHASE_SOFT_FREEZE:
-				$text = ':no_entry: *soft merge freeze*' . "\n";
+				$attachment->setColor(Message\Attachment::COLOR_DANGER);
+				$attachment->setPretext(':no_entry: *soft merge freeze*');
 				break;
 			case self::PROJECT_PHASE_CODE_FREEZE:
-				$text = ':no_entry: *merge freeze*' . "\n";
+				$attachment->setColor(Message\Attachment::COLOR_DANGER);
+				$attachment->setPretext(':no_entry: *merge freeze*');
 				break;
 			case self::PROJECT_PHASE_DEVELOPMENT:
 			default:
-				$text = '';
+				$attachment->setColor(Message\Attachment::COLOR_NOTICE);
 				break;
 		}
+		$attachment->setTitle($item->subject);
+		$attachment->setTitleLink('https://review.typo3.org/' . $item->_number);
+		$attachment->setAuthorName($item->owner->name);
 
-		$text .= $this->bold($item->subject) . ' by ' . $this->italic($item->owner->name) . "\n";
 		$text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created) . ' | ID: ' . $this->bold($item->_number) . "\n";
 		$text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
 
-		return $text;
+		$attachment->setText($text);
+		$attachment->setFallback($text);
+		$message->setText(' ');
+		$message->addAttachment($attachment);
+		return $message;
 	}
 
 	/**
