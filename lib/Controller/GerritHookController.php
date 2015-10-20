@@ -32,7 +32,7 @@ class GerritHookController {
 			// only core patches please...
 			exit;
 		}
-		$patchId = (int) str_replace('http://review.typo3.org/', '', $json->{'change-url'});
+		$patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
 		$patchSet = intval($json->patchset);
 		$branch = $json->branch;
 
