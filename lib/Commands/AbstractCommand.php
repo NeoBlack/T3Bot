@@ -19,6 +19,7 @@ abstract class AbstractCommand {
 	const PROJECT_PHASE_STABILISATION	= 'stabilisation';
 	const PROJECT_PHASE_SOFT_FREEZE		= 'soft_freeze';
 	const PROJECT_PHASE_CODE_FREEZE		= 'code_freeze';
+	const PROJECT_PHASE_FEATURE_FREEZE	= 'feature_freeze';
 
 	/**
 	 * @var
@@ -108,6 +109,10 @@ abstract class AbstractCommand {
 			case self::PROJECT_PHASE_CODE_FREEZE:
 				$attachment->setColor(Message\Attachment::COLOR_DANGER);
 				$attachment->setPretext(':no_entry: *merge freeze*');
+				break;
+			case self::PROJECT_PHASE_FEATURE_FREEZE:
+				$attachment->setColor(Message\Attachment::COLOR_DANGER);
+				$attachment->setPretext(':no_entry: *FEATURE FREEZE*');
 				break;
 			case self::PROJECT_PHASE_DEVELOPMENT:
 			default:
