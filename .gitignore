@@ -1,3 +1,11 @@
-.idea
+; Mac files
 .DS_Store
+
+; Configuration file
 config/config.php
+
+; PHPStorm settings
+.idea/
+
+; composer stuff
+vendor/
