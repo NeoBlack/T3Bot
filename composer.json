@@ -1,0 +1,17 @@
+{
+  "name": "NeoBlack/T3Bot",
+  "description": "TYPO3 channel bot",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Frank Nägler",
+      "email": "mail@naegler.net"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "T3Bot\\": "lib/"
+    }
+  }
+}
