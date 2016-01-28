@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "T3Bot\\": "lib/"
+      "T3Bot\\": "Classes/"
     }
   }
 }
