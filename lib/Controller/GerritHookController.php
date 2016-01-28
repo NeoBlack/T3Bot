@@ -86,6 +86,63 @@ class GerritHookController {
 					$payload->channel = $channel;
 					$this->postToSlack($payload);
 				}
+				$files = $this->getFilesForPatch($patchId, $patchSet);
+				$rstFiles = array();
+				foreach ($files as $fileName => $changeInfo) {
+					if ($this->endsWith(strtolower($fileName), '.rst')) {
+						$rstFiles[$fileName] = $changeInfo;
+					}
+				}
+				if (count($rstFiles) > 0) {
+					$channel = '#fntest';
+					foreach ($rstFiles as $fileName => $changeInfo) {
+						$status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
+
+						$message = new Message();
+						$message->setText(' ');
+						$attachment = new Message\Attachment();
+
+						switch ($status) {
+							case 'A':
+								$attachment->setColor(Message\Attachment::COLOR_GOOD);
+								$attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
+								$attachment->setAuthorName($item->owner->name);
+
+								$text = "A new documentation file has been added\n";
+								$text .= ":link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/{$fileName}|Show reST file>";
+								$attachment->setText($text);
+								$attachment->setFallback($text);
+								$message->addAttachment($attachment);
+								break;
+							case 'D':
+								$attachment->setColor(Message\Attachment::COLOR_WARNING);
+								$attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
+								$attachment->setAuthorName($item->owner->name);
+
+								$text = "A documentation file has been removed\n";
+								$text .= ":link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/{$fileName}|Show reST file>";
+								$attachment->setText($text);
+								$attachment->setFallback($text);
+								$message->addAttachment($attachment);
+								break;
+							default:
+								$attachment->setColor(Message\Attachment::COLOR_WARNING);
+								$attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
+								$attachment->setAuthorName($item->owner->name);
+
+								$text = "A documentation file has been updated\n";
+								$text .= ":link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/{$fileName}|Show reST file>";
+								$attachment->setText($text);
+								$attachment->setFallback($text);
+								$message->addAttachment($attachment);
+								break;
+						}
+						$payload = json_decode($message->getJSON());
+						$payload->channel = $channel;
+						$this->postToSlack($payload);
+						sleep(1);
+					}
+				}
 				break;
 			default:
 				exit;
@@ -106,6 +163,19 @@ class GerritHookController {
 	}
 
 	/**
+	 * @param int $changeId
+	 * @param int $revision
+	 *
+	 * @return mixed|string
+	 */
+	protected function getFilesForPatch($changeId, $revision) {
+		$url = 'https://review.typo3.org/changes/' . $changeId . '/revisions/' . $revision . '/files';
+		$result = file_get_contents($url);
+		$result = json_decode(str_replace(")]}'\n", '', $result));
+		return $result;
+	}
+
+	/**
 	 * @param string $payload a json string
 	 */
 	protected function postToSlack($payload) {
@@ -115,6 +185,16 @@ class GerritHookController {
 		}
 		$command = 'curl -X POST --data-urlencode ' . escapeshellarg('payload=' . $payload) . ' https://' . $GLOBALS['config']['slack']['apiHost'] . '/services/hooks/incoming-webhook?token=' . $GLOBALS['config']['slack']['incomingWebhookToken'];
 		exec($command);
+	}
 
+	/**
+	 * @param string $haystack
+	 * @param string $needle
+	 *
+	 * @return bool
+	 */
+	protected function endsWith($haystack, $needle) {
+		// search forward starting from end minus needle length characters
+		return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
 	}
 }
