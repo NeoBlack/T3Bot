@@ -3,6 +3,8 @@
 
 ; Configuration file
 config/config.php
+config/config.*.php
+!config/config.example.php
 
 ; PHPStorm settings
 .idea/

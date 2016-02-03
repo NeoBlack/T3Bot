@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
@@ -10,23 +10,25 @@
 namespace T3Bot\Commands;
 
 /**
- * Class ForgeCommand.
+ * Class BeerCommand.
  */
 class BeerCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     protected $commandName = 'beer';
 
     /**
-     *
+     * @var array
      */
-    public function __construct()
-    {
-        $this->helpCommands['help'] = 'shows this help';
-        $this->helpCommands['stats <username>'] = 'show beer counter for <username>';
-        $this->helpCommands['for <username>'] = 'give <username> a T3Beer';
-        $this->helpCommands['all'] = 'show all beer counter';
-        $this->helpCommands['top10'] = 'show TOP 10';
-    }
+    protected $helpCommands = [
+        'help' => 'shows this help',
+        'stats [username]' => 'show beer counter for [username]',
+        'for [username]' => 'give [username] a T3Beer',
+        'all' => 'show all beer counter',
+        'top10' => 'show TOP 10'
+    ];
 
     /**
      * stats for all beer counter.
@@ -86,12 +88,13 @@ class BeerCommand extends AbstractCommand
         $username = trim($params[0]);
         if (substr($username, 0, 1) === '<' && substr($username, 1, 1) === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
-            $db = $this->getDatabaseConnection();
+            $this->getDatabaseConnection()->insert('beers', [
+                'to_user' => $username,
+                'from_user' => $from_user
+            ]);
 
-            $sql = 'INSERT INTO beers (to_user, from_user) VALUES (\''.$db->real_escape_string($username).'\', \''.$db->real_escape_string($from_user).'\')';
-            $db->query($sql);
-
-            return 'Yeah, one more :t3beer: for <@'.$username.'>'.chr(10).'<@'.$username.'> has received '.$this->getBeerCountByUsername($username).' :t3beer: so far';
+            return 'Yeah, one more :t3beer: for <@' . $username . '>' . chr(10) . '<@' . $username . '> has received '
+                . $this->getBeerCountByUsername($username) . ' :t3beer: so far';
         } else {
             return '*Sorry, a username must start with a @-sign:*';
         }
@@ -104,11 +107,8 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerCountByUsername($username)
     {
-        $db = $this->getDatabaseConnection();
-        $sql = 'SELECT * FROM beers WHERE to_user = \''.$db->real_escape_string($username).'\'';
-        $result = $db->query($sql);
-
-        return $result->num_rows;
+        return count($this->getDatabaseConnection()
+            ->fetchAll('SELECT * FROM beers WHERE to_user = ?', array($username)));
     }
 
     /**
@@ -116,11 +116,8 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerCountAll()
     {
-        $db = $this->getDatabaseConnection();
-        $sql = 'SELECT * FROM beers';
-        $result = $db->query($sql);
-
-        return $result->num_rows;
+        return count($this->getDatabaseConnection()
+            ->fetchAll('SELECT * FROM beers'));
     }
 
     /**
@@ -128,17 +125,8 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerTop10()
     {
-        $db = $this->getDatabaseConnection();
-        $sql = 'SELECT count(to_user) as cnt, to_user FROM beers GROUP BY to_user ORDER BY cnt DESC LIMIT 10';
-        $result = $db->query($sql);
-        $results = array();
-        while ($row = $result->fetch_assoc()) {
-            $results[] = array(
-                'cnt' => $row['cnt'],
-                'username' => $row['to_user'],
-            );
-        }
-
-        return $results;
+        return $this->getDatabaseConnection()->fetchAll(
+            'SELECT count(*) as cnt, to_user as username FROM beers GROUP BY to_user ORDER BY cnt DESC LIMIT 10'
+        );
     }
 }

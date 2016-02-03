@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot

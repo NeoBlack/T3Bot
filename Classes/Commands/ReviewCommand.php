@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
@@ -14,21 +14,23 @@ namespace T3Bot\Commands;
  */
 class ReviewCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     protected $commandName = 'review';
 
     /**
-     *
+     * @var array
      */
-    public function __construct()
-    {
-        $this->helpCommands['help'] = 'shows this help';
-        $this->helpCommands['count [PROJECT=Packages/TYPO3.CMS]'] = 'shows the number of currently open reviews for [PROJECT]';
-        $this->helpCommands['random'] = 'shows a random open review';
-        $this->helpCommands['show <Ref-ID> [<Ref-ID-2>, [<Ref-ID-n>]]'] = 'shows the review by given change number(s)';
-        $this->helpCommands['user <username> [PROJECT=Packages/TYPO3.CMS]'] = 'shows the open reviews by given username for [PROJECT]';
-        $this->helpCommands['query <searchQuery>'] = 'shows the results for given <searchQuery>, max limit is 50';
-        $this->helpCommands['merged <YYYY-MM-DD>'] = 'shows a count of merged patches on master since given date';
-    }
+    protected $helpCommands = [
+        'help' => 'shows this help',
+        'count [PROJECT=Packages/TYPO3.CMS]' => 'shows the number of currently open reviews for [PROJECT]',
+        'random' => 'shows a random open review',
+        'show [Ref-ID] [[Ref-ID-2], [[Ref-ID-n]]]' => 'shows the review by given change number(s)',
+        'user [username] [PROJECT=Packages/TYPO3.CMS]' => 'shows the open reviews by given username for [PROJECT]',
+        'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
+        'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date'
+    ];
 
     /**
      * process count.
@@ -46,9 +48,15 @@ class ReviewCommand extends AbstractCommand
         $countMinus2 = count($result);
 
         $returnString = '';
-        $returnString .= 'There are currently '.$this->bold($count).' open reviews for project '.$this->italic($project).' and branch master on <https://review.typo3.org/#/q/project:'.$project.'+status:open+branch:master|https://review.typo3.org>'."\n";
-        $returnString .= $this->bold($countMinus1).' of '.$this->bold($count).' open reviews voted with '.$this->bold('-1')." <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:master+project:{$project}|Check now> \n";
-        $returnString .= $this->bold($countMinus2).' of '.$this->bold($count).' open reviews voted with '.$this->bold('-2')." <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:master+project:{$project}|Check now>";
+        $returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project '
+            . $this->italic($project) . ' and branch master on <https://review.typo3.org/#/q/project:' . $project
+            . '+status:open+branch:master|https://review.typo3.org>'."\n";
+        $returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with '
+            . $this->bold('-1') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
+            . 'master+project:' . $project . '|Check now> ' . "\n";
+        $returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with '
+            . $this->bold('-2') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
+            . 'master+project:' . $project . '|Check now>';
 
         return $returnString;
     }
@@ -110,7 +118,7 @@ class ReviewCommand extends AbstractCommand
         }
         if (count($this->params) > 2) {
             $changeIds = array();
-            for ($i = 1;$i < count($this->params); ++$i) {
+            for ($i = 1; $i < count($this->params); ++$i) {
                 $changeIds[] = 'change:'.$this->params[$i];
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
@@ -130,6 +138,7 @@ class ReviewCommand extends AbstractCommand
                 }
             }
         }
+        return '';
     }
 
     /**
@@ -198,7 +207,10 @@ class ReviewCommand extends AbstractCommand
     protected function queryGerrit($query)
     {
         $url = 'https://review.typo3.org/changes/?q='.urlencode($query);
-        $result = file_get_contents($url);
+        $ctx = stream_context_create(['ssl' => [
+            'peer_name' => 'review.typo3.org'
+        ]]);
+        $result = file_get_contents($url, null, $ctx);
         $result = json_decode(str_replace(")]}'\n", '', $result));
 
         return $result;

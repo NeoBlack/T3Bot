@@ -2,13 +2,19 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
 namespace T3Bot\Commands;
 
+use /** @noinspection PhpInternalEntityUsedInspection */
+    Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\DriverManager;
+use Slack\Message\Attachment;
+use Slack\Payload;
+use Slack\RealTimeClient;
 use T3Bot\Slack\Message;
 
 /**
@@ -37,22 +43,91 @@ abstract class AbstractCommand
      */
     protected $params = array();
 
-    abstract public function __construct();
+    /**
+     * @var Payload
+     */
+    protected $payload;
 
     /**
-     * @param array $params
-     *
-     * @return mixed|string
+     * @var RealTimeClient
      */
-    public function process(array $params = array())
+    protected $client;
+
+    /**
+     * AbstractCommand constructor.
+     *
+     * @param Payload $payload
+     * @param RealTimeClient $client
+     */
+    public function __construct(Payload $payload, RealTimeClient $client)
     {
+        $this->payload = $payload;
+        $this->client = $client;
+    }
+
+    /**
+     *
+     */
+    public function process()
+    {
+        $commandParts = explode(':', $this->payload->getData()['text']);
+        $params = array();
+        if (!empty($commandParts[1])) {
+            $params = explode(' ', preg_replace('/\s+/', ' ', $commandParts[1]));
+        }
+
         $this->params = $params;
         $command = isset($this->params[0]) ? $this->params[0] : 'help';
         $method = 'process'.ucfirst(strtolower($command));
         if (method_exists($this, $method)) {
-            return call_user_func(array($this, $method));
+            $this->sendResponse(call_user_func(array($this, $method)));
         } else {
-            return $this->getHelp();
+            $this->sendResponse($this->getHelp());
+        }
+    }
+
+    /**
+     * @param \T3Bot\Slack\Message|string $response
+     */
+    protected function sendResponse($response)
+    {
+        if ($response instanceof Message) {
+            $data['unfurl_links'] = false;
+            $data['unfurl_media'] = false;
+            $data['parse'] = 'none';
+            $data['text'] = $response->getText();
+            $data['channel'] = $this->payload->getData()['channel'];
+            $attachments = $response->getAttachments();
+            if (count($attachments)) {
+                $data['attachments'] = array();
+            }
+            /** @var \T3Bot\Slack\Message\Attachment $attachment */
+            foreach ($attachments as $attachment) {
+                $data['attachments'][] = Attachment::fromData([
+                    'title' => $attachment->getTitle(),
+                    'title_link' => $attachment->getTitleLink(),
+                    'text' => $attachment->getText(),
+                    'fallback' => $attachment->getFallback(),
+                    'color' => $attachment->getColor(),
+                    'pretext' => $attachment->getPretext(),
+                    'fields' => $attachment->getFields(),
+                    'author_name' => $attachment->getAuthorName(),
+                    'author_icon' => $attachment->getAuthorIcon(),
+                    'author_link' => $attachment->getAuthorLink(),
+                    'image_url' => $attachment->getImageUrl(),
+                    'thumb_url' => $attachment->getThumbUrl(),
+                ]);
+            }
+            $message = new \Slack\Message\Message($this->client, $data);
+            $this->client->postMessage($message);
+        } elseif (is_string($response)) {
+            $data['unfurl_links'] = false;
+            $data['unfurl_media'] = false;
+            $data['parse'] = 'none';
+            $data['text'] = $response;
+            $data['channel'] = $this->payload->getData()['channel'];
+            $data['as_user'] = true;
+            $this->client->apiCall('chat.postMessage', $data);
         }
     }
 
@@ -80,7 +155,8 @@ abstract class AbstractCommand
      */
     protected function getNumberAsEmoji($number)
     {
-        $numbers = array(':zero:', ':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:', ':eight:', ':nine:');
+        $numbers = array(':zero:', ':one:', ':two:', ':three:', ':four:',
+            ':five:', ':six:', ':seven:', ':eight:', ':nine:');
         $number = (string) $number;
         $result = '';
         foreach (str_split($number) as $char) {
@@ -95,7 +171,7 @@ abstract class AbstractCommand
      *
      * @param object $item the review item
      *
-     * @return string
+     * @return Message
      */
     protected function buildReviewMessage($item)
     {
@@ -129,9 +205,9 @@ abstract class AbstractCommand
         }
         $attachment->setTitle($item->subject);
         $attachment->setTitleLink('https://review.typo3.org/'.$item->_number);
-        $attachment->setAuthorName($item->owner->name);
 
-        $text .= 'Branch: '.$this->bold($branch).' | :calendar: '.$this->bold($created).' | ID: '.$this->bold($item->_number)."\n";
+        $text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
+            . ' | ID: ' . $this->bold($item->_number) . "\n";
         $text .= '<https://review.typo3.org/'.$item->_number.'|:arrow_right: Goto Review>';
 
         $attachment->setText($text);
@@ -151,7 +227,8 @@ abstract class AbstractCommand
      */
     protected function buildReviewLine($item)
     {
-        return $this->bold($item->subject).' <https://review.typo3.org/'.$item->_number.'|Review #'.$item->_number.' now>';
+        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
+        . '|Review #' . $item->_number . ' now>';
     }
 
     /**
@@ -179,15 +256,16 @@ abstract class AbstractCommand
     }
 
     /**
-     * @return \mysqli
+     * @return \Doctrine\DBAL\Connection
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getDatabaseConnection()
     {
         if (empty($GLOBALS['DB'])) {
-            $dbConfig = $GLOBALS['config']['db'];
-            $GLOBALS['DB'] = new \mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['schema']);
+            /** @noinspection PhpInternalEntityUsedInspection */
+            $config = new Configuration();
+            $GLOBALS['DB'] = DriverManager::getConnection($GLOBALS['config']['db'], $config);
         }
-
         return $GLOBALS['DB'];
     }
 }

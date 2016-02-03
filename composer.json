@@ -13,5 +13,9 @@
     "psr-4": {
       "T3Bot\\": "Classes/"
     }
+  },
+  "require": {
+    "coderstephen/slack-client": "^0.2.3",
+    "doctrine/dbal": "v2.5.4"
   }
 }

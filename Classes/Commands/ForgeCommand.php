@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
@@ -14,16 +14,18 @@ namespace T3Bot\Commands;
  */
 class ForgeCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     protected $commandName = 'forge';
 
     /**
-     *
+     * @var array
      */
-    public function __construct()
-    {
-        $this->helpCommands['help'] = 'shows this help';
-        $this->helpCommands['show <Issue-ID>'] = 'shows the issue by given <Issue-ID>';
-    }
+    protected $helpCommands = [
+        'help' => 'shows this help',
+        'show [Issue-ID]' => 'shows the issue by given [Issue-ID]'
+    ];
 
     /**
      * @param $item
@@ -34,9 +36,10 @@ class ForgeCommand extends AbstractCommand
     {
         $created = substr($item->created_on, 0, 19);
         $updated = substr($item->updated_on, 0, 19);
-        $text = $this->bold('['.$item->tracker->name.'] '.$item->subject).' by '.$this->italic($item->author->name)."\n";
+        $text = $this->bold('[' . $item->tracker->name . '] ' . $item->subject)
+            . ' by ' . $this->italic($item->author->name) . "\n";
         $text .= 'Project: '.$this->bold($item->project->name);
-        if (strlen(trim($item->category->name)) > 0) {
+        if (!empty($item->category->name)) {
             $text .= ' | Category: '.$this->bold($item->category->name);
         }
         $text .= ' | Status: '.$this->bold($item->status->name)."\n";
@@ -89,7 +92,10 @@ class ForgeCommand extends AbstractCommand
     protected function queryForge($query)
     {
         $url = "https://forge.typo3.org/{$query}.json";
-        $result = file_get_contents($url);
+        $ctx = stream_context_create(['ssl' => [
+            'peer_name' => 'forge.typo3.org'
+        ]]);
+        $result = file_get_contents($url, null, $ctx);
 
         return json_decode($result);
     }

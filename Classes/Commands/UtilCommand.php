@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
@@ -10,21 +10,26 @@
 namespace T3Bot\Commands;
 
 /**
- * Class ForgeCommand.
+ * Class UtilCommand.
  */
 class UtilCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     protected $commandName = 'util';
 
     /**
-     *
+     * @var array
      */
-    public function __construct()
-    {
-        $this->helpCommands['help'] = 'shows this help';
-        $this->helpCommands['coin <options>'] = 'coin toss with <options> (separate by comma)';
-    }
+    protected $helpCommands = [
+        'help' => 'shows this help',
+        'coin [options]' => 'coin toss with [options] (separate by comma)'
+    ];
 
+    /**
+     * @return string
+     */
     protected function processCoin()
     {
         $params = $this->params;

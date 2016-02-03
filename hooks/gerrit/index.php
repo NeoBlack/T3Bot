@@ -2,7 +2,7 @@
 /**
  * T3Bot.
  *
- * @author Frank Nägler <typo3@naegler.net>
+ * @author Frank Nägler <frank.naegler@typo3.org>
  *
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
@@ -13,15 +13,15 @@ require_once dirname(__FILE__).'/../../config/config.php';
 
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $slackCommandController = new \T3Bot\Controller\GerritHookController();
+    $hookCommandController = new \T3Bot\Controller\GerritHookController();
     switch ($_REQUEST['action']) {
         case 'change-merged':
         case '/var/gerrit/review/hooks/change-merged':
-            $slackCommandController->process('change-merged');
+            $hookCommandController->process('change-merged');
             break;
         case 'patchset-created':
         case '/var/gerrit/review/hooks/patchset-created':
-            $slackCommandController->process('patchset-created');
+            $hookCommandController->process('patchset-created');
             break;
     }
 }
