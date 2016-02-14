@@ -82,7 +82,7 @@ class BeerCommand extends AbstractCommand
      */
     protected function processFor()
     {
-        $from_user = $_REQUEST['user_id'];
+        $from_user = $this->payload->getData()['user'];
         $params = $this->params;
         array_shift($params);
         $username = trim($params[0]);
