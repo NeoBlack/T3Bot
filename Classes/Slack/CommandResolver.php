@@ -49,9 +49,18 @@ class CommandResolver
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client);
         }
-        if (strpos($message, 'botty') !== false || strpos($message, $GLOBALS['config']['slack']['botId']) !== false) {
-            return new BottyCommand($this->payload, $this->client);
+
+        $parts = explode(' ', $message);
+        $command = ucfirst(strtolower($parts[0]));
+        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
+        if (class_exists($commandClass)) {
+            return new $commandClass($this->payload, $this->client);
         }
-        return false;
+
+        $resultCommand = false;
+        if (strpos($message, 'botty') !== false || strpos($message, $GLOBALS['config']['slack']['botId']) !== false) {
+            $resultCommand = new BottyCommand($this->payload, $this->client);
+        }
+        return $resultCommand;
     }
 }

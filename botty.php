@@ -32,6 +32,13 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
     }
 });
 
+$client->on('presence_change', function (Slack\Payload $payload) use ($client) {
+    if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
+        $command = new \T3Bot\Commands\TellCommand($payload, $client);
+        $command->processPresenceChange($payload->getData()['user'], $payload->getData()['presence']);
+    }
+});
+
 $client->connect()->then(function () use ($client) {
     echo "Connected!\n";
 });

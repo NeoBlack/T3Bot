@@ -9,19 +9,23 @@
  */
 namespace T3Bot\Commands;
 
-use /** @noinspection PhpInternalEntityUsedInspection */
-    Doctrine\DBAL\Configuration;
+use /** @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Slack\Message\Attachment;
 use Slack\Payload;
 use Slack\RealTimeClient;
 use T3Bot\Slack\Message;
+use T3Bot\Traits\ForgerTrait;
+use T3Bot\Traits\GerritTrait;
+use T3Bot\Traits\SlackTrait;
 
 /**
  * Class AbstractCommand.
  */
 abstract class AbstractCommand
 {
+    use SlackTrait, ForgerTrait, GerritTrait;
+
     const PROJECT_PHASE_DEVELOPMENT = 'development';
     const PROJECT_PHASE_STABILISATION = 'stabilisation';
     const PROJECT_PHASE_SOFT_FREEZE = 'soft_freeze';
@@ -88,46 +92,92 @@ abstract class AbstractCommand
     }
 
     /**
-     * @param \T3Bot\Slack\Message|string $response
+     * @param \T3Bot\Slack\Message|string $messageToSent
+     * @param string $user
      */
-    public function sendResponse($response)
+    public function sendResponse($messageToSent, $user = null)
     {
-        if ($response instanceof Message) {
-            $data['unfurl_links'] = false;
-            $data['unfurl_media'] = false;
-            $data['parse'] = 'none';
-            $data['text'] = $response->getText();
-            $data['channel'] = $this->payload->getData()['channel'];
-            $attachments = $response->getAttachments();
-            if (count($attachments)) {
-                $data['attachments'] = array();
+        if ($user !== null) {
+            $this->client->apiCall('im.open', ['user' => $user])
+                ->then(function (Payload $response) use ($messageToSent) {
+                    $channel = $response->getData()['channel']['id'];
+                    if ($messageToSent instanceof Message) {
+                        $data['unfurl_links'] = false;
+                        $data['unfurl_media'] = false;
+                        $data['parse'] = 'none';
+                        $data['text'] = $messageToSent->getText();
+                        $data['channel'] = $channel;
+                        $attachments = $messageToSent->getAttachments();
+                        if (count($attachments)) {
+                            $data['attachments'] = array();
+                        }
+                        /** @var \T3Bot\Slack\Message\Attachment $attachment */
+                        foreach ($attachments as $attachment) {
+                            $data['attachments'][] = Attachment::fromData([
+                                'title' => $attachment->getTitle(),
+                                'title_link' => $attachment->getTitleLink(),
+                                'text' => $attachment->getText(),
+                                'fallback' => $attachment->getFallback(),
+                                'color' => $attachment->getColor(),
+                                'pretext' => $attachment->getPretext(),
+                                'author_name' => $attachment->getAuthorName(),
+                                'author_icon' => $attachment->getAuthorIcon(),
+                                'author_link' => $attachment->getAuthorLink(),
+                                'image_url' => $attachment->getImageUrl(),
+                                'thumb_url' => $attachment->getThumbUrl(),
+                            ]);
+                        }
+                        $message = new \Slack\Message\Message($this->client, $data);
+                        $this->client->postMessage($message);
+                    } elseif (is_string($messageToSent)) {
+                        $data['unfurl_links'] = false;
+                        $data['unfurl_media'] = false;
+                        $data['parse'] = 'none';
+                        $data['text'] = $messageToSent;
+                        $data['channel'] = $channel;
+                        $data['as_user'] = true;
+                        $this->client->apiCall('chat.postMessage', $data);
+                    }
+                });
+        } else {
+            $channel = $this->payload->getData()['channel'];
+            if ($messageToSent instanceof Message) {
+                $data['unfurl_links'] = false;
+                $data['unfurl_media'] = false;
+                $data['parse'] = 'none';
+                $data['text'] = $messageToSent->getText();
+                $data['channel'] = $channel;
+                $attachments = $messageToSent->getAttachments();
+                if (count($attachments)) {
+                    $data['attachments'] = array();
+                }
+                /** @var \T3Bot\Slack\Message\Attachment $attachment */
+                foreach ($attachments as $attachment) {
+                    $data['attachments'][] = Attachment::fromData([
+                        'title' => $attachment->getTitle(),
+                        'title_link' => $attachment->getTitleLink(),
+                        'text' => $attachment->getText(),
+                        'fallback' => $attachment->getFallback(),
+                        'color' => $attachment->getColor(),
+                        'pretext' => $attachment->getPretext(),
+                        'author_name' => $attachment->getAuthorName(),
+                        'author_icon' => $attachment->getAuthorIcon(),
+                        'author_link' => $attachment->getAuthorLink(),
+                        'image_url' => $attachment->getImageUrl(),
+                        'thumb_url' => $attachment->getThumbUrl(),
+                    ]);
+                }
+                $message = new \Slack\Message\Message($this->client, $data);
+                $this->client->postMessage($message);
+            } elseif (is_string($messageToSent)) {
+                $data['unfurl_links'] = false;
+                $data['unfurl_media'] = false;
+                $data['parse'] = 'none';
+                $data['text'] = $messageToSent;
+                $data['channel'] = $channel;
+                $data['as_user'] = true;
+                $this->client->apiCall('chat.postMessage', $data);
             }
-            /** @var \T3Bot\Slack\Message\Attachment $attachment */
-            foreach ($attachments as $attachment) {
-                $data['attachments'][] = Attachment::fromData([
-                    'title' => $attachment->getTitle(),
-                    'title_link' => $attachment->getTitleLink(),
-                    'text' => $attachment->getText(),
-                    'fallback' => $attachment->getFallback(),
-                    'color' => $attachment->getColor(),
-                    'pretext' => $attachment->getPretext(),
-                    'author_name' => $attachment->getAuthorName(),
-                    'author_icon' => $attachment->getAuthorIcon(),
-                    'author_link' => $attachment->getAuthorLink(),
-                    'image_url' => $attachment->getImageUrl(),
-                    'thumb_url' => $attachment->getThumbUrl(),
-                ]);
-            }
-            $message = new \Slack\Message\Message($this->client, $data);
-            $this->client->postMessage($message);
-        } elseif (is_string($response)) {
-            $data['unfurl_links'] = false;
-            $data['unfurl_media'] = false;
-            $data['parse'] = 'none';
-            $data['text'] = $response;
-            $data['channel'] = $this->payload->getData()['channel'];
-            $data['as_user'] = true;
-            $this->client->apiCall('chat.postMessage', $data);
         }
     }
 
@@ -196,43 +246,6 @@ abstract class AbstractCommand
         $message->addAttachment($attachment);
 
         return $message;
-    }
-
-    /**
-     * build a review line.
-     *
-     * @param object $item the review item
-     *
-     * @return string
-     */
-    protected function buildReviewLine($item)
-    {
-        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
-        . '|Review #' . $item->_number . ' now>';
-    }
-
-    /**
-     * make text bold.
-     *
-     * @param $string
-     *
-     * @return string
-     */
-    protected function bold($string)
-    {
-        return '*'.$string.'*';
-    }
-
-    /**
-     * make text italic.
-     *
-     * @param $string
-     *
-     * @return string
-     */
-    protected function italic($string)
-    {
-        return '_'.$string.'_';
     }
 
     /**
