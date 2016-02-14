@@ -22,7 +22,12 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
         $commandResolver = new \T3Bot\Slack\CommandResolver($payload, $client);
         $command = $commandResolver->resolveCommand();
         if ($command instanceof \T3Bot\Commands\AbstractCommand) {
-            $command->process();
+            $result = $command->process();
+            if ($result !== false) {
+                $command->sendResponse($result);
+            } else {
+                $command->sendResponse($command->getHelp());
+            }
         }
     }
 });

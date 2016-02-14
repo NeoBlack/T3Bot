@@ -19,6 +19,14 @@ class BottyCommand extends AbstractCommand
      */
     public function process()
     {
+        return $this->processMessage();
+    }
+
+    /**
+     * @return string
+     */
+    public function processMessage()
+    {
         $message = strtolower($this->payload->getData()['text']);
         $username = '<@' . $this->payload->getData()['user'] . '>';
 
@@ -34,7 +42,7 @@ class BottyCommand extends AbstractCommand
                 $result[] = ":link: <{$link}|{$text}>";
             }
 
-            $this->sendResponse(implode(' | ', $result));
+            return implode(' | ', $result);
         }
 
         $cats = array(':smiley_cat:', ':smile_cat:', ':heart_eyes_cat:', ':kissing_cat:', ':smirk_cat:', ':scream_cat:',
@@ -62,10 +70,16 @@ class BottyCommand extends AbstractCommand
             'cat' => 'ok, here is some cat content '.$cats[array_rand($cats)],
             'love' => 'I love you too, ' . $username . ':kiss:',
         );
+        $messageToSend = '';
         foreach ($responses as $keyword => $response) {
             if (strpos($message, $keyword) !== false) {
-                $this->sendResponse($response);
+                $messageToSend = $response;
+                break;
             }
         }
+        if ($messageToSend !== '') {
+            return $messageToSend;
+        }
+        return null;
     }
 }

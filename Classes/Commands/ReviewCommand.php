@@ -86,16 +86,16 @@ class ReviewCommand extends AbstractCommand
         if ($username === null) {
             return 'hey, I need a username!';
         }
-        $results = $this->queryGerrit('is:open owner:"'.$username.'" project:'.$project);
+        $results = $this->queryGerrit('is:open owner:"' . $username . '" project:' . $project);
         if (count($results) > 0) {
-            $listOfItems = array("*Here are the results for {$results[0]->owner->name}*:");
+            $listOfItems = array('*Here are the results for ' . $username . '*:');
             foreach ($results as $item) {
                 $listOfItems[] = $this->buildReviewLine($item);
             }
 
             return implode("\n", $listOfItems);
         } else {
-            return "{$username} has no open reviews or username is unknown";
+            return $username . ' has no open reviews or username is unknown';
         }
     }
 
@@ -109,9 +109,9 @@ class ReviewCommand extends AbstractCommand
         $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([0-9]*)(?:.*)*/i';
         $refId = isset($this->params[1]) ? $this->params[1] : null;
         if (preg_match_all($urlPattern, $refId, $matches)) {
-            $refId = (int) $matches[1][0];
+            $refId = (int)$matches[1][0];
         } else {
-            $refId = (int) $refId;
+            $refId = (int)$refId;
         }
         if ($refId === null || $refId == 0) {
             return 'hey, I need at least one change number!';
@@ -119,7 +119,7 @@ class ReviewCommand extends AbstractCommand
         if (count($this->params) > 2) {
             $changeIds = array();
             for ($i = 1; $i < count($this->params); ++$i) {
-                $changeIds[] = 'change:'.$this->params[$i];
+                $changeIds[] = 'change:' . $this->params[$i];
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
             $listOfItems = array();
@@ -129,7 +129,7 @@ class ReviewCommand extends AbstractCommand
 
             return implode("\n", $listOfItems);
         } else {
-            $result = $this->queryGerrit('change:'.$refId);
+            $result = $this->queryGerrit('change:' . $refId);
             foreach ($result as $item) {
                 if ($item->_number == $refId) {
                     return $this->buildReviewMessage($item);
@@ -175,7 +175,7 @@ class ReviewCommand extends AbstractCommand
     {
         $query = 'project:Packages/TYPO3.CMS status:merged after:###DATE### branch:master';
 
-        $date = $this->params[1];
+        $date = !(empty($this->params[1])) ? $this->params[1] : '';
         if (!$this->isDateFormatCorrect($date)) {
             return 'hey, I need a date in the format YYYY-MM-DD!';
         }

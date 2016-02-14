@@ -1,6 +1,6 @@
 {
-  "name": "NeoBlack/T3Bot",
-  "description": "TYPO3 channel bot",
+  "name": "neoblack/t3bot",
+  "description": "TYPO3 slack channel bot",
   "minimum-stability": "dev",
   "license": "proprietary",
   "authors": [
@@ -9,14 +9,26 @@
       "email": "mail@naegler.net"
     }
   ],
+  "support": {
+    "issues": "https://github.com/NeoBlack/T3Bot/issues",
+    "slack": "https://typo3.slack.com#t3bot"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "bin-dir": "./bin"
+  },
   "autoload": {
     "psr-4": {
-      "T3Bot\\": "Classes/"
+      "T3Bot\\": "Classes/",
+      "T3Bot\\Tests\\": "Tests/"
     }
   },
   "require": {
     "coderstephen/slack-client": "^0.2.3",
     "doctrine/dbal": "^2.5.4",
     "doctrine/migrations": "^1.2.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8.0"
   }
 }
