@@ -37,14 +37,14 @@ class UtilCommand extends AbstractCommand
         $params = implode(' ', $params);
         $options = array_map('trim', explode(',', $params));
         if (count($options) === 1) {
-            return '*T3Bot says:* _A complicated decision ..._';
+            return '*Botty says:* _A complicated decision ..._';
         }
         if (count(array_unique($options)) === 1) {
-            return '*T3Bot says:* _it is undecidable ..._';
+            return '*Botty says:* _it is undecidable ..._';
         }
 
         $option = $options[rand(0, count($options) - 1)];
 
-        return '*T3Bot says:* _'.$option.'_';
+        return '*Botty says:* _'.$option.'_';
     }
 }

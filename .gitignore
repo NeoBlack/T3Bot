@@ -11,3 +11,4 @@ config/config.*.php
 
 ; composer stuff
 vendor/
+bin/

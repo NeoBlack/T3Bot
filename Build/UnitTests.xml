@@ -1,0 +1,37 @@
+<phpunit
+	backupGlobals="true"
+	backupStaticAttributes="false"
+	bootstrap="UnitTestsBootstrap.php"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertWarningsToExceptions="true"
+	forceCoversAnnotation="false"
+	processIsolation="false"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false"
+	verbose="false"
+>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">../</directory>
+			<exclude>
+				<directory suffix=".php">../Build</directory>
+				<directory suffix=".php">../config</directory>
+				<directory suffix=".php">../hooks</directory>
+				<directory suffix=".php">../migrations</directory>
+				<directory suffix=".php">../Tests</directory>
+				<directory suffix=".php">../vendor</directory>
+				<file>../botty.php</file>
+				<file>../migrations-db.php</file>
+			</exclude>
+		</whitelist>
+	</filter>
+
+	<testsuites>
+		<testsuite name="Core tests">
+			<directory>../Tests/Unit/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

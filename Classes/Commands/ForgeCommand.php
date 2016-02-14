@@ -50,16 +50,6 @@ class ForgeCommand extends AbstractCommand
     }
 
     /**
-     * @param $item
-     *
-     * @return string
-     */
-    protected function buildIssueLine($item)
-    {
-        return "*[{$item->tracker->name}] {$item->subject}* <https://forge.typo3.org/issues/{$item->id}|View on Forge>";
-    }
-
-    /**
      * process show.
      *
      * @return string
@@ -67,11 +57,11 @@ class ForgeCommand extends AbstractCommand
     protected function processShow()
     {
         $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([0-9]*)(?:.*)*/i';
-        $issueNumber = isset($this->params[1]) ? $this->params[1] : null;
+        $issueNumber = isset($this->params[1]) ? $this->params[1] : '';
         if (preg_match_all($urlPattern, $issueNumber, $matches)) {
-            $issueNumber = (int) $matches[1][0];
+            $issueNumber = (int)$matches[1][0];
         } else {
-            $issueNumber = (int) $issueNumber;
+            $issueNumber = (int)$issueNumber;
         }
         if ($issueNumber === null || $issueNumber == 0) {
             return 'hey, I need an issue number!';

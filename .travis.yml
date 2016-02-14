@@ -1,0 +1,53 @@
+language: php
+
+matrix:
+  fast_finish: true
+  include:
+  - php: 5.5
+    env: UNIT_TESTS=yes PHP_LINT=yes
+  - php: 5.6
+    env: UNIT_TESTS=yes PHP_LINT=yes
+  - php: 7
+    env: UNIT_TESTS=yes PHP_LINT=yes
+sudo: false
+
+services:
+  - mysql
+
+addons:
+  apt:
+    packages:
+    - parallel
+
+cache:
+  directories:
+  - $HOME/.composer/cache
+
+notifications:
+  slack:
+    rooms:
+      secure: Hj6TJkhowVHomFckDSjen3VZVKZF8p0S55gARsIPOSBnoRzVe8w6UI31uu7HQ57WUAPXxt14bByFrle7QOAfis+cl4I+9OpvaCJ8kMXOH22h7x3pEQIpouRVj+Tm66inD4YCKU/yHuIx18NkgdNmaUZ7We3TKOX8+LJAQgQgrOg=
+    on_success: change
+    on_failure: always
+
+before_script:
+- phpenv config-rm xdebug.ini
+- if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
+- mysql -e 'create database t3bot;'
+- cp config/config.example.php config/config.php
+- composer install
+- ./bin/doctrine-migrations --no-interaction migrations:migrate
+
+script:
+- |
+  if [[ "$UNIT_TESTS" == "yes" ]]; then
+    echo;
+    echo "Running unit tests";
+    ./bin/phpunit -c Build/UnitTests.xml
+  fi
+- |-
+  if [[ "$PHP_LINT" == "yes" ]]; then
+      echo;
+      echo "Running php lint";
+      find . -name \*.php -not -path "./vendor/*" | parallel --gnu php -d display_errors=stderr -l {} > /dev/null \;
+  fi

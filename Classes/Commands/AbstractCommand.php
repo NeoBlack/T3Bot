@@ -73,23 +73,24 @@ abstract class AbstractCommand
         $commandParts = explode(':', $this->payload->getData()['text']);
         $params = array();
         if (!empty($commandParts[1])) {
-            $params = explode(' ', preg_replace('/\s+/', ' ', $commandParts[1]));
+            array_shift($commandParts);
+            $params = explode(' ', preg_replace('/\s+/', ' ', implode(':', $commandParts)));
         }
 
         $this->params = $params;
         $command = isset($this->params[0]) ? $this->params[0] : 'help';
         $method = 'process'.ucfirst(strtolower($command));
         if (method_exists($this, $method)) {
-            $this->sendResponse(call_user_func(array($this, $method)));
+            return call_user_func(array($this, $method));
         } else {
-            $this->sendResponse($this->getHelp());
+            return $this->getHelp();
         }
     }
 
     /**
      * @param \T3Bot\Slack\Message|string $response
      */
-    protected function sendResponse($response)
+    public function sendResponse($response)
     {
         if ($response instanceof Message) {
             $data['unfurl_links'] = false;
@@ -136,31 +137,11 @@ abstract class AbstractCommand
      *
      * @return string
      */
-    protected function getHelp()
+    public function getHelp()
     {
         $result = "*HELP*\n";
         foreach ($this->helpCommands as $command => $helpText) {
             $result .= "*{$this->commandName}:{$command}*: {$helpText} \n";
-        }
-
-        return $result;
-    }
-
-    /**
-     * return number as emoji string.
-     *
-     * @param $number
-     *
-     * @return string
-     */
-    protected function getNumberAsEmoji($number)
-    {
-        $numbers = array(':zero:', ':one:', ':two:', ':three:', ':four:',
-            ':five:', ':six:', ':seven:', ':eight:', ':nine:');
-        $number = (string) $number;
-        $result = '';
-        foreach (str_split($number) as $char) {
-            $result .= $numbers[(int) $char];
         }
 
         return $result;
