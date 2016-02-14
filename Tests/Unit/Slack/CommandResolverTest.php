@@ -16,6 +16,7 @@ use T3Bot\Commands\BeerCommand;
 use T3Bot\Commands\BottyCommand;
 use T3Bot\Commands\ForgeCommand;
 use T3Bot\Commands\ReviewCommand;
+use T3Bot\Commands\TellCommand;
 use T3Bot\Commands\UtilCommand;
 use T3Bot\Slack\CommandResolver;
 use T3Bot\Tests\Unit\BaseTestCase;
@@ -40,7 +41,8 @@ class CommandResolverTest extends BaseTestCase
             'forge:foo' => ['forge:foo', ForgeCommand::class],
             'review:foo' => ['review:foo', ReviewCommand::class],
             'util:foo' => ['util:foo', UtilCommand::class],
-            'botty foo bar' => ['botty foo bar', BottyCommand::class],
+            'tell <@user> about' => ['tell <@user> about', TellCommand::class],
+            'bar foo botty foo bar' => ['bar foo botty foo bar', BottyCommand::class],
             'no command for any message' => ['no command for any message', false],
         ];
     }

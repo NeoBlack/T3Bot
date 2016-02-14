@@ -61,4 +61,17 @@ trait GerritTrait
         return $result;
     }
 
+    /**
+     * build a review line.
+     *
+     * @param object $item the review item
+     *
+     * @return string
+     */
+    protected function buildReviewLine($item)
+    {
+        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
+        . '|Review #' . $item->_number . ' now>';
+    }
+
 }

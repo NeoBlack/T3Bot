@@ -90,4 +90,24 @@ class AbstractCommandTest extends BaseCommandTestCase
         $message->setAttachments([$attachment]);
         $this->assertEquals([$attachment], $message->getAttachments());
     }
+
+    /**
+     * @test
+     */
+    public function ensureSendResponseHandlingForStringResponseWithUser()
+    {
+        $this->markTestSkipped('not implemented yet');
+        // @TODO: this method should test the same stuff like ensureSendResponseHandlingForStringResponse
+        // @TODO: but for a user (direct message, instead of channel message)
+    }
+
+    /**
+     * @test
+     */
+    public function ensureSendResponseHandlingForMessageResponseWithUser()
+    {
+        $this->markTestSkipped('not implemented yet');
+        // @TODO: this method should test the same stuff like ensureSendResponseHandlingForMessageResponse
+        // @TODO: but for a user (direct message, instead of channel message)
+    }
 }
