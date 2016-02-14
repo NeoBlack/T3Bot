@@ -16,6 +16,7 @@
   },
   "require": {
     "coderstephen/slack-client": "^0.2.3",
-    "doctrine/dbal": "v2.5.4"
+    "doctrine/dbal": "^2.5.4",
+    "doctrine/migrations": "^1.2.2"
   }
 }
