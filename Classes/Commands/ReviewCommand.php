@@ -9,11 +9,15 @@
  */
 namespace T3Bot\Commands;
 
+use T3Bot\Traits\GerritTrait;
+
 /**
  * Class ReviewCommand.
  */
 class ReviewCommand extends AbstractCommand
 {
+    use GerritTrait;
+
     /**
      * @var string
      */
@@ -116,6 +120,7 @@ class ReviewCommand extends AbstractCommand
         if ($refId === null || $refId == 0) {
             return 'hey, I need at least one change number!';
         }
+        $returnMessage = '';
         if (count($this->params) > 2) {
             $changeIds = array();
             for ($i = 1; $i < count($this->params); ++$i) {
@@ -127,18 +132,19 @@ class ReviewCommand extends AbstractCommand
                 $listOfItems[] = $this->buildReviewLine($item);
             }
 
-            return implode("\n", $listOfItems);
+            $returnMessage = implode("\n", $listOfItems);
         } else {
             $result = $this->queryGerrit('change:' . $refId);
+            if (!$result) {
+                return "{$refId} not found, sorry!";
+            }
             foreach ($result as $item) {
                 if ($item->_number == $refId) {
-                    return $this->buildReviewMessage($item);
-                } else {
-                    return "{$refId} not found, sorry!";
+                    $returnMessage = $this->buildReviewMessage($item);
                 }
             }
         }
-        return '';
+        return $returnMessage;
     }
 
     /**
@@ -197,22 +203,5 @@ class ReviewCommand extends AbstractCommand
     protected function isDateFormatCorrect($date)
     {
         return (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $date) === 1);
-    }
-
-    /**
-     * @param $query
-     *
-     * @return object|array
-     */
-    protected function queryGerrit($query)
-    {
-        $url = 'https://review.typo3.org/changes/?q='.urlencode($query);
-        $ctx = stream_context_create(['ssl' => [
-            'peer_name' => 'review.typo3.org'
-        ]]);
-        $result = file_get_contents($url, null, $ctx);
-        $result = json_decode(str_replace(")]}'\n", '', $result));
-
-        return $result;
     }
 }

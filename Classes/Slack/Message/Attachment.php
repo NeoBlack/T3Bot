@@ -143,32 +143,6 @@ class Attachment
     }
 
     /**
-     * @return \stdClass
-     */
-    public function asStdClass()
-    {
-        $result = new \stdClass();
-        $properties = get_class_vars(get_class($this));
-        foreach ($properties as $property => $value) {
-            if ($property === 'fields') {
-                if (!empty($this->fields)) {
-                    $result->fields = array();
-                    /** @var Field $field */
-                    foreach ($this->fields as $field) {
-                        $result->fields[] = $field->asStdClass();
-                    }
-                }
-            } else {
-                if (!empty($this->$property)) {
-                    $result->$property = $this->$property;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * @return string
      */
     public function getFallback()
@@ -310,30 +284,6 @@ class Attachment
     public function setText($text)
     {
         $this->text = $text;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @param array $fields
-     */
-    public function setFields($fields)
-    {
-        $this->fields = $fields;
-    }
-
-    /**
-     * @param Field $field
-     */
-    public function addField(Field $field)
-    {
-        $this->fields[] = $field;
     }
 
     /**

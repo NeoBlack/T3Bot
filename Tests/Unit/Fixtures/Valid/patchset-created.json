@@ -1,0 +1,15 @@
+{
+  "action": "\/var\/gerrit\/review\/hooks\/patchset-created",
+  "change": "I60e7b9a5457272b280f0de57105126d0f57fd721",
+  "is-draft": "false",
+  "kind": "NO_CODE_CHANGE",
+  "change-url": "https:\/\/review.typo3.org\/46634",
+  "change-owner": "Frank Naegler (frank.naegler@typo3.org)",
+  "project": "Packages\/TYPO3.CMS",
+  "branch": "master",
+  "uploader": "Frank Naegler (frank.naegler@typo3.org)",
+  "commit": "fca6705c5a60c22e374f00dde4e202361409099b",
+  "patchset": "1",
+  "message": "commit fca6705c5a60c22e374f00dde4e202361409099b\nAuthor: Frank Naegler <frank.naegler@typo3.org>\nDate:   Fri Feb 12 22:10:13 2016 +0100\n\n    [WIP][FEATURE] TcaBuilder\n\n    Resolves: #xxxxx\n    Releases: master\n    Change-Id: I60e7b9a5457272b280f0de57105126d0f57fd721",
+  "token": "unit-test-token"
+}

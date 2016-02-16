@@ -1,0 +1,13 @@
+{
+  "action": "\/var\/gerrit\/review\/hooks\/change-merged",
+  "change": "Icbe78ca2e3082e9eb9aa7a2b70c362d0aaa43934",
+  "change-url": "https:\/\/review.typo3.org\/46737",
+  "change-owner": "Wouter Wolters (typo3@wouterwolters.nl)",
+  "project": "Packages\/TYPO3.CMS.INVALID",
+  "branch": "TYPO3_7-6",
+  "submitter": "Wouter Wolters (typo3@wouterwolters.nl)",
+  "commit": "00a5c0c5e7f8570edf915b2fa52e9c4a730c5396",
+  "newrev": "00a5c0c5e7f8570edf915b2fa52e9c4a730c5396",
+  "message": "commit 00a5c0c5e7f8570edf915b2fa52e9c4a730c5396\nAuthor: Wouter Wolters <typo3@wouterwolters.nl>\nDate:   Tue Feb 16 20:10:17 2016 +0100\n\n    [BUGFIX] Catch submit event while saving shortcut with enter\n\n    To save the shortcut with an enter in the input field we need to\n    catch the submit event and use the same save mechanism as when\n    using the submit button.\n\n    Resolves: #73477\n    Releases: master,7.6\n    Change-Id: Icbe78ca2e3082e9eb9aa7a2b70c362d0aaa43934\n    Reviewed-on: https:\/\/review.typo3.org\/46737\n    Reviewed-by: Wouter Wolters <typo3@wouterwolters.nl>\n    Tested-by: Wouter Wolters <typo3@wouterwolters.nl>",
+  "token": "unit-test-token"
+}

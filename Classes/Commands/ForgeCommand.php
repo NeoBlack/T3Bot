@@ -9,11 +9,15 @@
  */
 namespace T3Bot\Commands;
 
+use T3Bot\Traits\ForgerTrait;
+
 /**
  * Class ForgeCommand.
  */
 class ForgeCommand extends AbstractCommand
 {
+    use ForgerTrait;
+
     /**
      * @var string
      */
@@ -72,21 +76,5 @@ class ForgeCommand extends AbstractCommand
         } else {
             return 'Sorry not found!';
         }
-    }
-
-    /**
-     * @param $query
-     *
-     * @return mixed
-     */
-    protected function queryForge($query)
-    {
-        $url = "https://forge.typo3.org/{$query}.json";
-        $ctx = stream_context_create(['ssl' => [
-            'peer_name' => 'forge.typo3.org'
-        ]]);
-        $result = file_get_contents($url, null, $ctx);
-
-        return json_decode($result);
     }
 }

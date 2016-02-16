@@ -64,13 +64,9 @@ class ForgeCommandTest extends BaseCommandTestCase
 
     /**
      * @test
-     * @todo test fails for now, must be fixed later
      */
     public function processShowReturnsCorrectResponseForUnknownIssueNumber()
     {
-        $this->markTestSkipped(
-            'test is broken for now'
-        );
         $this->initCommandWithPayload(ForgeCommand::class, [
             'user' => 'U54321',
             'text' => 'forge:show 99999'

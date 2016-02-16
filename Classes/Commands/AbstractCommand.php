@@ -111,7 +111,6 @@ abstract class AbstractCommand
                     'fallback' => $attachment->getFallback(),
                     'color' => $attachment->getColor(),
                     'pretext' => $attachment->getPretext(),
-                    'fields' => $attachment->getFields(),
                     'author_name' => $attachment->getAuthorName(),
                     'author_icon' => $attachment->getAuthorIcon(),
                     'author_link' => $attachment->getAuthorLink(),

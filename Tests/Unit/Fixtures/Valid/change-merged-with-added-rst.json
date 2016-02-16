@@ -1,0 +1,13 @@
+{
+  "action": "\/var\/gerrit\/review\/hooks\/change-merged",
+  "change": "fake-change-id",
+  "change-url": "https:\/\/review.typo3.org\/46505",
+  "change-owner": "Max Mayer",
+  "project": "Packages\/TYPO3.CMS",
+  "branch": "master",
+  "submitter": "Fake User <fake@mailcatcher.rl>",
+  "commit": "77b5034015d03625494711fd555b87614c503822",
+  "newrev": "fake-new-rev",
+  "message": "fake commit message",
+  "token": "unit-test-token"
+}

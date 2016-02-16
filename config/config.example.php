@@ -26,6 +26,9 @@ $GLOBALS['config'] = array(
         'change-merged' => array(
             'channels' => array('#random'),
         ),
+        'rst-merged' => array(
+            'channels' => array('#random'),
+        ),
         'patchset-created' => array(
             'channels' => array('#random'),
         ),

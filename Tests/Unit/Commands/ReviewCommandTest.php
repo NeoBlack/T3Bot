@@ -130,6 +130,20 @@ class ReviewCommandTest extends BaseCommandTestCase
 
     /**
      * @test
+     */
+    public function processUserReturnsCorrectOutputForValidUserWithoutOpenReviews()
+    {
+        $this->initCommandWithPayload(ReviewCommand::class, [
+            'user' => 'U54321',
+            'text' => 'review:user kasper'
+        ]);
+        /** @var Message $result */
+        $result = $this->command->process();
+        $this->assertContains('kasper has no open reviews or username is unknown', $result);
+    }
+
+    /**
+     * @test
      * @dataProvider showTestDataProvider
      */
     public function processShowReturnsCorrectOutputForValidRefIds($refId)
@@ -196,20 +210,16 @@ class ReviewCommandTest extends BaseCommandTestCase
 
     /**
      * @test
-     * @todo test fails for now, must be fixed later
      */
     public function processShowReturnsCorrectOutputForUnknownRefId()
     {
-        $this->markTestSkipped(
-            'test is broken for now'
-        );
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
             'text' => 'review:show 999999'
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $expectedString = 'hey, I need at least one change number!';
+        $expectedString = '999999 not found, sorry!';
         $this->assertEquals($expectedString, $result);
     }
 

@@ -9,18 +9,20 @@
  */
 namespace T3Bot\Controller;
 
-use /** @noinspection PhpInternalEntityUsedInspection */
-    Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Slack\ApiClient;
 use Slack\Message\Attachment;
 use T3Bot\Slack\Message;
+use T3Bot\Traits\GerritTrait;
 
 /**
  * Class GerritHookController.
  */
 class GerritHookController
 {
+    use GerritTrait;
+
     /**
      * @var ApiClient
      */
@@ -30,18 +32,19 @@ class GerritHookController
      * public method to start processing the request.
      *
      * @param string $hook
+     * @param string $input
      */
-    public function process($hook)
+    public function process($hook, $input = 'php://input')
     {
-        $entityBody = file_get_contents('php://input');
+        $entityBody = file_get_contents($input);
         $json = json_decode($entityBody);
 
-        if ($GLOBALS['config']['gerrit']['webhookToken'] != $json->token) {
-            exit;
+        if ($GLOBALS['config']['gerrit']['webhookToken'] !== $json->token) {
+            return;
         }
         if ($json->project !== 'Packages/TYPO3.CMS') {
             // only core patches please...
-            exit;
+            return;
         }
         $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
         $patchSet = (property_exists($json, 'patchset')) ? intval($json->patchset) : 0;
@@ -51,26 +54,24 @@ class GerritHookController
         switch ($hook) {
             case 'patchset-created':
                 if ($patchSet == 1 && $branch == 'master') {
+                    $item = $this->queryGerrit('change:'.$patchId);
+                    $item = $item[0];
+                    $created = substr($item->created, 0, 19);
+
+                    $message = new Message();
+                    $message->setText(' ');
+                    $attachment = new Message\Attachment();
+
+                    $attachment->setColor(Message\Attachment::COLOR_NOTICE);
+                    $attachment->setTitle('[NEW] '.$item->subject);
+
+                    $text = "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
+                    $text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
+                    $attachment->setText($text);
+                    $attachment->setFallback($text);
+                    $message->addAttachment($attachment);
+
                     foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                        $item = $this->queryGerrit('change:'.$patchId);
-                        $item = $item[0];
-                        $created = substr($item->created, 0, 19);
-
-                        $message = new Message();
-                        $message->setText(' ');
-                        $attachment = new Message\Attachment();
-
-                        $attachment->setColor(Message\Attachment::COLOR_NOTICE);
-                        $attachment->setTitle('[NEW] '.$item->subject);
-                        if (property_exists($item, 'owner') && property_exists($item->owner, 'name')) {
-                            $attachment->setAuthorName($item->owner->name);
-                        }
-
-                        $text = "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
-                        $text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
-                        $attachment->setText($text);
-                        $attachment->setFallback($text);
-                        $message->addAttachment($attachment);
                         $this->postToSlack($message, $channel);
                     }
                 }
@@ -78,121 +79,67 @@ class GerritHookController
             case 'change-merged':
                 $item = $this->queryGerrit('change:'.$patchId);
                 $item = $item[0];
+                $created = substr($item->created, 0, 19);
+
+                $message = new Message();
+                $message->setText(' ');
+                $attachment = new Message\Attachment();
+
+                $attachment->setColor(Message\Attachment::COLOR_GOOD);
+                $attachment->setTitle(':white_check_mark: [MERGED] '.$item->subject);
+
+                $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
+                $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
+                $attachment->setText($text);
+                $attachment->setFallback($text);
+                $message->addAttachment($attachment);
+
                 foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                    $created = substr($item->created, 0, 19);
-
-                    $message = new Message();
-                    $message->setText(' ');
-                    $attachment = new Message\Attachment();
-
-                    $attachment->setColor(Message\Attachment::COLOR_GOOD);
-                    $attachment->setTitle(':white_check_mark: [MERGED] '.$item->subject);
-                    if (property_exists($item, 'owner') && property_exists($item->owner, 'name')) {
-                        $attachment->setAuthorName($item->owner->name);
-                    }
-
-                    $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
-                    $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
-                    $attachment->setText($text);
-                    $attachment->setFallback($text);
-                    $message->addAttachment($attachment);
                     $this->postToSlack($message, $channel);
                 }
+
                 $files = $this->getFilesForPatch($patchId, $commit);
                 $rstFiles = array();
-                foreach ($files as $fileName => $changeInfo) {
-                    if ($this->endsWith(strtolower($fileName), '.rst')) {
-                        $rstFiles[$fileName] = $changeInfo;
+                if (is_array($files)) {
+                    foreach ($files as $fileName => $changeInfo) {
+                        if ($this->endsWith(strtolower($fileName), '.rst')) {
+                            $rstFiles[$fileName] = $changeInfo;
+                        }
                     }
                 }
                 if (count($rstFiles) > 0) {
-                    $channel = '#fntest';
+                    $message = new Message();
+                    $message->setText(' ');
+                    $attachment = new Message\Attachment();
                     foreach ($rstFiles as $fileName => $changeInfo) {
-                        $status = !empty($changeInfo->status) ? $changeInfo->status : null;
-
-                        $message = new Message();
-                        $message->setText(' ');
-                        $attachment = new Message\Attachment();
-
+                        $status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
                         switch ($status) {
                             case 'A':
                                 $attachment->setColor(Message\Attachment::COLOR_GOOD);
-                                $attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
-                                if (property_exists($item, 'owner') && property_exists($item->owner, 'name')) {
-                                    $attachment->setAuthorName($item->owner->name);
-                                }
-                                $text = "A new documentation file has been added\n";
-                                $text .= ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                                    . '|Show reST file>';
-                                $attachment->setText($text);
-                                $attachment->setFallback($text);
-                                $message->addAttachment($attachment);
+                                $attachment->setTitle('A new documentation file has been added');
                                 break;
                             case 'D':
                                 $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                                $attachment->setTitle(':white_check_mark: [MERGED] '.$item->subject);
-                                if (property_exists($item, 'owner') && property_exists($item->owner, 'name')) {
-                                    $attachment->setAuthorName($item->owner->name);
-                                }
-                                $text = "A documentation file has been removed\n";
-                                $text .= ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                                    . '|Show reST file>';
-                                $attachment->setText($text);
-                                $attachment->setFallback($text);
-                                $message->addAttachment($attachment);
+                                $attachment->setTitle('A documentation file has been removed');
                                 break;
                             default:
                                 $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                                $attachment->setTitle(':white_check_mark: [MERGED] '.$item->subject);
-                                if (property_exists($item, 'owner') && property_exists($item->owner, 'name')) {
-                                    $attachment->setAuthorName($item->owner->name);
-                                }
-                                $text = "A documentation file has been updated\n";
-                                $text .= ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                                    . '|Show reST file>';
-                                $attachment->setText($text);
-                                $attachment->setFallback($text);
-                                $message->addAttachment($attachment);
+                                $attachment->setTitle('A documentation file has been updated');
                                 break;
                         }
+                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
+                            . '|Show reST file>';
+                        $attachment->setText($text);
+                        $attachment->setFallback($text);
+                        $message->addAttachment($attachment);
+
+                    }
+                    foreach ($GLOBALS['config']['gerrit']['rst-merged']['channels'] as $channel) {
                         $this->postToSlack($message, $channel);
-                        sleep(1);
                     }
                 }
                 break;
-            default:
-                exit;
-            break;
         }
-    }
-
-    /**
-     * @param $query
-     *
-     * @return object|array
-     */
-    protected function queryGerrit($query)
-    {
-        $url = 'https://review.typo3.org/changes/?q='.$query;
-        $result = file_get_contents($url);
-        $result = json_decode(str_replace(")]}'\n", '', $result));
-
-        return $result;
-    }
-
-    /**
-     * @param int $changeId
-     * @param int $revision
-     *
-     * @return mixed|string
-     */
-    protected function getFilesForPatch($changeId, $revision)
-    {
-        $url = 'https://review.typo3.org/changes/' . $changeId . '/revisions/' . $revision . '/files';
-        $result = file_get_contents($url);
-        $result = json_decode(str_replace(")]}'\n", '', $result));
-
-        return $result;
     }
 
     /**
@@ -221,7 +168,6 @@ class GerritHookController
                 'fallback' => $attachment->getFallback(),
                 'color' => $attachment->getColor(),
                 'pretext' => $attachment->getPretext(),
-                'fields' => $attachment->getFields(),
                 'author_name' => $attachment->getAuthorName(),
                 'author_icon' => $attachment->getAuthorIcon(),
                 'author_link' => $attachment->getAuthorLink(),
@@ -236,6 +182,16 @@ class GerritHookController
 
         // since the bot is a real bot, we can't push directly to slack
         // lets put the message into our messages pool
+        $this->addMessageToQueue($data);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function addMessageToQueue(array $data)
+    {
         /** @noinspection PhpInternalEntityUsedInspection */
         $config = new Configuration();
         $db = DriverManager::getConnection($GLOBALS['config']['db'], $config);

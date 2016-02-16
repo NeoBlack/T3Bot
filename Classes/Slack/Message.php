@@ -44,7 +44,7 @@ class Message
     {
         if (!empty($data)) {
             foreach ($data as $property => $value) {
-                if (property_exists($this, $property) && !empty($this->$property)) {
+                if (property_exists($this, $property)) {
                     $this->$property = $value;
                 }
             }
@@ -52,32 +52,6 @@ class Message
         if (empty($this->icon_emoji)) {
             $this->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getJSON()
-    {
-        $result = new \stdClass();
-        $properties = get_class_vars(get_class($this));
-        foreach ($properties as $property => $value) {
-            if ($property === 'attachments') {
-                if (!empty($this->attachments)) {
-                    $result->attachments = array();
-                    /** @var Attachment $attachment */
-                    foreach ($this->attachments as $attachment) {
-                        $result->attachments[] = $attachment->asStdClass();
-                    }
-                }
-            } else {
-                if (!empty($this->$property)) {
-                    $result->$property = $this->$property;
-                }
-            }
-        }
-
-        return json_encode($result);
     }
 
     /**
