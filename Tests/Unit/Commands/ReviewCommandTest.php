@@ -10,6 +10,7 @@
 namespace T3Bot\Tests\Unit\Commands;
 
 use Prophecy\Argument;
+use T3Bot\Commands\AbstractCommand;
 use T3Bot\Commands\ReviewCommand;
 use T3Bot\Slack\Message;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
@@ -35,6 +36,22 @@ class ReviewCommandTest extends BaseCommandTestCase
             'review:show http://review.typo3.org/#/c/12345/1' => array('http://review.typo3.org/#/c/12345/1'),
             'review:show https://review.typo3.org/#/c/12345/1' => array('https://review.typo3.org/#/c/12345/1'),
         );
+    }
+
+    /**
+     * Data provider for prjectPhase test
+     *
+     * @return array
+     */
+    public function projectPhaseDataProvider()
+    {
+        return [
+            AbstractCommand::PROJECT_PHASE_DEVELOPMENT => [AbstractCommand::PROJECT_PHASE_DEVELOPMENT, ''],
+            AbstractCommand::PROJECT_PHASE_STABILISATION => [AbstractCommand::PROJECT_PHASE_STABILISATION, ':warning: *stabilisation phase*'],
+            AbstractCommand::PROJECT_PHASE_SOFT_FREEZE => [AbstractCommand::PROJECT_PHASE_SOFT_FREEZE, ':no_entry: *soft merge freeze*'],
+            AbstractCommand::PROJECT_PHASE_CODE_FREEZE => [AbstractCommand::PROJECT_PHASE_CODE_FREEZE, ':no_entry: *merge freeze*'],
+            AbstractCommand::PROJECT_PHASE_FEATURE_FREEZE => [AbstractCommand::PROJECT_PHASE_FEATURE_FREEZE, ':no_entry: *FEATURE FREEZE*'],
+        ];
     }
 
     /**
@@ -284,5 +301,22 @@ class ReviewCommandTest extends BaseCommandTestCase
         $result = $this->command->process();
         $expectedString = '/Good job folks, since 2015-01-01 you merged \*([0-9]*)\* patches into master/';
         $this->assertRegExp($expectedString, $result);
+    }
+
+    /**
+     * @test
+     * @dataProvider projectPhaseDataProvider
+     */
+    public function processShowWithProjectPhasesReturnsCorrectPretext($projectPhase, $expectedPretext)
+    {
+        $GLOBALS['config']['projectPhase'] = $projectPhase;
+
+        $this->initCommandWithPayload(ReviewCommand::class, [
+            'user' => 'U54321',
+            'text' => 'review:show 12345'
+        ]);
+        /** @var Message $result */
+        $result = $this->command->process();
+        $this->assertEquals($expectedPretext, $result->getAttachments()[0]->getPretext());
     }
 }
