@@ -128,7 +128,7 @@ class GerritHookController
                                 break;
                         }
                         $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                            . '|Show reST file>';
+                            . '|' . basename($fileName, '.rst') . '>';
                         $attachment->setText($text);
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
