@@ -110,8 +110,8 @@ class GerritHookController
                 if (count($rstFiles) > 0) {
                     $message = new Message();
                     $message->setText(' ');
-                    $attachment = new Message\Attachment();
                     foreach ($rstFiles as $fileName => $changeInfo) {
+                        $attachment = new Message\Attachment();
                         $status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
                         switch ($status) {
                             case 'A':
@@ -128,11 +128,10 @@ class GerritHookController
                                 break;
                         }
                         $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                            . '|' . basename($fileName, '.rst') . '>';
+                            . '|' . $fileName . '>';
                         $attachment->setText($text);
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
-
                     }
                     foreach ($GLOBALS['config']['gerrit']['rst-merged']['channels'] as $channel) {
                         $this->postToSlack($message, $channel);
