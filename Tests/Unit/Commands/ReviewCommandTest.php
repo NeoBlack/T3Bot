@@ -18,6 +18,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class ReviewCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class ReviewCommandTest extends BaseCommandTestCase
 {
     /**
@@ -62,7 +64,7 @@ class ReviewCommandTest extends BaseCommandTestCase
             'text' => 'review:foo',
         ]);
         $result = $this->command->process();
-        $this->assertStringStartsWith('*HELP*', $result);
+        static::assertStringStartsWith('*HELP*', $result);
     }
 
     /**
@@ -76,7 +78,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         $result = $this->command->process();
         $expectedResult = '/There are currently \*([0-9]*)\* open reviews for project _Packages\/TYPO3.CMS_/';
-        $this->assertRegExp($expectedResult, $result);
+        static::assertRegExp($expectedResult, $result);
     }
 
     /**
@@ -90,11 +92,11 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertInstanceOf(Message::class, $result);
+        static::assertInstanceOf(Message::class, $result);
         $attachments = $result->getAttachments();
         /** @var Message\Attachment $attachment */
         foreach ($attachments as $attachment) {
-            $this->assertNotEmpty($attachment->getTitle());
+            static::assertNotEmpty($attachment->getTitle());
         }
     }
 
@@ -109,7 +111,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertEquals('hey, I need a username!', $result);
+        static::assertEquals('hey, I need a username!', $result);
     }
 
     /**
@@ -123,7 +125,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertContains('*Here are the results for neoblack*:', $result);
+        static::assertContains('*Here are the results for neoblack*:', $result);
     }
 
     /**
@@ -137,12 +139,14 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertContains('kasper has no open reviews or username is unknown', $result);
+        static::assertContains('kasper has no open reviews or username is unknown', $result);
     }
 
     /**
      * @test
      * @dataProvider showTestDataProvider
+     *
+     * @param string $refId
      */
     public function processShowReturnsCorrectOutputForValidRefIds($refId)
     {
@@ -152,11 +156,11 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertInstanceOf(Message::class, $result);
+        static::assertInstanceOf(Message::class, $result);
         $attachments = $result->getAttachments();
         /** @var Message\Attachment $attachment */
         foreach ($attachments as $attachment) {
-            $this->assertEquals('[BUGFIX] Log route values if a route can\'t be resolved', $attachment->getTitle());
+            static::assertEquals('[BUGFIX] Log route values if a route can\'t be resolved', $attachment->getTitle());
         }
     }
 
@@ -171,9 +175,11 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $expectedString = '*[BUGFIX] Cast autoload and classAliasMap to Array* <https://review.typo3.org/23456|Review #23456 now>'.chr(10);
-        $expectedString .= '*[BUGFIX] Log route values if a route can\'t be resolved* <https://review.typo3.org/12345|Review #12345 now>';
-        $this->assertEquals($expectedString, $result);
+        $expectedString = '*[BUGFIX] Cast autoload and classAliasMap to Array* '
+            .'<https://review.typo3.org/23456|Review #23456 now>'.chr(10);
+        $expectedString .= '*[BUGFIX] Log route values if a route can\'t be resolved* '
+            .'<https://review.typo3.org/12345|Review #12345 now>';
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -188,7 +194,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'hey, I need at least one change number!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -203,7 +209,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'hey, I need at least one change number!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -218,7 +224,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = '999999 not found, sorry!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -233,7 +239,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'hey, I need a query!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -248,7 +254,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = '*Here are the results for test*:';
-        $this->assertStringStartsWith($expectedString, $result);
+        static::assertStringStartsWith($expectedString, $result);
     }
 
     /**
@@ -263,7 +269,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'öäauieqd-asucc3ucbauiscaui-sd not found, sorry!';
-        $this->assertStringStartsWith($expectedString, $result);
+        static::assertStringStartsWith($expectedString, $result);
     }
 
     /**
@@ -278,7 +284,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'hey, I need a date in the format YYYY-MM-DD!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -293,7 +299,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = 'hey, I need a date in the format YYYY-MM-DD!';
-        $this->assertEquals($expectedString, $result);
+        static::assertEquals($expectedString, $result);
     }
 
     /**
@@ -308,12 +314,15 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = '/Good job folks, since 2015-01-01 you merged \*([0-9]*)\* patches into master/';
-        $this->assertRegExp($expectedString, $result);
+        static::assertRegExp($expectedString, $result);
     }
 
     /**
      * @test
      * @dataProvider projectPhaseDataProvider
+     *
+     * @param string $projectPhase
+     * @param string $expectedPretext
      */
     public function processShowWithProjectPhasesReturnsCorrectPretext($projectPhase, $expectedPretext)
     {
@@ -325,6 +334,6 @@ class ReviewCommandTest extends BaseCommandTestCase
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $this->assertEquals($expectedPretext, $result->getAttachments()[0]->getPretext());
+        static::assertEquals($expectedPretext, $result->getAttachments()[0]->getPretext());
     }
 }

@@ -18,6 +18,8 @@ use T3Bot\Commands\AbstractCommand;
 /**
  * Class BaseCommandTestCase.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class BaseCommandTestCase extends BaseTestCase
 {
     /**

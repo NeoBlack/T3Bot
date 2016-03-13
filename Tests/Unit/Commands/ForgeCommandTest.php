@@ -16,6 +16,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class ForgeCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class ForgeCommandTest extends BaseCommandTestCase
 {
     /**
@@ -44,7 +46,7 @@ class ForgeCommandTest extends BaseCommandTestCase
             'text' => 'forge:show',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('hey, I need an issue number!', $result);
+        static::assertEquals('hey, I need an issue number!', $result);
     }
 
     /**
@@ -57,7 +59,7 @@ class ForgeCommandTest extends BaseCommandTestCase
             'text' => 'forge:show asdasd',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('hey, I need an issue number!', $result);
+        static::assertEquals('hey, I need an issue number!', $result);
     }
 
     /**
@@ -70,12 +72,14 @@ class ForgeCommandTest extends BaseCommandTestCase
             'text' => 'forge:show 99999',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('Sorry not found!', $result);
+        static::assertEquals('Sorry not found!', $result);
     }
 
     /**
      * @test
      * @dataProvider showTestDataProvider
+     *
+     * @param string $issueNumber
      */
     public function processShowReturnsCorrectResponseForValidIssueNumbers($issueNumber)
     {
@@ -84,6 +88,6 @@ class ForgeCommandTest extends BaseCommandTestCase
             'text' => 'forge:show '.$issueNumber,
         ]);
         $result = $this->command->process();
-        $this->assertStringStartsWith('*[Feature] Preview of news records* by _Georg Ringer_', $result);
+        static::assertStringStartsWith('*[Feature] Preview of news records* by _Georg Ringer_', $result);
     }
 }

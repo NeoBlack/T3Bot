@@ -19,6 +19,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class TellCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class TellCommandTest extends BaseCommandTestCase
 {
     /**
@@ -36,6 +38,9 @@ class TellCommandTest extends BaseCommandTestCase
     /**
      * @test
      * @dataProvider tellDataProvider
+     *
+     * @param string $message
+     * @param string $expectedMessage
      */
     public function processTellReturnsCorrectResponse($message, $expectedMessage)
     {
@@ -44,7 +49,7 @@ class TellCommandTest extends BaseCommandTestCase
             'text' => $message,
         ]);
         $result = $this->command->process();
-        $this->assertEquals($expectedMessage, $result);
+        static::assertEquals($expectedMessage, $result);
     }
 
     /**
@@ -62,7 +67,7 @@ class TellCommandTest extends BaseCommandTestCase
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
         /** @var TellCommand|\PHPUnit_Framework_MockObject_MockObject $command */
         $command = $this->getMock(TellCommand::class, ['sendResponse'], [$payload, $client]);
-        $command->expects($this->exactly(0))
+        $command->expects(static::exactly(0))
             ->method('sendResponse');
         $command->processPresenceChange('U12345', 'away');
     }
@@ -82,7 +87,7 @@ class TellCommandTest extends BaseCommandTestCase
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
         /** @var TellCommand|\PHPUnit_Framework_MockObject_MockObject $command */
         $command = $this->getMock(TellCommand::class, ['sendResponse'], [$payload, $client]);
-        $command->expects($this->exactly(3))
+        $command->expects(static::exactly(3))
             ->method('sendResponse');
         $command->processPresenceChange('U12345', 'active');
     }

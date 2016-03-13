@@ -25,6 +25,8 @@ use T3Bot\Tests\Unit\BaseTestCase;
 /**
  * Class CommandResolverTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class CommandResolverTest extends BaseTestCase
 {
     /**
@@ -66,9 +68,9 @@ class CommandResolverTest extends BaseTestCase
         $commandResolver = new CommandResolver($payload, $client);
         $subject = $commandResolver->resolveCommand();
         if ($expectedClass === false) {
-            $this->assertFalse($subject);
+            static::assertFalse($subject);
         } else {
-            $this->assertInstanceOf($expectedClass, $subject);
+            static::assertInstanceOf($expectedClass, $subject);
         }
     }
 }

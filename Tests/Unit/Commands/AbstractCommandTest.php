@@ -20,6 +20,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class AbstractCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class AbstractCommandTest extends BaseCommandTestCase
 {
     /**
@@ -61,6 +63,7 @@ class AbstractCommandTest extends BaseCommandTestCase
         ]);
         /** @var RealTimeClient $client */
         $client = $this->prophesize(RealTimeClient::class);
+        /* @noinspection PhpParamsInspection */
         $client->postMessage(Argument::any())->willReturn(true);
 
         $message = new Message(['icon_emoji' => 'foo']);
@@ -82,12 +85,12 @@ class AbstractCommandTest extends BaseCommandTestCase
         $stub = $this->getMockForAbstractClass(AbstractCommand::class, [$payload, $client->reveal()]);
         $stub->sendResponse($message);
 
-        $this->assertEquals('foo', $message->getIconEmoji());
+        static::assertEquals('foo', $message->getIconEmoji());
         $message->setIconEmoji('bar');
-        $this->assertEquals('bar', $message->getIconEmoji());
+        static::assertEquals('bar', $message->getIconEmoji());
 
         $message->setAttachments([$attachment]);
-        $this->assertEquals([$attachment], $message->getAttachments());
+        static::assertEquals([$attachment], $message->getAttachments());
     }
 
     /**
@@ -95,7 +98,7 @@ class AbstractCommandTest extends BaseCommandTestCase
      */
     public function ensureSendResponseHandlingForStringResponseWithUser()
     {
-        $this->markTestSkipped('not implemented yet');
+        static::markTestSkipped('not implemented yet');
         // @TODO: this method should test the same stuff like ensureSendResponseHandlingForStringResponse
         // @TODO: but for a user (direct message, instead of channel message)
     }
@@ -105,7 +108,7 @@ class AbstractCommandTest extends BaseCommandTestCase
      */
     public function ensureSendResponseHandlingForMessageResponseWithUser()
     {
-        $this->markTestSkipped('not implemented yet');
+        static::markTestSkipped('not implemented yet');
         // @TODO: this method should test the same stuff like ensureSendResponseHandlingForMessageResponse
         // @TODO: but for a user (direct message, instead of channel message)
     }

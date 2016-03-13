@@ -16,6 +16,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class UtilCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class UtilCommandTest extends BaseCommandTestCase
 {
     /**
@@ -28,7 +30,7 @@ class UtilCommandTest extends BaseCommandTestCase
             'text' => 'util:coin',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('*Botty says:* _A complicated decision ..._', $result);
+        static::assertEquals('*Botty says:* _A complicated decision ..._', $result);
     }
 
     /**
@@ -41,7 +43,7 @@ class UtilCommandTest extends BaseCommandTestCase
             'text' => 'util:coin a',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('*Botty says:* _A complicated decision ..._', $result);
+        static::assertEquals('*Botty says:* _A complicated decision ..._', $result);
     }
 
     /**
@@ -54,7 +56,7 @@ class UtilCommandTest extends BaseCommandTestCase
             'text' => 'util:coin a, b',
         ]);
         $result = $this->command->process();
-        $this->assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_']);
+        static::assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_']);
     }
 
     /**
@@ -67,7 +69,7 @@ class UtilCommandTest extends BaseCommandTestCase
             'text' => 'util:coin a, b, c',
         ]);
         $result = $this->command->process();
-        $this->assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_', '*Botty says:* _c_']);
+        static::assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_', '*Botty says:* _c_']);
     }
 
     /**
@@ -80,6 +82,6 @@ class UtilCommandTest extends BaseCommandTestCase
             'text' => 'util:coin a, a',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('*Botty says:* _it is undecidable ..._', $result);
+        static::assertEquals('*Botty says:* _it is undecidable ..._', $result);
     }
 }

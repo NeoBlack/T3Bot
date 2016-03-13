@@ -16,6 +16,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class BeerCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class BeerCommandTest extends BaseCommandTestCase
 {
     /**
@@ -28,7 +30,7 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:for max',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('*Sorry, a username must start with a @-sign:*', $result);
+        static::assertEquals('*Sorry, a username must start with a @-sign:*', $result);
     }
 
     /**
@@ -41,7 +43,7 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:for <@U23456>',
         ]);
         $result = $this->command->process();
-        $this->assertStringStartsWith('Yeah, one more :t3beer: for <@U23456>', $result);
+        static::assertStringStartsWith('Yeah, one more :t3beer: for <@U23456>', $result);
     }
 
     /**
@@ -54,7 +56,7 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:all',
         ]);
         $result = $this->command->process();
-        $this->assertRegExp('/Yeah, ([0-9]*) :t3beer: spend to all people/', $result);
+        static::assertRegExp('/Yeah, ([0-9]*) :t3beer: spend to all people/', $result);
     }
 
     /**
@@ -67,7 +69,7 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:top10',
         ]);
         $result = $this->command->process();
-        $this->assertStringStartsWith('*Yeah, here are the TOP 10*', $result);
+        static::assertStringStartsWith('*Yeah, here are the TOP 10*', $result);
     }
 
     /**
@@ -80,7 +82,7 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:stats <@U23456>',
         ]);
         $result = $this->command->process();
-        $this->assertRegExp('/<@U23456> has received ([0-9]*) :t3beer: so far/', $result);
+        static::assertRegExp('/<@U23456> has received ([0-9]*) :t3beer: so far/', $result);
     }
 
     /**
@@ -93,6 +95,6 @@ class BeerCommandTest extends BaseCommandTestCase
             'text' => 'beer:stats foo',
         ]);
         $result = $this->command->process();
-        $this->assertEquals('*Sorry, a username must start with a @-sign:*', $result);
+        static::assertEquals('*Sorry, a username must start with a @-sign:*', $result);
     }
 }

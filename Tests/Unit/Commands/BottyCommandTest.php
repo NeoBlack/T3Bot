@@ -16,6 +16,8 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class BottyCommandTest.
  */
+
+/** @noinspection LongInheritanceChainInspection */
 class BottyCommandTest extends BaseCommandTestCase
 {
     /**
@@ -55,6 +57,9 @@ class BottyCommandTest extends BaseCommandTestCase
     /**
      * @test
      * @dataProvider testDataProvider
+     *
+     * @param string $keyword
+     * @param string $response
      */
     public function processShowReturnsCorrectResponseForKnownKeywords($keyword, $response)
     {
@@ -64,9 +69,9 @@ class BottyCommandTest extends BaseCommandTestCase
         ]);
         $result = $this->command->process();
         if ($response === null) {
-            $this->assertNull($response);
+            static::assertNull($response);
         } else {
-            $this->assertStringStartsWith($response, $result);
+            static::assertStringStartsWith($response, $result);
         }
     }
 
@@ -81,6 +86,8 @@ class BottyCommandTest extends BaseCommandTestCase
             'text' => 'botty help',
         ]);
         $result = $this->command->process();
-        $this->assertEquals(':link: <http://www.t3bot.de|My Homepage> | :link: <https://github.com/NeoBlack/T3Bot|Github> | :link: <http://wiki.typo3.org/T3Bot|Help for Commands>', $result);
+        static::assertEquals(':link: <http://www.t3bot.de|My Homepage> | '
+            .':link: <https://github.com/NeoBlack/T3Bot|Github> | '
+            .':link: <http://wiki.typo3.org/T3Bot|Help for Commands>', $result);
     }
 }

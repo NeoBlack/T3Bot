@@ -10,6 +10,8 @@
 
 namespace T3Bot\Traits;
 
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
+
 trait SlackTrait
 {
     /**
@@ -39,7 +41,7 @@ trait SlackTrait
     /**
      * build a review line.
      *
-     * @param object $item the review item
+     * @param stdClass $item the review item
      *
      * @return string
      */
@@ -61,7 +63,7 @@ trait SlackTrait
         $text = $this->bold('['.$item->tracker->name.'] '.$item->subject)
             .' by '.$this->italic($item->author->name)."\n";
         $text .= 'Project: '.$this->bold($item->project->name);
-        if (!empty($item->category->name)) {
+        if ($item->category->name !== '') {
             $text .= ' | Category: '.$this->bold($item->category->name);
         }
         $text .= ' | Status: '.$this->bold($item->status->name)."\n";

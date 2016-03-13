@@ -10,6 +10,8 @@
 
 namespace T3Bot\Tests\Unit;
 
+use MyProject\Proxies\__CG__\stdClass;
+
 /**
  * Class BaseTestCase.
  */
@@ -18,7 +20,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Call protected/private method of a class.
      *
-     * @param object &$object    Instantiated object that we will run method on.
+     * @param mixed  &$object    Instantiated object that we will run method on.
      * @param string $methodName Method name to call
      * @param array  $parameters Array of parameters to pass into method.
      *
@@ -34,15 +36,15 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param object $object
-     * @param string $property
-     * @param mixed  $value
+     * @param stdClass $object
+     * @param string   $property
+     * @param mixed    $value
      */
     public function setProperty(&$object, $property, $value)
     {
         $reflection = new \ReflectionClass(get_class($object));
-        $property = $reflection->getProperty($property);
-        $property->setAccessible(true);
+        $_property = $reflection->getProperty($property);
+        $_property->setAccessible(true);
         $object->$property = $value;
     }
 }

@@ -78,10 +78,7 @@ class BottyCommand extends AbstractCommand
                 break;
             }
         }
-        if ($messageToSend !== '') {
-            return $messageToSend;
-        }
 
-        return;
+        return $messageToSend;
     }
 }
