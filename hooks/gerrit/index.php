@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 require_once dirname(__FILE__).'/../../vendor/autoload.php';
 require_once dirname(__FILE__).'/../../config/config.php';
 

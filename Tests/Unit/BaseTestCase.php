@@ -7,12 +7,11 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit;
 
 /**
- * Class BaseTestCase
- *
- * @package T3Bot\Tests\Unit
+ * Class BaseTestCase.
  */
 class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +36,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * @param object $object
      * @param string $property
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function setProperty(&$object, $property, $value)
     {

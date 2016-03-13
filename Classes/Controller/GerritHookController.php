@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Controller;
 
 use Doctrine\DBAL\Configuration;
@@ -34,6 +35,7 @@ class GerritHookController
      *
      * @param string $hook
      * @param string $input
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function process($hook, $input = 'php://input')
@@ -49,7 +51,7 @@ class GerritHookController
             return;
         }
         $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
-        $patchSet = property_exists($json, 'patchset') ? (int)$json->patchset : 0;
+        $patchSet = property_exists($json, 'patchset') ? (int) $json->patchset : 0;
         $commit = $json->commit;
         $branch = $json->branch;
 
@@ -57,9 +59,9 @@ class GerritHookController
             case 'patchset-created':
                 if ($patchSet === 1 && $branch === 'master') {
                     /** @var array $item */
-                    $item = $this->queryGerrit('change:' . $patchId);
+                    $item = $this->queryGerrit('change:'.$patchId);
                     $item = $item[0];
-                    /** @var stdClass $item */
+                    /* @var stdClass $item */
                     $created = substr($item->created, 0, 19);
 
                     $message = new Message();
@@ -84,7 +86,7 @@ class GerritHookController
                 /** @var array $item */
                 $item = $this->queryGerrit('change:'.$patchId);
                 $item = $item[0];
-                /** @var stdClass $item */
+                /* @var stdClass $item */
                 $created = substr($item->created, 0, 19);
 
                 $message = new Message();
@@ -133,8 +135,8 @@ class GerritHookController
                                 $attachment->setTitle('A documentation file has been updated');
                                 break;
                         }
-                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                            . '|' . $fileName . '>';
+                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/'.$fileName
+                            .'|'.$fileName.'>';
                         $attachment->setText($text);
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
@@ -149,7 +151,7 @@ class GerritHookController
 
     /**
      * @param Message $payload
-     * @param string $channel
+     * @param string  $channel
      *
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -181,7 +183,7 @@ class GerritHookController
             ]);
         }
         if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
-            /** @noinspection PhpUndefinedFieldInspection */
+            /* @noinspection PhpUndefinedFieldInspection */
             $data['icon_emoji'] = $GLOBALS['config']['slack']['botAvatar'];
         }
 
@@ -197,7 +199,7 @@ class GerritHookController
      */
     protected function addMessageToQueue(array $data)
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
+        /* @noinspection PhpInternalEntityUsedInspection */
         $config = new Configuration();
         $db = DriverManager::getConnection($GLOBALS['config']['db'], $config);
         $db->insert('messages', ['message' => json_encode($data)]);

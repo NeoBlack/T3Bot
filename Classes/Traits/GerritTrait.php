@@ -35,6 +35,7 @@ trait GerritTrait
             curl_close($ch);
             $result = json_decode(str_replace(")]}'\n", '', $data));
         }
+
         return $result;
     }
 
@@ -46,7 +47,7 @@ trait GerritTrait
      */
     protected function getFilesForPatch($changeId, $revision)
     {
-        $url = 'https://review.typo3.org/changes/' . $changeId . '/revisions/' . $revision . '/files';
+        $url = 'https://review.typo3.org/changes/'.$changeId.'/revisions/'.$revision.'/files';
 
         $ch = curl_init();
         $timeout = 5;
@@ -60,6 +61,7 @@ trait GerritTrait
             curl_close($ch);
             $result = json_decode(str_replace(")]}'\n", '', $data), true);
         }
+
         return $result;
     }
 }

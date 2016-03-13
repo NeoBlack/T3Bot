@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Commands;
 
 /**
@@ -29,7 +30,7 @@ class ReviewCommand extends AbstractCommand
         'show [Ref-ID] [[Ref-ID-2], [[Ref-ID-n]]]' => 'shows the review by given change number(s)',
         'user [username] [PROJECT=Packages/TYPO3.CMS]' => 'shows the open reviews by given username for [PROJECT]',
         'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
-        'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date'
+        'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date',
     ];
 
     /**
@@ -48,15 +49,15 @@ class ReviewCommand extends AbstractCommand
         $countMinus2 = count($result);
 
         $returnString = '';
-        $returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project '
-            . $this->italic($project) . ' and branch master on <https://review.typo3.org/#/q/project:' . $project
-            . '+status:open+branch:master|https://review.typo3.org>'."\n";
-        $returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with '
-            . $this->bold('-1') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
-            . 'master+project:' . $project . '|Check now> ' . "\n";
-        $returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with '
-            . $this->bold('-2') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
-            . 'master+project:' . $project . '|Check now>';
+        $returnString .= 'There are currently '.$this->bold($count).' open reviews for project '
+            .$this->italic($project).' and branch master on <https://review.typo3.org/#/q/project:'.$project
+            .'+status:open+branch:master|https://review.typo3.org>'."\n";
+        $returnString .= $this->bold($countMinus1).' of '.$this->bold($count).' open reviews voted with '
+            .$this->bold('-1').' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
+            .'master+project:'.$project.'|Check now> '."\n";
+        $returnString .= $this->bold($countMinus2).' of '.$this->bold($count).' open reviews voted with '
+            .$this->bold('-2').' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
+            .'master+project:'.$project.'|Check now>';
 
         return $returnString;
     }
@@ -87,16 +88,16 @@ class ReviewCommand extends AbstractCommand
         if ($username === null) {
             return 'hey, I need a username!';
         }
-        $results = $this->queryGerrit('is:open owner:"' . $username . '" project:' . $project);
+        $results = $this->queryGerrit('is:open owner:"'.$username.'" project:'.$project);
         if (count($results) > 0) {
-            $listOfItems = array('*Here are the results for ' . $username . '*:');
+            $listOfItems = array('*Here are the results for '.$username.'*:');
             foreach ($results as $item) {
                 $listOfItems[] = $this->buildReviewLine($item);
             }
 
             return implode("\n", $listOfItems);
         } else {
-            return $username . ' has no open reviews or username is unknown';
+            return $username.' has no open reviews or username is unknown';
         }
     }
 
@@ -110,9 +111,9 @@ class ReviewCommand extends AbstractCommand
         $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([\d]*)(?:.*)*/i';
         $refId = isset($this->params[1]) ? $this->params[1] : null;
         if (preg_match_all($urlPattern, $refId, $matches)) {
-            $refId = (int)$matches[1][0];
+            $refId = (int) $matches[1][0];
         } else {
-            $refId = (int)$refId;
+            $refId = (int) $refId;
         }
         if ($refId === null || $refId === 0) {
             return 'hey, I need at least one change number!';
@@ -122,7 +123,7 @@ class ReviewCommand extends AbstractCommand
         if ($paramsCount > 2) {
             $changeIds = array();
             for ($i = 1; $i < $paramsCount; ++$i) {
-                $changeIds[] = 'change:' . $this->params[$i];
+                $changeIds[] = 'change:'.$this->params[$i];
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
             $listOfItems = array();
@@ -132,7 +133,7 @@ class ReviewCommand extends AbstractCommand
 
             $returnMessage = implode("\n", $listOfItems);
         } else {
-            $result = $this->queryGerrit('change:' . $refId);
+            $result = $this->queryGerrit('change:'.$refId);
             if (!$result) {
                 return "{$refId} not found, sorry!";
             }
@@ -142,6 +143,7 @@ class ReviewCommand extends AbstractCommand
                 }
             }
         }
+
         return $returnMessage;
     }
 

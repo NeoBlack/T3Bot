@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 require_once 'vendor/autoload.php';
 require_once 'config/config.php';
 
@@ -43,7 +42,7 @@ $client->connect()->then(function () use ($client) {
     echo "Connected!\n";
 });
 
-/** @noinspection PhpInternalEntityUsedInspection */
+/* @noinspection PhpInternalEntityUsedInspection */
 $db = \Doctrine\DBAL\DriverManager::getConnection($GLOBALS['config']['db'], new \Doctrine\DBAL\Configuration());
 
 $loop->addPeriodicTimer(5, function () use ($client, $db) {

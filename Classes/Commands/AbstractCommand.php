@@ -7,9 +7,10 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Commands;
 
-use /** @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
+use /* @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use MyProject\Proxies\__CG__\stdClass;
 use Slack\Message\Attachment;
@@ -61,7 +62,7 @@ abstract class AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload $payload
+     * @param Payload        $payload
      * @param RealTimeClient $client
      */
     public function __construct(Payload $payload, RealTimeClient $client)
@@ -94,7 +95,7 @@ abstract class AbstractCommand
 
     /**
      * @param \T3Bot\Slack\Message|string $messageToSent
-     * @param string $user
+     * @param string                      $user
      */
     public function sendResponse($messageToSent, $user = null)
     {
@@ -237,8 +238,8 @@ abstract class AbstractCommand
         $attachment->setTitle($item->subject);
         $attachment->setTitleLink('https://review.typo3.org/'.$item->_number);
 
-        $text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
-            . ' | ID: ' . $this->bold($item->_number) . "\n";
+        $text .= 'Branch: '.$this->bold($branch).' | :calendar: '.$this->bold($created)
+            .' | ID: '.$this->bold($item->_number)."\n";
         $text .= '<https://review.typo3.org/'.$item->_number.'|:arrow_right: Goto Review>';
 
         $attachment->setText($text);
@@ -251,15 +252,17 @@ abstract class AbstractCommand
 
     /**
      * @return \Doctrine\DBAL\Connection
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function getDatabaseConnection()
     {
         if (empty($GLOBALS['DB'])) {
-            /** @noinspection PhpInternalEntityUsedInspection */
+            /* @noinspection PhpInternalEntityUsedInspection */
             $config = new Configuration();
             $GLOBALS['DB'] = DriverManager::getConnection($GLOBALS['config']['db'], $config);
         }
+
         return $GLOBALS['DB'];
     }
 }

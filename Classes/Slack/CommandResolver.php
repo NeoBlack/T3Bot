@@ -15,9 +15,7 @@ use Slack\RealTimeClient;
 use T3Bot\Commands\BottyCommand;
 
 /**
- * Class CommandResolver
- *
- * @package T3Bot
+ * Class CommandResolver.
  */
 class CommandResolver
 {
@@ -45,14 +43,14 @@ class CommandResolver
         $message = $this->payload->getData()['text'];
         $parts = explode(':', $message);
         $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
+        $commandClass = '\\T3Bot\\Commands\\'.$command.'Command';
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client);
         }
 
         $parts = explode(' ', $message);
         $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
+        $commandClass = '\\T3Bot\\Commands\\'.$command.'Command';
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client);
         }
@@ -61,6 +59,7 @@ class CommandResolver
         if (strpos($message, 'botty') !== false || strpos($message, $GLOBALS['config']['slack']['botId']) !== false) {
             $resultCommand = new BottyCommand($this->payload, $this->client);
         }
+
         return $resultCommand;
     }
 }

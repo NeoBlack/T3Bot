@@ -12,7 +12,6 @@ namespace T3Bot\Traits;
 
 trait SlackTrait
 {
-
     /**
      * make text bold.
      *
@@ -46,8 +45,8 @@ trait SlackTrait
      */
     protected function buildReviewLine($item)
     {
-        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
-        . '|Review #' . $item->_number . ' now>';
+        return $this->bold($item->subject).' <https://review.typo3.org/'.$item->_number
+        .'|Review #'.$item->_number.' now>';
     }
 
     /**
@@ -59,8 +58,8 @@ trait SlackTrait
     {
         $created = substr($item->created_on, 0, 19);
         $updated = substr($item->updated_on, 0, 19);
-        $text = $this->bold('[' . $item->tracker->name . '] ' . $item->subject)
-            . ' by ' . $this->italic($item->author->name) . "\n";
+        $text = $this->bold('['.$item->tracker->name.'] '.$item->subject)
+            .' by '.$this->italic($item->author->name)."\n";
         $text .= 'Project: '.$this->bold($item->project->name);
         if (!empty($item->category->name)) {
             $text .= ' | Category: '.$this->bold($item->category->name);

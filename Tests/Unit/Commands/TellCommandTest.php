@@ -7,9 +7,9 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Commands;
 
-use Prophecy\Argument;
 use React\EventLoop\LoopInterface;
 use Slack\Payload;
 use Slack\RealTimeClient;
@@ -17,9 +17,7 @@ use T3Bot\Commands\TellCommand;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
- * Class TellCommandTest
- *
- * @package T3Bot\Tests\Unit\Commands
+ * Class TellCommandTest.
  */
 class TellCommandTest extends BaseCommandTestCase
 {
@@ -29,12 +27,9 @@ class TellCommandTest extends BaseCommandTestCase
     public function tellDataProvider()
     {
         return [
-            'tell <@U12345> about review:12345'
-                => ['tell <@U12345> about review:12345', 'OK, I will tell <@U12345> about your message'],
-            'tell <@U12345> about forge:12345'
-                => ['tell <@U12345> about forge:12345', 'OK, I will tell <@U12345> about your message'],
-            'tell <@U12345> you are so nice'
-                => ['tell <@U12345> you are so nice', 'OK, I will tell <@U12345> about your message'],
+            'tell <@U12345> about review:12345' => ['tell <@U12345> about review:12345', 'OK, I will tell <@U12345> about your message'],
+            'tell <@U12345> about forge:12345' => ['tell <@U12345> about forge:12345', 'OK, I will tell <@U12345> about your message'],
+            'tell <@U12345> you are so nice' => ['tell <@U12345> you are so nice', 'OK, I will tell <@U12345> about your message'],
         ];
     }
 
@@ -46,7 +41,7 @@ class TellCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(TellCommand::class, [
             'user' => 'U54321',
-            'text' => $message
+            'text' => $message,
         ]);
         $result = $this->command->process();
         $this->assertEquals($expectedMessage, $result);
@@ -61,7 +56,7 @@ class TellCommandTest extends BaseCommandTestCase
         /** @var Payload $payload */
         $payload = new Payload([
             'user' => 'U12345',
-            'presence' => 'away'
+            'presence' => 'away',
         ]);
         /** @var RealTimeClient $client */
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
@@ -81,7 +76,7 @@ class TellCommandTest extends BaseCommandTestCase
         /** @var Payload $payload */
         $payload = new Payload([
             'user' => 'U12345',
-            'presence' => 'active'
+            'presence' => 'active',
         ]);
         /** @var RealTimeClient $client */
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);

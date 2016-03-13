@@ -7,18 +7,16 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Commands;
 
-use Prophecy\Argument;
 use T3Bot\Commands\AbstractCommand;
 use T3Bot\Commands\ReviewCommand;
 use T3Bot\Slack\Message;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
- * Class ReviewCommandTest
- *
- * @package T3Bot\Tests\Unit\Commands
+ * Class ReviewCommandTest.
  */
 class ReviewCommandTest extends BaseCommandTestCase
 {
@@ -39,7 +37,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     }
 
     /**
-     * Data provider for prjectPhase test
+     * Data provider for prjectPhase test.
      *
      * @return array
      */
@@ -61,7 +59,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:foo'
+            'text' => 'review:foo',
         ]);
         $result = $this->command->process();
         $this->assertStringStartsWith('*HELP*', $result);
@@ -74,7 +72,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:count'
+            'text' => 'review:count',
         ]);
         $result = $this->command->process();
         $expectedResult = '/There are currently \*([0-9]*)\* open reviews for project _Packages\/TYPO3.CMS_/';
@@ -88,7 +86,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:random'
+            'text' => 'review:random',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -107,7 +105,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:user'
+            'text' => 'review:user',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -121,7 +119,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:user neoblack'
+            'text' => 'review:user neoblack',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -135,7 +133,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:user kasper'
+            'text' => 'review:user kasper',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -150,7 +148,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show ' . $refId
+            'text' => 'review:show '.$refId,
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -169,11 +167,11 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show 12345 23456'
+            'text' => 'review:show 12345 23456',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $expectedString = '*[BUGFIX] Cast autoload and classAliasMap to Array* <https://review.typo3.org/23456|Review #23456 now>' . chr(10);
+        $expectedString = '*[BUGFIX] Cast autoload and classAliasMap to Array* <https://review.typo3.org/23456|Review #23456 now>'.chr(10);
         $expectedString .= '*[BUGFIX] Log route values if a route can\'t be resolved* <https://review.typo3.org/12345|Review #12345 now>';
         $this->assertEquals($expectedString, $result);
     }
@@ -185,7 +183,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show'
+            'text' => 'review:show',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -200,7 +198,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show x11111'
+            'text' => 'review:show x11111',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -215,7 +213,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show 999999'
+            'text' => 'review:show 999999',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -230,7 +228,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:query'
+            'text' => 'review:query',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -245,7 +243,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:query test'
+            'text' => 'review:query test',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -260,7 +258,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:query öäauieqd-asucc3ucbauiscaui-sd'
+            'text' => 'review:query öäauieqd-asucc3ucbauiscaui-sd',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -275,7 +273,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:merged'
+            'text' => 'review:merged',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -290,7 +288,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:merged 01.01.2015'
+            'text' => 'review:merged 01.01.2015',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -305,7 +303,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:merged 2015-01-01'
+            'text' => 'review:merged 2015-01-01',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -323,7 +321,7 @@ class ReviewCommandTest extends BaseCommandTestCase
 
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show 12345'
+            'text' => 'review:show 12345',
         ]);
         /** @var Message $result */
         $result = $this->command->process();

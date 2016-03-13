@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Slack;
 
 use React\EventLoop\LoopInterface;
@@ -22,9 +23,7 @@ use T3Bot\Slack\CommandResolver;
 use T3Bot\Tests\Unit\BaseTestCase;
 
 /**
- * Class CommandResolverTest
- *
- * @package T3Bot\Tests\Unit\Slack
+ * Class CommandResolverTest.
  */
 class CommandResolverTest extends BaseTestCase
 {

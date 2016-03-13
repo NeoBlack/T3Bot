@@ -7,16 +7,14 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Commands;
 
-use Prophecy\Argument;
 use T3Bot\Commands\UtilCommand;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
- * Class UtilCommandTest
- *
- * @package T3Bot\Tests\Unit\Commands
+ * Class UtilCommandTest.
  */
 class UtilCommandTest extends BaseCommandTestCase
 {
@@ -27,7 +25,7 @@ class UtilCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(UtilCommand::class, [
             'user' => 'U54321',
-            'text' => 'util:coin'
+            'text' => 'util:coin',
         ]);
         $result = $this->command->process();
         $this->assertEquals('*Botty says:* _A complicated decision ..._', $result);
@@ -40,7 +38,7 @@ class UtilCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(UtilCommand::class, [
             'user' => 'U54321',
-            'text' => 'util:coin a'
+            'text' => 'util:coin a',
         ]);
         $result = $this->command->process();
         $this->assertEquals('*Botty says:* _A complicated decision ..._', $result);
@@ -53,7 +51,7 @@ class UtilCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(UtilCommand::class, [
             'user' => 'U54321',
-            'text' => 'util:coin a, b'
+            'text' => 'util:coin a, b',
         ]);
         $result = $this->command->process();
         $this->assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_']);
@@ -66,7 +64,7 @@ class UtilCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(UtilCommand::class, [
             'user' => 'U54321',
-            'text' => 'util:coin a, b, c'
+            'text' => 'util:coin a, b, c',
         ]);
         $result = $this->command->process();
         $this->assertContains($result, ['*Botty says:* _a_', '*Botty says:* _b_', '*Botty says:* _c_']);
@@ -79,7 +77,7 @@ class UtilCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(UtilCommand::class, [
             'user' => 'U54321',
-            'text' => 'util:coin a, a'
+            'text' => 'util:coin a, a',
         ]);
         $result = $this->command->process();
         $this->assertEquals('*Botty says:* _it is undecidable ..._', $result);

@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 $GLOBALS['config'] = array(
     // project phase
     'projectPhase' => \T3Bot\Commands\AbstractCommand::PROJECT_PHASE_DEVELOPMENT,
@@ -18,7 +17,7 @@ $GLOBALS['config'] = array(
         // bot auth token
         'botAuthToken' => '',
         // bot id (this is important, to prevent the bot to react on own messages
-        'botId' => ''
+        'botId' => '',
     ),
     'gerrit' => array(
         // secret token, to ensure the request was received from gerrit
@@ -38,6 +37,6 @@ $GLOBALS['config'] = array(
         'user' => 'root',
         'password' => '',
         'host' => '127.0.0.1',
-        'driver' => 'pdo_mysql'
+        'driver' => 'pdo_mysql',
     ),
 );

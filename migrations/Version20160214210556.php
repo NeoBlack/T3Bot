@@ -1,6 +1,6 @@
 <?php
 
-namespace T3BotMigrations;
+namespace T3Botmigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -23,7 +23,7 @@ class Version20160214210556 extends AbstractMigration
         $notificationsTable->addColumn('to_user', Type::STRING, array('length' => 32));
         $notificationsTable->addColumn('message', Type::TEXT);
         $notificationsTable->addColumn('created', Type::DATETIME, [
-            'columnDefinition' => 'timestamp default current_timestamp'
+            'columnDefinition' => 'timestamp default current_timestamp',
         ]);
         $notificationsTable->addColumn('delivered', Type::DATETIME);
         $notificationsTable->setPrimaryKey(['id']);

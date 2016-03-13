@@ -33,6 +33,7 @@ trait ForgerTrait
             curl_close($ch);
             $result = json_decode($data);
         }
+
         return $result;
     }
 }

@@ -7,19 +7,18 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Commands;
 
 use Prophecy\Argument;
-use \T3Bot\Slack\Message;
+use T3Bot\Slack\Message;
 use Slack\Payload;
 use Slack\RealTimeClient;
 use T3Bot\Commands\AbstractCommand;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
- * Class AbstractCommandTest
- *
- * @package T3Bot\Tests\Unit\Commands
+ * Class AbstractCommandTest.
  */
 class AbstractCommandTest extends BaseCommandTestCase
 {
@@ -31,18 +30,18 @@ class AbstractCommandTest extends BaseCommandTestCase
         /** @var Payload $payload */
         $payload = new Payload([
             'text' => 'test message',
-            'channel' => '#fntest'
+            'channel' => '#fntest',
         ]);
         /** @var RealTimeClient $client */
         $client = $this->prophesize(RealTimeClient::class);
 
         $client->apiCall('chat.postMessage', [
-            "unfurl_links" => false,
-            "unfurl_media" => false,
-            "parse" => "none",
-            "text" => "this is a test string",
-            "channel" => "#fntest",
-            "as_user" => true
+            'unfurl_links' => false,
+            'unfurl_media' => false,
+            'parse' => 'none',
+            'text' => 'this is a test string',
+            'channel' => '#fntest',
+            'as_user' => true,
         ])->willReturn(true);
 
         /** @var AbstractCommand $stub */
@@ -58,7 +57,7 @@ class AbstractCommandTest extends BaseCommandTestCase
         /** @var Payload $payload */
         $payload = new Payload([
             'text' => 'test message',
-            'channel' => '#fntest'
+            'channel' => '#fntest',
         ]);
         /** @var RealTimeClient $client */
         $client = $this->prophesize(RealTimeClient::class);

@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Commands;
 
 /**
@@ -24,7 +25,7 @@ class ForgeCommand extends AbstractCommand
      */
     protected $helpCommands = [
         'help' => 'shows this help',
-        'show [Issue-ID]' => 'shows the issue by given [Issue-ID]'
+        'show [Issue-ID]' => 'shows the issue by given [Issue-ID]',
     ];
 
     /**
@@ -37,9 +38,9 @@ class ForgeCommand extends AbstractCommand
         $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([\d]*)(?:.*)*/i';
         $issueNumber = !empty($this->params[1]) ? $this->params[1] : '';
         if (preg_match_all($urlPattern, $issueNumber, $matches)) {
-            $issueNumber = (int)$matches[1][0];
+            $issueNumber = (int) $matches[1][0];
         } else {
-            $issueNumber = (int)$issueNumber;
+            $issueNumber = (int) $issueNumber;
         }
         if ($issueNumber === null || $issueNumber === 0) {
             return 'hey, I need an issue number!';

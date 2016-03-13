@@ -1,6 +1,6 @@
 <?php
 
-namespace T3BotMigrations;
+namespace T3Botmigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -18,14 +18,14 @@ class Version20160214204059 extends AbstractMigration
     {
         // create beer table
         $beerTable = $schema->createTable('beers');
-        $beerTable->addColumn('id', Type::INTEGER, array("unsigned" => true))->setAutoincrement(true);
-        $beerTable->addColumn('from_user', Type::STRING, array("length" => 32));
-        $beerTable->addColumn('to_user', Type::STRING, array("length" => 32));
+        $beerTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
+        $beerTable->addColumn('from_user', Type::STRING, array('length' => 32));
+        $beerTable->addColumn('to_user', Type::STRING, array('length' => 32));
         $beerTable->setPrimaryKey(['id']);
 
         // create messages table
         $messagesTable = $schema->createTable('messages');
-        $messagesTable->addColumn('id', Type::INTEGER, array("unsigned" => true))->setAutoincrement(true);
+        $messagesTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
         $messagesTable->addColumn('message', Type::TEXT);
         $messagesTable->setPrimaryKey(['id']);
     }

@@ -7,16 +7,14 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit\Commands;
 
-use Prophecy\Argument;
 use T3Bot\Commands\BeerCommand;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
- * Class BeerCommandTest
- *
- * @package T3Bot\Tests\Unit\Commands
+ * Class BeerCommandTest.
  */
 class BeerCommandTest extends BaseCommandTestCase
 {
@@ -27,7 +25,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U54321',
-            'text' => 'beer:for max'
+            'text' => 'beer:for max',
         ]);
         $result = $this->command->process();
         $this->assertEquals('*Sorry, a username must start with a @-sign:*', $result);
@@ -40,7 +38,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U12345',
-            'text' => 'beer:for <@U23456>'
+            'text' => 'beer:for <@U23456>',
         ]);
         $result = $this->command->process();
         $this->assertStringStartsWith('Yeah, one more :t3beer: for <@U23456>', $result);
@@ -53,7 +51,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U12345',
-            'text' => 'beer:all'
+            'text' => 'beer:all',
         ]);
         $result = $this->command->process();
         $this->assertRegExp('/Yeah, ([0-9]*) :t3beer: spend to all people/', $result);
@@ -66,7 +64,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U12345',
-            'text' => 'beer:top10'
+            'text' => 'beer:top10',
         ]);
         $result = $this->command->process();
         $this->assertStringStartsWith('*Yeah, here are the TOP 10*', $result);
@@ -79,7 +77,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U12345',
-            'text' => 'beer:stats <@U23456>'
+            'text' => 'beer:stats <@U23456>',
         ]);
         $result = $this->command->process();
         $this->assertRegExp('/<@U23456> has received ([0-9]*) :t3beer: so far/', $result);
@@ -92,7 +90,7 @@ class BeerCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(BeerCommand::class, [
             'user' => 'U12345',
-            'text' => 'beer:stats foo'
+            'text' => 'beer:stats foo',
         ]);
         $result = $this->command->process();
         $this->assertEquals('*Sorry, a username must start with a @-sign:*', $result);

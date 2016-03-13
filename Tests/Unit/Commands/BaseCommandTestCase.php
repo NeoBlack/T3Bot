@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Tests\Unit;
 
 use React\EventLoop\LoopInterface;
@@ -15,9 +16,7 @@ use Slack\RealTimeClient;
 use T3Bot\Commands\AbstractCommand;
 
 /**
- * Class BaseCommandTestCase
- *
- * @package T3Bot\Tests\Unit
+ * Class BaseCommandTestCase.
  */
 class BaseCommandTestCase extends BaseTestCase
 {
@@ -28,7 +27,7 @@ class BaseCommandTestCase extends BaseTestCase
 
     /**
      * @param AbstractCommand $commandClass
-     * @param array $payloadData
+     * @param array           $payloadData
      */
     protected function initCommandWithPayload($commandClass, $payloadData)
     {

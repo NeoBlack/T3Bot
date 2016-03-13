@@ -7,6 +7,7 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
+
 namespace T3Bot\Commands;
 
 /**
@@ -24,7 +25,7 @@ class UtilCommand extends AbstractCommand
      */
     protected $helpCommands = [
         'help' => 'shows this help',
-        'coin [options]' => 'coin toss with [options] (separate by comma)'
+        'coin [options]' => 'coin toss with [options] (separate by comma)',
     ];
 
     /**
