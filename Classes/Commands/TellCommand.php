@@ -34,6 +34,7 @@ class TellCommand extends AbstractCommand
 
     /**
      * @return bool|string
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function process()
     {
@@ -49,6 +50,7 @@ class TellCommand extends AbstractCommand
     /**
      * @param string $user
      * @param string $presence
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function processPresenceChange($user, $presence)
     {
@@ -61,12 +63,12 @@ class TellCommand extends AbstractCommand
             foreach ($notifications as $notification) {
                 if (strpos($notification['message'], 'review:') === 0) {
                     $parts = explode(':', $notification['message']);
-                    $refId = trim($parts[1]);
+                    $refId = (int)trim($parts[1]);
                     $result = $this->queryGerrit('change:' . $refId);
                     $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
                         . ' ask you to look at this patch:*';
                     foreach ($result as $item) {
-                        if ($item->_number == $refId) {
+                        if ((int)$item->_number === $refId) {
                             $message = $this->buildReviewMessage($item);
                             $message->setText($msg);
                             $this->sendResponse($message, $user);
@@ -75,7 +77,7 @@ class TellCommand extends AbstractCommand
                 } elseif (strpos($notification['message'], 'forge:') === 0) {
                     $parts = explode(':', $notification['message']);
                     $issueNumber = (int)trim($parts[1]);
-                    $result = $this->queryForge("issues/{$issueNumber}");
+                    $result = $this->queryForge('issues/' . $issueNumber);
                     if ($result) {
                         $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
                             . ' ask you to look at this issue:*';
@@ -100,15 +102,14 @@ class TellCommand extends AbstractCommand
 
     /**
      * @return string
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function processTell()
     {
         $params = $this->params;
         array_shift($params);
         $toUser = array_shift($params);
-        $toUser = str_replace('<', '', $toUser);
-        $toUser = str_replace('>', '', $toUser);
-        $toUser = str_replace('@', '', $toUser);
+        $toUser = str_replace(['<', '>', '@'], '', $toUser);
         if ($params[0] === 'about'
             && (strpos($params[1], 'review:') !== false || strpos($params[1], 'forge:') !== false)) {
             $message = $params[1];

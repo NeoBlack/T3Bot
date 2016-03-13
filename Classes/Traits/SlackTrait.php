@@ -36,4 +36,39 @@ trait SlackTrait
     {
         return '_'.$string.'_';
     }
+
+    /**
+     * build a review line.
+     *
+     * @param object $item the review item
+     *
+     * @return string
+     */
+    protected function buildReviewLine($item)
+    {
+        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
+        . '|Review #' . $item->_number . ' now>';
+    }
+
+    /**
+     * @param $item
+     *
+     * @return string
+     */
+    protected function buildIssueMessage($item)
+    {
+        $created = substr($item->created_on, 0, 19);
+        $updated = substr($item->updated_on, 0, 19);
+        $text = $this->bold('[' . $item->tracker->name . '] ' . $item->subject)
+            . ' by ' . $this->italic($item->author->name) . "\n";
+        $text .= 'Project: '.$this->bold($item->project->name);
+        if (!empty($item->category->name)) {
+            $text .= ' | Category: '.$this->bold($item->category->name);
+        }
+        $text .= ' | Status: '.$this->bold($item->status->name)."\n";
+        $text .= ':calendar: Created: '.$this->bold($created).' | Last update: '.$this->bold($updated)."\n";
+        $text .= '<https://forge.typo3.org/issues/'.$item->id.'|:arrow_right: View on Forge>';
+
+        return $text;
+    }
 }

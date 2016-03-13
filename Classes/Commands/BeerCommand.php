@@ -34,6 +34,7 @@ class BeerCommand extends AbstractCommand
      * stats for all beer counter.
      *
      * @return string
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function processAll()
     {
@@ -44,6 +45,7 @@ class BeerCommand extends AbstractCommand
      * stats for TOP 10.
      *
      * @return string
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function processTop10()
     {
@@ -60,13 +62,14 @@ class BeerCommand extends AbstractCommand
      * stats for beer counter.
      *
      * @return string
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function processStats()
     {
         $params = $this->params;
         array_shift($params);
         $username = trim($params[0]);
-        if (substr($username, 0, 1) === '<' && substr($username, 1, 1) === '@') {
+        if (strpos($username, '<') === 0 && substr($username, 1, 1) === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
 
             return '<@'.$username.'> has received '.$this->getBeerCountByUsername($username).' :t3beer: so far';
@@ -79,6 +82,7 @@ class BeerCommand extends AbstractCommand
      * give someone a beer.
      *
      * @return string
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function processFor()
     {
@@ -86,7 +90,7 @@ class BeerCommand extends AbstractCommand
         $params = $this->params;
         array_shift($params);
         $username = trim($params[0]);
-        if (substr($username, 0, 1) === '<' && substr($username, 1, 1) === '@') {
+        if (strpos($username, '<') === 0 && substr($username, 1, 1) === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
             $this->getDatabaseConnection()->insert('beers', [
                 'to_user' => $username,
@@ -104,6 +108,7 @@ class BeerCommand extends AbstractCommand
      * @param $username
      *
      * @return int
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getBeerCountByUsername($username)
     {
@@ -113,6 +118,7 @@ class BeerCommand extends AbstractCommand
 
     /**
      * @return int
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getBeerCountAll()
     {
@@ -122,6 +128,7 @@ class BeerCommand extends AbstractCommand
 
     /**
      * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getBeerTop10()
     {

@@ -39,11 +39,11 @@ class UtilCommand extends AbstractCommand
         if (count($options) === 1) {
             return '*Botty says:* _A complicated decision ..._';
         }
-        if (count(array_unique($options)) === 1) {
+        if (count(array_count_values($options)) === 1) {
             return '*Botty says:* _it is undecidable ..._';
         }
 
-        $option = $options[rand(0, count($options) - 1)];
+        $option = $options[mt_rand(0, count($options) - 1)];
 
         return '*Botty says:* _'.$option.'_';
     }

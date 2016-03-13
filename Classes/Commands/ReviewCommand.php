@@ -9,15 +9,11 @@
  */
 namespace T3Bot\Commands;
 
-use T3Bot\Traits\GerritTrait;
-
 /**
  * Class ReviewCommand.
  */
 class ReviewCommand extends AbstractCommand
 {
-    use GerritTrait;
-
     /**
      * @var string
      */
@@ -43,7 +39,7 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processCount()
     {
-        $project = isset($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
+        $project = !empty($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
         $result = $this->queryGerrit("is:open branch:master project:{$project}");
         $count = count($result);
         $result = $this->queryGerrit("label:Code-Review=-1 is:open branch:master project:{$project}");
@@ -72,6 +68,7 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processRandom()
     {
+        /** @var array $result */
         $result = $this->queryGerrit('is:open project:Packages/TYPO3.CMS');
         $item = $result[array_rand($result)];
 
@@ -85,8 +82,8 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processUser()
     {
-        $username = isset($this->params[1]) ? $this->params[1] : null;
-        $project = isset($this->params[2]) ? $this->params[2] : 'Packages/TYPO3.CMS';
+        $username = !empty($this->params[1]) ? $this->params[1] : null;
+        $project = !empty($this->params[2]) ? $this->params[2] : 'Packages/TYPO3.CMS';
         if ($username === null) {
             return 'hey, I need a username!';
         }
@@ -110,20 +107,21 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processShow()
     {
-        $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([0-9]*)(?:.*)*/i';
+        $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([\d]*)(?:.*)*/i';
         $refId = isset($this->params[1]) ? $this->params[1] : null;
         if (preg_match_all($urlPattern, $refId, $matches)) {
             $refId = (int)$matches[1][0];
         } else {
             $refId = (int)$refId;
         }
-        if ($refId === null || $refId == 0) {
+        if ($refId === null || $refId === 0) {
             return 'hey, I need at least one change number!';
         }
         $returnMessage = '';
-        if (count($this->params) > 2) {
+        $paramsCount = count($this->params);
+        if ($paramsCount > 2) {
             $changeIds = array();
-            for ($i = 1; $i < count($this->params); ++$i) {
+            for ($i = 1; $i < $paramsCount; ++$i) {
                 $changeIds[] = 'change:' . $this->params[$i];
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
@@ -139,7 +137,7 @@ class ReviewCommand extends AbstractCommand
                 return "{$refId} not found, sorry!";
             }
             foreach ($result as $item) {
-                if ($item->_number == $refId) {
+                if ($item->_number === $refId) {
                     $returnMessage = $this->buildReviewMessage($item);
                 }
             }
@@ -157,7 +155,7 @@ class ReviewCommand extends AbstractCommand
         $queryParts = $this->params;
         array_shift($queryParts);
         $query = trim(implode(' ', $queryParts));
-        if (strlen($query) == 0) {
+        if ($query === '') {
             return 'hey, I need a query!';
         }
 
@@ -181,7 +179,7 @@ class ReviewCommand extends AbstractCommand
     {
         $query = 'project:Packages/TYPO3.CMS status:merged after:###DATE### branch:master';
 
-        $date = !(empty($this->params[1])) ? $this->params[1] : '';
+        $date = !empty($this->params[1]) ? $this->params[1] : '';
         if (!$this->isDateFormatCorrect($date)) {
             return 'hey, I need a date in the format YYYY-MM-DD!';
         }
@@ -202,6 +200,6 @@ class ReviewCommand extends AbstractCommand
      */
     protected function isDateFormatCorrect($date)
     {
-        return (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $date) === 1);
+        return (preg_match('/[\d]{4}-[\d]{2}-[\d]{2}/', $date) === 1);
     }
 }

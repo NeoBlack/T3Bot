@@ -11,6 +11,7 @@ namespace T3Bot\Controller;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 use Slack\ApiClient;
 use Slack\Message\Attachment;
 use T3Bot\Slack\Message;
@@ -33,6 +34,7 @@ class GerritHookController
      *
      * @param string $hook
      * @param string $input
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function process($hook, $input = 'php://input')
     {
@@ -47,15 +49,17 @@ class GerritHookController
             return;
         }
         $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
-        $patchSet = (property_exists($json, 'patchset')) ? intval($json->patchset) : 0;
+        $patchSet = property_exists($json, 'patchset') ? (int)$json->patchset : 0;
         $commit = $json->commit;
         $branch = $json->branch;
 
         switch ($hook) {
             case 'patchset-created':
-                if ($patchSet == 1 && $branch == 'master') {
-                    $item = $this->queryGerrit('change:'.$patchId);
+                if ($patchSet === 1 && $branch === 'master') {
+                    /** @var array $item */
+                    $item = $this->queryGerrit('change:' . $patchId);
                     $item = $item[0];
+                    /** @var stdClass $item */
                     $created = substr($item->created, 0, 19);
 
                     $message = new Message();
@@ -77,8 +81,10 @@ class GerritHookController
                 }
                 break;
             case 'change-merged':
+                /** @var array $item */
                 $item = $this->queryGerrit('change:'.$patchId);
                 $item = $item[0];
+                /** @var stdClass $item */
                 $created = substr($item->created, 0, 19);
 
                 $message = new Message();

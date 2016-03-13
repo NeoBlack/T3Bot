@@ -10,12 +10,14 @@
 
 namespace T3Bot\Traits;
 
+use MyProject\Proxies\__CG__\stdClass;
+
 trait GerritTrait
 {
     /**
      * @param string $query
      *
-     * @return object|bool
+     * @return stdClass|array|bool
      */
     protected function queryGerrit($query)
     {
@@ -60,18 +62,4 @@ trait GerritTrait
         }
         return $result;
     }
-
-    /**
-     * build a review line.
-     *
-     * @param object $item the review item
-     *
-     * @return string
-     */
-    protected function buildReviewLine($item)
-    {
-        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
-        . '|Review #' . $item->_number . ' now>';
-    }
-
 }

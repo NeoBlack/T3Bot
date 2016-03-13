@@ -9,15 +9,11 @@
  */
 namespace T3Bot\Commands;
 
-use T3Bot\Traits\ForgerTrait;
-
 /**
  * Class ForgeCommand.
  */
 class ForgeCommand extends AbstractCommand
 {
-    use ForgerTrait;
-
     /**
      * @var string
      */
@@ -38,14 +34,14 @@ class ForgeCommand extends AbstractCommand
      */
     protected function processShow()
     {
-        $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([0-9]*)(?:.*)*/i';
-        $issueNumber = isset($this->params[1]) ? $this->params[1] : '';
+        $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([\d]*)(?:.*)*/i';
+        $issueNumber = !empty($this->params[1]) ? $this->params[1] : '';
         if (preg_match_all($urlPattern, $issueNumber, $matches)) {
             $issueNumber = (int)$matches[1][0];
         } else {
             $issueNumber = (int)$issueNumber;
         }
-        if ($issueNumber === null || $issueNumber == 0) {
+        if ($issueNumber === null || $issueNumber === 0) {
             return 'hey, I need an issue number!';
         }
         $result = $this->queryForge("issues/{$issueNumber}");

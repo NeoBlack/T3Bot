@@ -9,8 +9,6 @@
  */
 namespace T3Bot\Slack\Message;
 
-use T3Bot\Slack\Message\Attachment\Field;
-
 /**
  * Class Attachment.
  */
@@ -133,11 +131,9 @@ class Attachment
      */
     public function __construct(array $data = array())
     {
-        if (!empty($data)) {
-            foreach ($data as $property => $value) {
-                if (property_exists($this, $property)) {
-                    $this->$property = $value;
-                }
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->$property = $value;
             }
         }
     }

@@ -11,6 +11,7 @@ namespace T3Bot\Commands;
 
 use /** @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use MyProject\Proxies\__CG__\stdClass;
 use Slack\Message\Attachment;
 use Slack\Payload;
 use Slack\RealTimeClient;
@@ -81,11 +82,11 @@ abstract class AbstractCommand
             $params = explode(' ', preg_replace('/\s+/', ' ', implode(':', $commandParts)));
         }
 
+        $command = !empty($params[0]) ? $params[0] : 'help';
         $this->params = $params;
-        $command = isset($this->params[0]) ? $this->params[0] : 'help';
         $method = 'process'.ucfirst(strtolower($command));
         if (method_exists($this, $method)) {
-            return call_user_func(array($this, $method));
+            return $this->{$method}();
         } else {
             return $this->getHelp();
         }
@@ -199,7 +200,7 @@ abstract class AbstractCommand
     /**
      * build a review message.
      *
-     * @param object $item the review item
+     * @param stdClass $item the review item
      *
      * @return Message
      */

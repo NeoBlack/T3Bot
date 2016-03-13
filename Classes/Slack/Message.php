@@ -28,7 +28,7 @@ class Message
      *
      * @var string
      */
-    protected $icon_emoji;
+    protected $icon_emoji = '';
 
     /**
      * @var array<T3Bot\Slack\Message\Attachment>
@@ -42,14 +42,12 @@ class Message
      */
     public function __construct(array $data = array())
     {
-        if (!empty($data)) {
-            foreach ($data as $property => $value) {
-                if (property_exists($this, $property)) {
-                    $this->$property = $value;
-                }
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->$property = $value;
             }
         }
-        if (empty($this->icon_emoji)) {
+        if ($this->icon_emoji === '') {
             $this->icon_emoji = $GLOBALS['config']['slack']['botAvatar'];
         }
     }
