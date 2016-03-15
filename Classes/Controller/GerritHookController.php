@@ -10,25 +10,15 @@
 
 namespace T3Bot\Controller;
 
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\DriverManager;
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
-use Slack\ApiClient;
-use Slack\Message\Attachment;
 use T3Bot\Slack\Message;
 use T3Bot\Traits\GerritTrait;
 
 /**
  * Class GerritHookController.
  */
-class GerritHookController
+class GerritHookController extends AbstractHookController
 {
     use GerritTrait;
-
-    /**
-     * @var ApiClient
-     */
-    protected $slackApiClient;
 
     /**
      * public method to start processing the request.
@@ -147,76 +137,5 @@ class GerritHookController
                 }
                 break;
         }
-    }
-
-    /**
-     * @param Message $payload
-     * @param string  $channel
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function postToSlack(Message $payload, $channel)
-    {
-        $data['unfurl_links'] = false;
-        $data['unfurl_media'] = false;
-        $data['parse'] = 'none';
-        $data['text'] = $payload->getText();
-        $data['channel'] = $channel;
-        $attachments = $payload->getAttachments();
-        if (count($attachments)) {
-            $data['attachments'] = array();
-        }
-        /** @var \T3Bot\Slack\Message\Attachment $attachment */
-        foreach ($attachments as $attachment) {
-            $data['attachments'][] = Attachment::fromData([
-                'title' => $attachment->getTitle(),
-                'title_link' => $attachment->getTitleLink(),
-                'text' => $attachment->getText(),
-                'fallback' => $attachment->getFallback(),
-                'color' => $attachment->getColor(),
-                'pretext' => $attachment->getPretext(),
-                'author_name' => $attachment->getAuthorName(),
-                'author_icon' => $attachment->getAuthorIcon(),
-                'author_link' => $attachment->getAuthorLink(),
-                'image_url' => $attachment->getImageUrl(),
-                'thumb_url' => $attachment->getThumbUrl(),
-            ]);
-        }
-        if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
-            /* @noinspection PhpUndefinedFieldInspection */
-            $data['icon_emoji'] = $GLOBALS['config']['slack']['botAvatar'];
-        }
-
-        // since the bot is a real bot, we can't push directly to slack
-        // lets put the message into our messages pool
-        $this->addMessageToQueue($data);
-    }
-
-    /**
-     * @param array $data
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function addMessageToQueue(array $data)
-    {
-        /* @noinspection PhpInternalEntityUsedInspection */
-        $config = new Configuration();
-        $db = DriverManager::getConnection($GLOBALS['config']['db'], $config);
-        $db->insert('messages', ['message' => json_encode($data)]);
-    }
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     *
-     * @return bool
-     */
-    protected function endsWith($haystack, $needle)
-    {
-        // search forward starting from end minus needle length characters
-        return $needle === '' || (
-            ($temp = strlen($haystack) - strlen($needle)) >= 0
-            && strpos($haystack, $needle, $temp) !== false
-        );
     }
 }
