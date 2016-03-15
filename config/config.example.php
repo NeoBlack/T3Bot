@@ -22,8 +22,8 @@ $GLOBALS['config'] = array(
     'webhook' => array(
         't3o-registrations' => array(
             'securityToken' => '',
-            'channels' => array('#t3o-registrations')
-        )
+            'channels' => array('#t3o-registrations'),
+        ),
     ),
     'gerrit' => array(
         // secret token, to ensure the request was received from gerrit

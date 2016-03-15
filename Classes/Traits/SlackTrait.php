@@ -10,8 +10,6 @@
 
 namespace T3Bot\Traits;
 
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
-
 trait SlackTrait
 {
     /**
@@ -41,7 +39,7 @@ trait SlackTrait
     /**
      * build a review line.
      *
-     * @param stdClass $item the review item
+     * @param \stdClass $item the review item
      *
      * @return string
      */

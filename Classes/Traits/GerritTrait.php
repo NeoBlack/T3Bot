@@ -10,14 +10,12 @@
 
 namespace T3Bot\Traits;
 
-use MyProject\Proxies\__CG__\stdClass;
-
 trait GerritTrait
 {
     /**
      * @param string $query
      *
-     * @return stdClass|array|bool
+     * @return \stdClass|array|bool
      */
     protected function queryGerrit($query)
     {

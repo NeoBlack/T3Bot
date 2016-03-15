@@ -51,7 +51,7 @@ class GerritHookController extends AbstractHookController
                     /** @var array $item */
                     $item = $this->queryGerrit('change:'.$patchId);
                     $item = $item[0];
-                    /* @var stdClass $item */
+                    /* @var \stdClass $item */
                     $created = substr($item->created, 0, 19);
 
                     $message = new Message();
@@ -76,7 +76,7 @@ class GerritHookController extends AbstractHookController
                 /** @var array $item */
                 $item = $this->queryGerrit('change:'.$patchId);
                 $item = $item[0];
-                /* @var stdClass $item */
+                /* @var \stdClass $item */
                 $created = substr($item->created, 0, 19);
 
                 $message = new Message();

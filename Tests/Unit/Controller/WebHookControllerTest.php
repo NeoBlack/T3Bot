@@ -26,7 +26,7 @@ class WebHookControllerTest extends BaseTestCase
     {
         $GLOBALS['config']['webhook']['t3o-registrations'] = array(
             'securityToken' => 'SECURE_VALID_TOKEN',
-            'channels' => array('#t3o-registrations')
+            'channels' => array('#t3o-registrations'),
         );
         $GLOBALS['config']['slack']['botAvatar'] = 'botty';
     }
@@ -37,12 +37,12 @@ class WebHookControllerTest extends BaseTestCase
     public function validWebhookDataProvider()
     {
         return [
-            'webhook' => [__DIR__ . '/../Fixtures/Valid/webhook.json'],
-            'webhook_danger' => [__DIR__ . '/../Fixtures/Valid/webhook_danger.json'],
-            'webhook_info' => [__DIR__ . '/../Fixtures/Valid/webhook_info.json'],
-            'webhook_notice' => [__DIR__ . '/../Fixtures/Valid/webhook_notice.json'],
-            'webhook_ok' => [__DIR__ . '/../Fixtures/Valid/webhook_ok.json'],
-            'webhook_warning' => [__DIR__ . '/../Fixtures/Valid/webhook_warning.json']
+            'webhook' => [__DIR__.'/../Fixtures/Valid/webhook.json'],
+            'webhook_danger' => [__DIR__.'/../Fixtures/Valid/webhook_danger.json'],
+            'webhook_info' => [__DIR__.'/../Fixtures/Valid/webhook_info.json'],
+            'webhook_notice' => [__DIR__.'/../Fixtures/Valid/webhook_notice.json'],
+            'webhook_ok' => [__DIR__.'/../Fixtures/Valid/webhook_ok.json'],
+            'webhook_warning' => [__DIR__.'/../Fixtures/Valid/webhook_warning.json'],
         ];
     }
 
@@ -55,7 +55,7 @@ class WebHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('unknow', __DIR__ . '/../Fixtures/Valid/webhook.json');
+        $controller->process('unknow', __DIR__.'/../Fixtures/Valid/webhook.json');
     }
 
     /**
@@ -80,7 +80,7 @@ class WebHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('t3o-registrations', __DIR__ . '/../Fixtures/Invalid/webhook.json');
+        $controller->process('t3o-registrations', __DIR__.'/../Fixtures/Invalid/webhook.json');
     }
 
     /**
@@ -92,7 +92,7 @@ class WebHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
-        $controller->process('t3o-registrations', __DIR__ . '/../Fixtures/Valid/webhook.json');
+        $controller->process('t3o-registrations', __DIR__.'/../Fixtures/Valid/webhook.json');
     }
 
     /**

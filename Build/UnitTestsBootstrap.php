@@ -37,8 +37,8 @@ class UnitTestsBootstrap
      */
     protected function initializeConfiguration()
     {
-        include __DIR__ . '/../vendor/autoload.php';
-        include __DIR__ . '/../config/config.php';
+        include __DIR__.'/../vendor/autoload.php';
+        include __DIR__.'/../config/config.php';
 
         return $this;
     }

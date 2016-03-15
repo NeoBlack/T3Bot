@@ -12,7 +12,6 @@ namespace T3Bot\Commands;
 
 use /* @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
-use MyProject\Proxies\__CG__\stdClass;
 use Slack\Message\Attachment;
 use Slack\Payload;
 use Slack\RealTimeClient;
@@ -201,7 +200,7 @@ abstract class AbstractCommand
     /**
      * build a review message.
      *
-     * @param stdClass $item the review item
+     * @param \stdClass $item the review item
      *
      * @return Message
      */
