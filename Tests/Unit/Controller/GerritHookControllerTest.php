@@ -37,7 +37,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::once())
             ->method('postToSlack');
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Valid/change-merged.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Valid/change-merged.json');
     }
 
     /**
@@ -55,7 +55,7 @@ class GerritHookControllerTest extends BaseTestCase
                 static::isInstanceOf(Message::class),
                 static::equalTo('#rst-channel')
             );
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Valid/change-merged-with-added-rst.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Valid/change-merged-with-added-rst.json');
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = $mergeChannel;
     }
 
@@ -74,7 +74,7 @@ class GerritHookControllerTest extends BaseTestCase
                 static::isInstanceOf(Message::class),
                 static::equalTo('#rst-channel')
             );
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Valid/change-merged-with-deleted-rst.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Valid/change-merged-with-deleted-rst.json');
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = $mergeChannel;
     }
 
@@ -93,7 +93,7 @@ class GerritHookControllerTest extends BaseTestCase
                 static::isInstanceOf(Message::class),
                 static::equalTo('#rst-channel')
             );
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Valid/change-merged-with-changed-rst.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Valid/change-merged-with-changed-rst.json');
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = $mergeChannel;
     }
 
@@ -106,7 +106,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::once())
             ->method('postToSlack');
-        $controller->process('patchset-created', __DIR__.'/../Fixtures/Valid/patchset-created.json');
+        $controller->process('patchset-created', __DIR__ . '/../Fixtures/Valid/patchset-created.json');
     }
 
     /**
@@ -118,7 +118,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Invalid/change-merged.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Invalid/change-merged.json');
     }
 
     /**
@@ -130,7 +130,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('patchset-created', __DIR__.'/../Fixtures/Invalid/patchset-created.json');
+        $controller->process('patchset-created', __DIR__ . '/../Fixtures/Invalid/patchset-created.json');
     }
 
     /**
@@ -142,7 +142,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Invalid/change-merged-invalid-token.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Invalid/change-merged-invalid-token.json');
     }
 
     /**
@@ -154,7 +154,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::never())
             ->method('postToSlack');
-        $controller->process('patchset-created', __DIR__.'/../Fixtures/Invalid/patchset-created-invalid-token.json');
+        $controller->process('patchset-created', __DIR__ . '/../Fixtures/Invalid/patchset-created-invalid-token.json');
     }
 
     /**
@@ -166,7 +166,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
-        $controller->process('change-merged', __DIR__.'/../Fixtures/Valid/change-merged.json');
+        $controller->process('change-merged', __DIR__ . '/../Fixtures/Valid/change-merged.json');
     }
 
     /**
@@ -178,7 +178,7 @@ class GerritHookControllerTest extends BaseTestCase
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
-        $controller->process('patchset-created', __DIR__.'/../Fixtures/Valid/patchset-created.json');
+        $controller->process('patchset-created', __DIR__ . '/../Fixtures/Valid/patchset-created.json');
     }
 
     /**

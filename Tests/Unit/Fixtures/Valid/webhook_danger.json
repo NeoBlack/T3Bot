@@ -1,0 +1,6 @@
+{
+  "securityToken": "SECURE_VALID_TOKEN",
+  "color": "danger",
+  "title": "Title of the message",
+  "text": "Text of the message"
+}

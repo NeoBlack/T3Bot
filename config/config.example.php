@@ -19,6 +19,12 @@ $GLOBALS['config'] = array(
         // bot id (this is important, to prevent the bot to react on own messages
         'botId' => '',
     ),
+    'webhook' => array(
+        't3o-registrations' => array(
+            'securityToken' => '',
+            'channels' => array('#t3o-registrations')
+        )
+    ),
     'gerrit' => array(
         // secret token, to ensure the request was received from gerrit
         'webhookToken' => '',
