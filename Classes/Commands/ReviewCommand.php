@@ -41,11 +41,11 @@ class ReviewCommand extends AbstractCommand
     protected function processCount()
     {
         $project = !empty($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
-        $result = $this->queryGerrit("is:open branch:master project:{$project}");
+        $result = $this->queryGerrit("is:open branch:master -message:WIP project:{$project}");
         $count = count($result);
-        $result = $this->queryGerrit("label:Code-Review=-1 is:open branch:master project:{$project}");
+        $result = $this->queryGerrit("label:Code-Review=-1 is:open branch:master -message:WIP project:{$project}");
         $countMinus1 = count($result);
-        $result = $this->queryGerrit("label:Code-Review=-2 is:open branch:master project:{$project}");
+        $result = $this->queryGerrit("label:Code-Review=-2 is:open branch:master -message:WIP project:{$project}");
         $countMinus2 = count($result);
 
         $returnString = '';
