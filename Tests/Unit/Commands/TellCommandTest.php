@@ -29,7 +29,7 @@ class TellCommandTest extends BaseCommandTestCase
     public function tellDataProvider()
     {
         return [
-            'tell <@U12345> about review:12345' => ['tell <@U12345> about review:12345', 'OK, I will tell <@U12345> about your message'],
+            'tell <@U12345> about review:47640' => ['tell <@U12345> about review:47640', 'OK, I will tell <@U12345> about your message'],
             'tell <@U12345> about forge:12345' => ['tell <@U12345> about forge:12345', 'OK, I will tell <@U12345> about your message'],
             'tell <@U12345> you are so nice' => ['tell <@U12345> you are so nice', 'OK, I will tell <@U12345> about your message'],
         ];
