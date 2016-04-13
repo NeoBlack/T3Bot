@@ -31,7 +31,7 @@ class UnitTestsBootstrap
     }
 
     /**
-     * Provides the default configuration in $GLOBALS['TYPO3_CONF_VARS'].
+     * Provides the default configuration.
      *
      * @return UnitTestsBootstrap fluent interface
      */

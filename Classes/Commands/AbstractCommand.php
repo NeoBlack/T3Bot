@@ -98,6 +98,7 @@ abstract class AbstractCommand
      */
     public function sendResponse($messageToSent, $user = null)
     {
+        $data = [];
         if ($user !== null) {
             $this->client->apiCall('im.open', ['user' => $user])
                 ->then(function (Payload $response) use ($messageToSent) {
