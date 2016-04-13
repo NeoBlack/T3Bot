@@ -30,11 +30,11 @@ class ReviewCommandTest extends BaseCommandTestCase
     public function showTestDataProvider()
     {
         return array(
-            'review:show 12345' => array('12345'),
-            'review:show http://review.typo3.org/#/c/12345/' => array('http://review.typo3.org/#/c/12345/'),
-            'review:show https://review.typo3.org/#/c/12345/' => array('https://review.typo3.org/#/c/12345/'),
-            'review:show http://review.typo3.org/#/c/12345/1' => array('http://review.typo3.org/#/c/12345/1'),
-            'review:show https://review.typo3.org/#/c/12345/1' => array('https://review.typo3.org/#/c/12345/1'),
+            'review:show 47640' => array('47640'),
+            'review:show http://review.typo3.org/#/c/47640/' => array('http://review.typo3.org/#/c/47640/'),
+            'review:show https://review.typo3.org/#/c/47640/' => array('https://review.typo3.org/#/c/47640/'),
+            'review:show http://review.typo3.org/#/c/47640/1' => array('http://review.typo3.org/#/c/47640/1'),
+            'review:show https://review.typo3.org/#/c/47640/1' => array('https://review.typo3.org/#/c/47640/1'),
         );
     }
 
@@ -160,7 +160,7 @@ class ReviewCommandTest extends BaseCommandTestCase
         $attachments = $result->getAttachments();
         /** @var Message\Attachment $attachment */
         foreach ($attachments as $attachment) {
-            static::assertEquals('[BUGFIX] Log route values if a route can\'t be resolved', $attachment->getTitle());
+            static::assertEquals('[BUGFIX] Prevent fatal error when uploading file with invalid filename', $attachment->getTitle());
         }
     }
 
@@ -171,14 +171,14 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show 12345 23456',
+            'text' => 'review:show 47640 23456',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
-        $expectedString = '*[BUGFIX] Cast autoload and classAliasMap to Array* '
-            .'<https://review.typo3.org/23456|Review #23456 now>'.chr(10);
-        $expectedString .= '*[BUGFIX] Log route values if a route can\'t be resolved* '
-            .'<https://review.typo3.org/12345|Review #12345 now>';
+        $expectedString = '*[BUGFIX] Prevent fatal error when uploading file with invalid filename* '
+            .'<https://review.typo3.org/47640|Review #47640 now>'.chr(10);
+        $expectedString .= '*[BUGFIX] Cast autoload and classAliasMap to Array* '
+            .'<https://review.typo3.org/23456|Review #23456 now>';
         static::assertEquals($expectedString, $result);
     }
 
@@ -330,7 +330,7 @@ class ReviewCommandTest extends BaseCommandTestCase
 
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show 12345',
+            'text' => 'review:show 47640',
         ]);
         /** @var Message $result */
         $result = $this->command->process();
