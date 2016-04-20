@@ -27,7 +27,7 @@ class ReviewCommand extends AbstractCommand
         'help' => 'shows this help',
         'count [PROJECT=Packages/TYPO3.CMS]' => 'shows the number of currently open reviews for [PROJECT]',
         'random' => 'shows a random open review',
-        'show [Ref-ID] [[Ref-ID-2], [[Ref-ID-n]]]' => 'shows the review by given change number(s)',
+        'show [Ref-ID] [[Ref-ID-2] [[Ref-ID-n]]]' => 'shows the review by given change number(s). Do not use separators other than space.',
         'user [username] [PROJECT=Packages/TYPO3.CMS]' => 'shows the open reviews by given username for [PROJECT]',
         'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
         'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date',
