@@ -23,7 +23,7 @@ class ReviewCommand extends AbstractCommand {
 		$this->helpCommands['help'] = 'shows this help';
 		$this->helpCommands['count [PROJECT=Packages/TYPO3.CMS]'] = 'shows the number of currently open reviews for [PROJECT]';
 		$this->helpCommands['random'] = 'shows a random open review';
-		$this->helpCommands['show <Ref-ID> [<Ref-ID-2>, [<Ref-ID-n>]]'] = 'shows the review by given change number(s)';
+		$this->helpCommands['show <Ref-ID> [<Ref-ID-2> [<Ref-ID-n>]]'] = 'shows the review by given change number(s). Do not use seperators other than space.';
 		$this->helpCommands['user <username> [PROJECT=Packages/TYPO3.CMS]'] = 'shows the open reviews by given username for [PROJECT]';
 		$this->helpCommands['query <searchQuery>'] = 'shows the results for given <searchQuery>, max limit is 50';
 		$this->helpCommands['merged <YYYY-MM-DD>'] = 'shows a count of merged patches on master since given date';
