@@ -27,7 +27,9 @@ DESC="Daemon for botty script"
 PIDFILE="/var/run/${NAME}.pid"
 LOGFILE="/var/log/${NAME}.log"
 
+# CHANGE this to your PHP path
 DAEMON="/usr/bin/php"
+# CHANGE this to your bot path
 DAEMON_OPTS="/var/www/t3bot.de/botty.php"
 
 START_OPTS="--start --background --make-pidfile --pidfile ${PIDFILE} --exec ${DAEMON} ${DAEMON_OPTS}"
@@ -40,20 +42,20 @@ set -e
 case "$1" in
     start)
         echo -n "Starting ${DESC}: "
-        start-stop-daemon $START_OPTS >> $LOGFILE
+        /sbin/start-stop-daemon $START_OPTS >> $LOGFILE
         echo "$NAME."
         ;;
     stop)
         echo -n "Stopping $DESC: "
-        start-stop-daemon $STOP_OPTS
+        /sbin/start-stop-daemon $STOP_OPTS
         echo "$NAME."
         rm -f $PIDFILE
         ;;
     restart|force-reload)
         echo -n "Restarting $DESC: "
-        start-stop-daemon $STOP_OPTS
+        /sbin/start-stop-daemon $STOP_OPTS
         sleep 1
-        start-stop-daemon $START_OPTS >> $LOGFILE
+        /sbin/start-stop-daemon $START_OPTS >> $LOGFILE
         echo "$NAME."
         ;;
     *)
