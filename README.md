@@ -14,7 +14,7 @@ If you want to contribute, fork this repository and send a pull request.
 
 ## Requirements
 
-This projects require at least PHP 5.6 up to PHP 7.0 
+This project requires at least PHP 5.6 up to PHP 7.0 
 
 ## Unit Test
 
