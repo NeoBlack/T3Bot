@@ -57,7 +57,7 @@ class ChannelCommand extends AbstractCommand
         $channel = $data['channel'];
         $message = new Message();
         $message->setText(sprintf(
-            '<@%s> open channel #%s, join it <#%s>',
+            '<@%s> opened channel #%s, join it <#%s>',
             $channel['creator'],
             $channel['name'],
             $channel['id']
