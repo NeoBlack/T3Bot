@@ -94,9 +94,10 @@ abstract class AbstractCommand
 
     /**
      * @param \T3Bot\Slack\Message|string $messageToSent
-     * @param string                      $user
+     * @param string $user
+     * @param string $channel the channel id
      */
-    public function sendResponse($messageToSent, $user = null)
+    public function sendResponse($messageToSent, $user = null, $channel = null)
     {
         $data = [];
         if ($user !== null) {
@@ -142,7 +143,7 @@ abstract class AbstractCommand
                     }
                 });
         } else {
-            $channel = $this->payload->getData()['channel'];
+            $channel = $channel !== null ? $channel : $this->payload->getData()['channel'];
             if ($messageToSent instanceof Message) {
                 $data['unfurl_links'] = false;
                 $data['unfurl_media'] = false;

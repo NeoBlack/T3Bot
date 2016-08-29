@@ -18,6 +18,10 @@ $GLOBALS['config'] = array(
         'botAuthToken' => '',
         // bot id (this is important, to prevent the bot to react on own messages
         'botId' => '',
+        // Channels
+        'channels' => [
+            'channelCreated' => '#newChannel'
+        ]
     ),
     'webhook' => array(
         't3o-registrations' => array(

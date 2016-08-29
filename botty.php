@@ -31,6 +31,13 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
     }
 });
 
+$client->on('channel_created', function (Slack\Payload $payload) use ($client) {
+    if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
+        $command = new \T3Bot\Commands\ChannelCommand($payload, $client);
+        $command->processChannelCreated($payload->getData());
+    }
+});
+
 $client->on('presence_change', function (Slack\Payload $payload) use ($client) {
     if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
         $command = new \T3Bot\Commands\TellCommand($payload, $client);
