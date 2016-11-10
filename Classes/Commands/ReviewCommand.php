@@ -65,7 +65,7 @@ class ReviewCommand extends AbstractCommand
     /**
      * process random.
      *
-     * @return string
+     * @return \T3Bot\Slack\Message
      */
     protected function processRandom()
     {
@@ -91,8 +91,10 @@ class ReviewCommand extends AbstractCommand
         $results = $this->queryGerrit('is:open owner:"'.$username.'" project:'.$project);
         if (count($results) > 0) {
             $listOfItems = array('*Here are the results for '.$username.'*:');
-            foreach ($results as $item) {
-                $listOfItems[] = $this->buildReviewLine($item);
+            if (is_array($results)) {
+                foreach ($results as $item) {
+                    $listOfItems[] = $this->buildReviewLine($item);
+                }
             }
 
             return implode("\n", $listOfItems);
@@ -127,19 +129,22 @@ class ReviewCommand extends AbstractCommand
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
             $listOfItems = array();
-            foreach ($result as $item) {
-                $listOfItems[] = $this->buildReviewLine($item);
+            if (is_array($result)) {
+                foreach ($result as $item) {
+                    $listOfItems[] = $this->buildReviewLine($item);
+                }
             }
-
             $returnMessage = implode("\n", $listOfItems);
         } else {
             $result = $this->queryGerrit('change:'.$refId);
             if (!$result) {
                 return "{$refId} not found, sorry!";
             }
-            foreach ($result as $item) {
-                if ($item->_number === $refId) {
-                    $returnMessage = $this->buildReviewMessage($item);
+            if (is_array($result)) {
+                foreach ($result as $item) {
+                    if ($item->_number === $refId) {
+                        $returnMessage = $this->buildReviewMessage($item);
+                    }
                 }
             }
         }
@@ -164,10 +169,11 @@ class ReviewCommand extends AbstractCommand
         $results = $this->queryGerrit('limit:50 '.$query);
         if (count($results) > 0) {
             $listOfItems = array("*Here are the results for {$query}*:");
-            foreach ($results as $item) {
-                $listOfItems[] = $this->buildReviewLine($item);
+            if (is_array($results)) {
+                foreach ($results as $item) {
+                    $listOfItems[] = $this->buildReviewLine($item);
+                }
             }
-
             return implode("\n", $listOfItems);
         }
 

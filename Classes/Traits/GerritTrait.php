@@ -19,22 +19,7 @@ trait GerritTrait
      */
     protected function queryGerrit($query)
     {
-        $url = 'https://review.typo3.org/changes/?q='.urlencode($query);
-
-        $ch = curl_init();
-        $timeout = 5;
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        $data = curl_exec($ch);
-
-        $result = false;
-        if (!curl_errno($ch)) {
-            curl_close($ch);
-            $result = json_decode(str_replace(")]}'\n", '', $data));
-        }
-
-        return $result;
+        return $this->remoteCall('https://review.typo3.org/changes/?q='.urlencode($query));
     }
 
     /**
@@ -45,8 +30,18 @@ trait GerritTrait
      */
     protected function getFilesForPatch($changeId, $revision)
     {
-        $url = 'https://review.typo3.org/changes/'.$changeId.'/revisions/'.$revision.'/files';
+        return $this->remoteCall(
+            'https://review.typo3.org/changes/' . $changeId . '/revisions/' . $revision . '/files'
+        );
+    }
 
+    /**
+     * @param string $url
+     *
+     * @return bool|mixed
+     */
+    protected function remoteCall($url)
+    {
         $ch = curl_init();
         $timeout = 5;
         curl_setopt($ch, CURLOPT_URL, $url);

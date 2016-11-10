@@ -105,6 +105,7 @@ abstract class AbstractCommand
                 ->then(function (Payload $response) use ($messageToSent) {
                     $channel = $response->getData()['channel']['id'];
                     if ($messageToSent instanceof Message) {
+                        $data = [];
                         $data['unfurl_links'] = false;
                         $data['unfurl_media'] = false;
                         $data['parse'] = 'none';
@@ -133,6 +134,7 @@ abstract class AbstractCommand
                         $message = new \Slack\Message\Message($this->client, $data);
                         $this->client->postMessage($message);
                     } elseif (is_string($messageToSent)) {
+                        $data = [];
                         $data['unfurl_links'] = false;
                         $data['unfurl_media'] = false;
                         $data['parse'] = 'none';

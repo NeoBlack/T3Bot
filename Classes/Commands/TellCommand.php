@@ -71,11 +71,14 @@ class TellCommand extends AbstractCommand
                     $result = $this->queryGerrit('change:'.$refId);
                     $msg = '*Hi <@'.$user.'>, <@'.$notification['from_user'].'>'
                         .' ask you to look at this patch:*';
-                    foreach ($result as $item) {
-                        if ((int) $item->_number === $refId) {
-                            $message = $this->buildReviewMessage($item);
-                            $message->setText($msg);
-                            $this->sendResponse($message, $user);
+
+                    if (is_array($result)) {
+                        foreach ($result as $item) {
+                            if ((int) $item->_number === $refId) {
+                                $message = $this->buildReviewMessage($item);
+                                $message->setText($msg);
+                                $this->sendResponse($message, $user);
+                            }
                         }
                     }
                 } elseif (strpos($notification['message'], 'forge:') === 0) {

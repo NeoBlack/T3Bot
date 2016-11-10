@@ -38,6 +38,7 @@ abstract class AbstractHookController
      */
     protected function postToSlack(Message $payload, $channel)
     {
+        $data = [];
         $data['unfurl_links'] = false;
         $data['unfurl_media'] = false;
         $data['parse'] = 'none';

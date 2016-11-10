@@ -12,6 +12,7 @@ namespace T3Bot\Slack;
 
 use Slack\Payload;
 use Slack\RealTimeClient;
+use T3Bot\Commands\AbstractCommand;
 use T3Bot\Commands\BottyCommand;
 
 /**
@@ -36,7 +37,7 @@ class CommandResolver
     }
 
     /**
-     * @return \T3Bot\Commands\AbstractCommand|bool
+     * @return bool|AbstractCommand
      */
     public function resolveCommand()
     {
