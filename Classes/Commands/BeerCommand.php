@@ -73,7 +73,7 @@ class BeerCommand extends AbstractCommand
         $params = $this->params;
         array_shift($params);
         $username = trim($params[0]);
-        if (strpos($username, '<') === 0 && substr($username, 1, 1) === '@') {
+        if (strpos($username, '<') === 0 && $username[1] === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
 
             return '<@'.$username.'> has received '.$this->getBeerCountByUsername($username).' :t3beer: so far';
@@ -95,15 +95,28 @@ class BeerCommand extends AbstractCommand
         $params = $this->params;
         array_shift($params);
         $username = trim($params[0]);
-        if (strpos($username, '<') === 0 && substr($username, 1, 1) === '@') {
+        if (strpos($username, '<') === 0 && $username[1] === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
-            $this->getDatabaseConnection()->insert('beers', [
-                'to_user' => $username,
-                'from_user' => $from_user,
-            ]);
+            $record = $this->getDatabaseConnection()->fetchAll(
+                'SELECT tstamp FROM beers WHERE to_user = ? AND from_user = ? ORDER BY tstamp DESC LIMIT 1', [
+                    $username, $from_user
+                ]
+            );
+            if (!empty($record)) {
+                if ($record[0]['tstamp'] + 86400 < time()) {
+                    $data = [
+                        'to_user' => $username,
+                        'from_user' => $from_user,
+                        'tstamp' => time()
+                    ];
+                    $this->getDatabaseConnection()->insert('beers', $data);
+                    return 'Yeah, one more :t3beer: for <@'.$username.'>'.chr(10).'<@'.$username.'> has received '
+                        . $this->getBeerCountByUsername($username).' :t3beer: so far';
+                } else {
+                    return 'You spend one :t3beer: to <@' . $username . '> within in last 24 hours. Too much beer is unhealthy ;)';
+                }
+            }
 
-            return 'Yeah, one more :t3beer: for <@'.$username.'>'.chr(10).'<@'.$username.'> has received '
-                .$this->getBeerCountByUsername($username).' :t3beer: so far';
         } else {
             return '*Sorry, a username must start with a @-sign:*';
         }

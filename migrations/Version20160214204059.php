@@ -21,6 +21,7 @@ class Version20160214204059 extends AbstractMigration
         $beerTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
         $beerTable->addColumn('from_user', Type::STRING, array('length' => 32));
         $beerTable->addColumn('to_user', Type::STRING, array('length' => 32));
+        $beerTable->addColumn('tstamp', Type::INTEGER, array('unsigned' => true));
         $beerTable->setPrimaryKey(['id']);
 
         // create messages table
