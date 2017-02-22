@@ -17,15 +17,31 @@ $client = new Slack\RealTimeClient($loop);
 $client->setToken($GLOBALS['config']['slack']['botAuthToken']);
 
 $client->on('message', function (Slack\Payload $payload) use ($client) {
-    if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
-        $commandResolver = new \T3Bot\Slack\CommandResolver($payload, $client);
-        $command = $commandResolver->resolveCommand();
-        if ($command instanceof \T3Bot\Commands\AbstractCommand) {
-            $result = $command->process();
-            if ($result !== false) {
-                $command->sendResponse($result);
-            } else {
-                $command->sendResponse($command->getHelp());
+    $user = $payload->getData()['user'];
+    if (in_array($user, $GLOBALS['config']['slack']['userBlacklist'], true)) {
+        $client->apiCall('im.open', ['user' => $user])
+            ->then(function (Slack\Payload $response) use ($client) {
+                $channel = $response->getData()['channel']['id'];
+                $data = [];
+                $data['unfurl_links'] = false;
+                $data['unfurl_media'] = false;
+                $data['parse'] = 'none';
+                $data['text'] = 'Sorry, but you are blacklisted!';
+                $data['channel'] = $channel;
+                $message = new \Slack\Message\Message($client, $data);
+                $client->postMessage($message);
+            });
+    } else {
+        if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
+            $commandResolver = new \T3Bot\Slack\CommandResolver($payload, $client);
+            $command = $commandResolver->resolveCommand();
+            if ($command instanceof \T3Bot\Commands\AbstractCommand) {
+                $result = $command->process();
+                if ($result !== false) {
+                    $command->sendResponse($result);
+                } else {
+                    $command->sendResponse($command->getHelp());
+                }
             }
         }
     }

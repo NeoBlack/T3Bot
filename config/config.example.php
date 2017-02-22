@@ -21,7 +21,8 @@ $GLOBALS['config'] = array(
         // Channels
         'channels' => [
             'channelCreated' => '#newChannel'
-        ]
+        ],
+        'userBlacklist' => []
     ),
     'webhook' => array(
         't3o-registrations' => array(
