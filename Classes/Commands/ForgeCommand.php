@@ -23,17 +23,18 @@ class ForgeCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'forge';
         $this->helpCommands = [
             'help' => 'shows this help',
             'show [Issue-ID]' => 'shows the issue by given [Issue-ID]',
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**

@@ -26,10 +26,11 @@ class TellCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'tell';
         $this->helpCommands = [
@@ -38,7 +39,7 @@ class TellCommand extends AbstractCommand
             'tell [@to-user] about forge:[Issue-ID]' => 'tell the target user about the given forge issue',
             'tell [@to-user] [your message]' => 'tell the target user your message',
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**

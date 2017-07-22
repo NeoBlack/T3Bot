@@ -63,15 +63,27 @@ abstract class AbstractCommand
     protected $client;
 
     /**
+     * @var array
+     */
+    protected $configuration;
+
+    /**
+     * @var Connection
+     */
+    protected $databaseConnection;
+
+    /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->payload = $payload;
         $this->client = $client;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -145,7 +157,7 @@ abstract class AbstractCommand
 
         $message = new Message();
         $attachment = new Message\Attachment();
-        switch ($GLOBALS['config']['projectPhase']) {
+        switch ($this->configuration['projectPhase']) {
             case self::PROJECT_PHASE_STABILISATION:
                 $attachment->setColor(Message\Attachment::COLOR_WARNING);
                 $attachment->setPretext(':warning: *stabilisation phase*');
@@ -252,11 +264,10 @@ abstract class AbstractCommand
      */
     protected function getDatabaseConnection() : Connection
     {
-        if (empty($GLOBALS['DB'])) {
+        if ($this->databaseConnection === null) {
             $config = new Configuration();
-            $GLOBALS['DB'] = DriverManager::getConnection($GLOBALS['config']['db'], $config);
+            $this->databaseConnection = DriverManager::getConnection($this->configuration['db'], $config);
         }
-
-        return $GLOBALS['DB'];
+        return $this->databaseConnection;
     }
 }

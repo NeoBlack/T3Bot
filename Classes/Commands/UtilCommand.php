@@ -23,17 +23,18 @@ class UtilCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'util';
         $this->helpCommands = [
             'help' => 'shows this help',
             'coin [options]' => 'coin toss with [options] (separate by comma)',
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**

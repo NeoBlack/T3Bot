@@ -51,42 +51,22 @@ class GerritHookController extends AbstractHookController
                     $item = $item[0];
                     $created = substr($item->created, 0, 19);
 
-                    $message = new Message();
-                    $message->setText(' ');
-                    $attachment = new Message\Attachment();
-
-                    $attachment->setColor(Message\Attachment::COLOR_NOTICE);
-                    $attachment->setTitle('[NEW] ' . $item->subject);
-
                     $text = "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
                     $text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
-                    $attachment->setText($text);
-                    $attachment->setFallback($text);
-                    $message->addAttachment($attachment);
 
+                    $message = $this->buildMessage('[NEW] ' . $item->subject, $text);
                     $this->sendMessageToChannel($hook, $message);
                 }
                 break;
             case 'change-merged':
-                /** @var array $item */
                 $item = $this->queryGerrit('change:' . $patchId);
                 $item = $item[0];
-                /* @var \stdClass $item */
                 $created = substr($item->created, 0, 19);
-
-                $message = new Message();
-                $message->setText(' ');
-                $attachment = new Message\Attachment();
-
-                $attachment->setColor(Message\Attachment::COLOR_GOOD);
-                $attachment->setTitle(':white_check_mark: [MERGED] ' . $item->subject);
 
                 $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
                 $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
-                $attachment->setText($text);
-                $attachment->setFallback($text);
-                $message->addAttachment($attachment);
 
+                $message = $this->buildMessage(':white_check_mark: [MERGED] ' . $item->subject, $text, Message\Attachment::COLOR_GOOD);
                 $this->sendMessageToChannel($hook, $message);
 
                 $files = $this->getFilesForPatch($patchId, $commit);
@@ -118,8 +98,7 @@ class GerritHookController extends AbstractHookController
                                 $attachment->setTitle('A documentation file has been updated');
                                 break;
                         }
-                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName
-                            . '|' . $fileName . '>';
+                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
                         $attachment->setText($text);
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
@@ -128,6 +107,28 @@ class GerritHookController extends AbstractHookController
                 }
                 break;
         }
+    }
+
+    /**
+     * @param string $title
+     * @param string $text
+     * @param string $color
+     *
+     * @return Message
+     */
+    protected function buildMessage(string $title, string $text, string $color = Message\Attachment::COLOR_NOTICE) : Message
+    {
+        $message = new Message();
+        $message->setText(' ');
+        $attachment = new Message\Attachment();
+
+        $attachment->setColor($color);
+        $attachment->setTitle($title);
+
+        $attachment->setText($text);
+        $attachment->setFallback($text);
+        $message->addAttachment($attachment);
+        return $message;
     }
 
     /**

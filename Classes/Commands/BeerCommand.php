@@ -23,10 +23,11 @@ class BeerCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'beer';
         $this->helpCommands = [
@@ -36,7 +37,7 @@ class BeerCommand extends AbstractCommand
             'all' => 'show all beer counter',
             'top10' => 'show TOP 10',
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**

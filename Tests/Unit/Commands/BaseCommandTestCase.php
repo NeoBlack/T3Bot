@@ -37,6 +37,6 @@ class BaseCommandTestCase extends BaseTestCase
         $payload = new Payload($payloadData);
         /** @var RealTimeClient $client */
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
-        $this->command = new $commandClass($payload, $client);
+        $this->command = new $commandClass($payload, $client, $GLOBALS['config']);
     }
 }

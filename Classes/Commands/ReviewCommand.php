@@ -24,10 +24,11 @@ class ReviewCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'review';
         $this->helpCommands = [
@@ -39,7 +40,7 @@ class ReviewCommand extends AbstractCommand
             'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
             'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date',
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**

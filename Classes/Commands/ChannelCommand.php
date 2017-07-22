@@ -24,16 +24,17 @@ class ChannelCommand extends AbstractCommand
     /**
      * AbstractCommand constructor.
      *
-     * @param Payload        $payload
+     * @param Payload $payload
      * @param RealTimeClient $client
+     * @param array|null $configuration
      */
-    public function __construct(Payload $payload, RealTimeClient $client)
+    public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {
         $this->commandName = 'channel';
         $this->helpCommands = [
             'help' => 'shows this help'
         ];
-        parent::__construct($payload, $client);
+        parent::__construct($payload, $client, $configuration);
     }
 
     /**
@@ -69,6 +70,6 @@ class ChannelCommand extends AbstractCommand
             $channel['name'],
             $channel['id']
         ));
-        $this->sendResponse($message, null, $GLOBALS['config']['slack']['channels']['channelCreated']);
+        $this->sendResponse($message, null, $this->configuration['slack']['channels']['channelCreated']);
     }
 }

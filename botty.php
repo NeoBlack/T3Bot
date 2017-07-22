@@ -35,7 +35,7 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
     } else {
         if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
             $commandResolver = new \T3Bot\Slack\CommandResolver($payload, $client);
-            $command = $commandResolver->resolveCommand();
+            $command = $commandResolver->resolveCommand($GLOBALS['config']);
             if ($command instanceof \T3Bot\Commands\AbstractCommand) {
                 $result = $command->process();
                 if ($result !== false) {
@@ -50,14 +50,14 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
 
 $client->on('channel_created', function (Slack\Payload $payload) use ($client) {
     if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
-        $command = new \T3Bot\Commands\ChannelCommand($payload, $client);
+        $command = new \T3Bot\Commands\ChannelCommand($payload, $client, $GLOBALS['config']);
         $command->processChannelCreated($payload->getData());
     }
 });
 
 $client->on('presence_change', function (Slack\Payload $payload) use ($client) {
     if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
-        $command = new \T3Bot\Commands\TellCommand($payload, $client);
+        $command = new \T3Bot\Commands\TellCommand($payload, $client, $GLOBALS['config']);
         $command->processPresenceChange($payload->getData()['user'], $payload->getData()['presence']);
     }
 });

@@ -78,8 +78,8 @@ abstract class AbstractHookController
                 'thumb_url' => $attachment->getThumbUrl(),
             ]);
         }
-        if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
-            $data['icon_emoji'] = $GLOBALS['config']['slack']['botAvatar'];
+        if (!empty($this->configuration['slack']['botAvatar'])) {
+            $data['icon_emoji'] = $this->configuration['slack']['botAvatar'];
         }
 
         // since the bot is a real bot, we can't push directly to slack
@@ -95,7 +95,7 @@ abstract class AbstractHookController
     protected function addMessageToQueue(array $data)
     {
         $config = new Configuration();
-        $db = DriverManager::getConnection($GLOBALS['config']['db'], $config);
+        $db = DriverManager::getConnection($this->configuration['db'], $config);
         $db->insert('messages', ['message' => json_encode($data)]);
     }
 

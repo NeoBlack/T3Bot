@@ -36,28 +36,30 @@ class CommandResolver
     }
 
     /**
+     * @param array|null $configuration
+     *
      * @return bool|AbstractCommand
      */
-    public function resolveCommand()
+    public function resolveCommand(array $configuration = null)
     {
         $message = $this->payload->getData()['text'];
         $parts = explode(':', $message);
         $command = ucfirst(strtolower($parts[0]));
         $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
         if (class_exists($commandClass)) {
-            return new $commandClass($this->payload, $this->client);
+            return new $commandClass($this->payload, $this->client, $configuration);
         }
 
         $parts = explode(' ', $message);
         $command = ucfirst(strtolower($parts[0]));
         $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
         if (class_exists($commandClass)) {
-            return new $commandClass($this->payload, $this->client);
+            return new $commandClass($this->payload, $this->client, $configuration);
         }
 
         $resultCommand = false;
-        if (strpos($message, 'botty') !== false || strpos($message, $GLOBALS['config']['slack']['botId']) !== false) {
-            $resultCommand = new BottyCommand($this->payload, $this->client);
+        if (strpos($message, 'botty') !== false || strpos($message, $configuration['slack']['botId']) !== false) {
+            $resultCommand = new BottyCommand($this->payload, $this->client, $configuration);
         }
 
         return $resultCommand;

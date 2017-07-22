@@ -104,7 +104,7 @@ class TellCommandTest extends BaseCommandTestCase
         ]);
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
         /** @var TellCommand|\PHPUnit_Framework_MockObject_MockObject $command */
-        $command = $this->getMock(TellCommand::class, ['sendResponse'], [$payload, $client]);
+        $command = $this->getMock(TellCommand::class, ['sendResponse'], [$payload, $client, $GLOBALS['config']]);
         $command
             ->expects(static::exactly(1))
             ->method('sendResponse');

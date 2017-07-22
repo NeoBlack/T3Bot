@@ -65,7 +65,7 @@ class CommandResolverTest extends BaseTestCase
         /** @var RealTimeClient $client */
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
         $commandResolver = new CommandResolver($payload, $client);
-        $subject = $commandResolver->resolveCommand();
+        $subject = $commandResolver->resolveCommand($GLOBALS['config']);
         if ($expectedClass === false) {
             static::assertFalse($subject);
         } else {
