@@ -9,35 +9,45 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
+use T3Bot\Slack\Message;
+
 /**
  * Class ReviewCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 class ReviewCommand extends AbstractCommand
 {
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'review';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help',
-        'count [PROJECT=Packages/TYPO3.CMS]' => 'shows the number of currently open reviews for [PROJECT]',
-        'random' => 'shows a random open review',
-        'show [Ref-ID] [[Ref-ID-2] [[Ref-ID-n]]]' => 'shows the review by given change number(s). Do not use separators other than space.',
-        'user [username] [PROJECT=Packages/TYPO3.CMS]' => 'shows the open reviews by given username for [PROJECT]',
-        'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
-        'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date',
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'review';
+        $this->helpCommands = [
+            'help' => 'shows this help',
+            'count [PROJECT=Packages/TYPO3.CMS]' => 'shows the number of currently open reviews for [PROJECT]',
+            'random' => 'shows a random open review',
+            'show [Ref-ID] [[Ref-ID-2] [[Ref-ID-n]]]' => 'shows the review by given change number(s). Do not use separators other than space.',
+            'user [username] [PROJECT=Packages/TYPO3.CMS]' => 'shows the open reviews by given username for [PROJECT]',
+            'query [searchQuery]' => 'shows the results for given [searchQuery], max limit is 50',
+            'merged [YYYY-MM-DD]' => 'shows a count of merged patches on master since given date',
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * process count.
      *
      * @return string
      */
-    protected function processCount()
+    protected function processCount() : string
     {
         $project = !empty($this->params[1]) ? $this->params[1] : 'Packages/TYPO3.CMS';
         $result = $this->queryGerrit("is:open branch:master -message:WIP project:{$project}");
@@ -64,9 +74,9 @@ class ReviewCommand extends AbstractCommand
     /**
      * process random.
      *
-     * @return \T3Bot\Slack\Message
+     * @return Message
      */
-    protected function processRandom()
+    protected function processRandom() : Message
     {
         /** @var array $result */
         $result = $this->queryGerrit('is:open project:Packages/TYPO3.CMS');
@@ -80,7 +90,7 @@ class ReviewCommand extends AbstractCommand
      *
      * @return string
      */
-    protected function processUser()
+    protected function processUser() : string
     {
         $username = !empty($this->params[1]) ? $this->params[1] : null;
         $project = !empty($this->params[2]) ? $this->params[2] : 'Packages/TYPO3.CMS';
@@ -97,20 +107,19 @@ class ReviewCommand extends AbstractCommand
             }
 
             return implode("\n", $listOfItems);
-        } else {
-            return $username . ' has no open reviews or username is unknown';
         }
+        return $username . ' has no open reviews or username is unknown';
     }
 
     /**
      * process count.
      *
-     * @return string
+     * @return string|Message
      */
     protected function processShow()
     {
-        $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([\d]*)(?:.*)*/i';
-        $refId = isset($this->params[1]) ? $this->params[1] : null;
+        $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([\d]*)(?:.*)/i';
+        $refId = $this->params[1] ?? null;
         if (preg_match_all($urlPattern, $refId, $matches)) {
             $refId = (int) $matches[1][0];
         } else {
@@ -133,7 +142,7 @@ class ReviewCommand extends AbstractCommand
                     $listOfItems[] = $this->buildReviewLine($item);
                 }
             }
-            $returnMessage = implode("\n", $listOfItems);
+            $returnMessage = implode(chr(10), $listOfItems);
         } else {
             $result = $this->queryGerrit('change:' . $refId);
             if (!$result) {
@@ -156,7 +165,7 @@ class ReviewCommand extends AbstractCommand
      *
      * @return string
      */
-    protected function processQuery()
+    protected function processQuery() : string
     {
         $queryParts = $this->params;
         array_shift($queryParts);
@@ -173,7 +182,7 @@ class ReviewCommand extends AbstractCommand
                     $listOfItems[] = $this->buildReviewLine($item);
                 }
             }
-            return implode("\n", $listOfItems);
+            return implode(chr(10), $listOfItems);
         }
 
         return "{$query} not found, sorry!";
@@ -182,7 +191,7 @@ class ReviewCommand extends AbstractCommand
     /**
      * @return string
      */
-    protected function processMerged()
+    protected function processMerged() : string
     {
         $query = 'project:Packages/TYPO3.CMS status:merged after:###DATE### branch:master';
 
@@ -205,7 +214,7 @@ class ReviewCommand extends AbstractCommand
      *
      * @return bool
      */
-    protected function isDateFormatCorrect($date)
+    protected function isDateFormatCorrect($date) : bool
     {
         return preg_match('/[\d]{4}-[\d]{2}-[\d]{2}/', $date) === 1;
     }

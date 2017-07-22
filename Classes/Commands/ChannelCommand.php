@@ -9,24 +9,32 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
 use T3Bot\Slack\Message;
 
 /**
  * Class ChannelCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 class ChannelCommand extends AbstractCommand
 {
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'channel';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help'
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'channel';
+        $this->helpCommands = [
+            'help' => 'shows this help'
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * @return bool|string

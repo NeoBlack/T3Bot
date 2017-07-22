@@ -21,6 +21,9 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /** @noinspection LongInheritanceChainInspection */
 class BeerCommandTest extends BaseCommandTestCase
 {
+    /**
+     *
+     */
     public function tearDown()
     {
         DriverManager::getConnection($GLOBALS['config']['db'], new Configuration())
@@ -30,6 +33,7 @@ class BeerCommandTest extends BaseCommandTestCase
             ]);
         parent::tearDown();
     }
+
     /**
      * @test
      */

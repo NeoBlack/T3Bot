@@ -22,6 +22,9 @@ use T3Bot\Traits\SlackTrait;
 
 /**
  * Class AbstractCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 abstract class AbstractCommand
 {
@@ -34,7 +37,7 @@ abstract class AbstractCommand
     const PROJECT_PHASE_FEATURE_FREEZE = 'feature_freeze';
 
     /**
-     * @var
+     * @var string
      */
     protected $commandName;
 

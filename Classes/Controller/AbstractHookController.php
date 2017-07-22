@@ -64,7 +64,6 @@ abstract class AbstractHookController
             ]);
         }
         if (!empty($GLOBALS['config']['slack']['botAvatar'])) {
-            /* @noinspection PhpUndefinedFieldInspection */
             $data['icon_emoji'] = $GLOBALS['config']['slack']['botAvatar'];
         }
 
@@ -80,7 +79,6 @@ abstract class AbstractHookController
      */
     protected function addMessageToQueue(array $data)
     {
-        /* @noinspection PhpInternalEntityUsedInspection */
         $config = new Configuration();
         $db = DriverManager::getConnection($GLOBALS['config']['db'], $config);
         $db->insert('messages', ['message' => json_encode($data)]);
@@ -92,7 +90,7 @@ abstract class AbstractHookController
      *
      * @return bool
      */
-    protected function endsWith($haystack, $needle)
+    protected function endsWith($haystack, $needle) : bool
     {
         // search forward starting from end minus needle length characters
         return $needle === '' || (

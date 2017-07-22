@@ -9,28 +9,37 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
+
 /**
  * Class UtilCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 class UtilCommand extends AbstractCommand
 {
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'util';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help',
-        'coin [options]' => 'coin toss with [options] (separate by comma)',
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'util';
+        $this->helpCommands = [
+            'help' => 'shows this help',
+            'coin [options]' => 'coin toss with [options] (separate by comma)',
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * @return string
      */
-    protected function processCoin()
+    protected function processCoin() : string
     {
         $params = $this->params;
         array_shift($params);
@@ -43,7 +52,7 @@ class UtilCommand extends AbstractCommand
             return '*Botty says:* _it is undecidable ..._';
         }
 
-        $option = $options[mt_rand(0, count($options) - 1)];
+        $option = $options[random_int(0, count($options) - 1)];
 
         return '*Botty says:* _' . $option . '_';
     }

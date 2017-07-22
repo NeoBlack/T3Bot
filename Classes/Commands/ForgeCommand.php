@@ -9,32 +9,41 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
+
 /**
  * Class ForgeCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 class ForgeCommand extends AbstractCommand
 {
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'forge';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help',
-        'show [Issue-ID]' => 'shows the issue by given [Issue-ID]',
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'forge';
+        $this->helpCommands = [
+            'help' => 'shows this help',
+            'show [Issue-ID]' => 'shows the issue by given [Issue-ID]',
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * process show.
      *
      * @return string
      */
-    protected function processShow()
+    protected function processShow() : string
     {
-        $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([\d]*)(?:.*)*/i';
+        $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([\d]*)(?:.*)/i';
         $issueNumber = !empty($this->params[1]) ? $this->params[1] : '';
         if (preg_match_all($urlPattern, $issueNumber, $matches)) {
             $issueNumber = (int) $matches[1][0];

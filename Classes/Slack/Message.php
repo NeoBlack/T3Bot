@@ -55,7 +55,7 @@ class Message
     /**
      * @return string
      */
-    public function getText()
+    public function getText() : string
     {
         return $this->text;
     }
@@ -71,7 +71,7 @@ class Message
     /**
      * @return string
      */
-    public function getIconEmoji()
+    public function getIconEmoji() : string
     {
         return $this->icon_emoji;
     }
@@ -87,7 +87,7 @@ class Message
     /**
      * @return array
      */
-    public function getAttachments()
+    public function getAttachments() : array
     {
         return $this->attachments;
     }

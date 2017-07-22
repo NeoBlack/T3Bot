@@ -28,7 +28,7 @@ class Attachment
      *
      * @var string
      */
-    protected $fallback;
+    protected $fallback = '';
 
     /**
      * Color for the attachment
@@ -45,14 +45,14 @@ class Attachment
      *
      * @var string
      */
-    protected $pretext;
+    protected $pretext = '';
 
     /**
      * Small text used to display the author's name.
      *
      * @var string
      */
-    protected $author_name;
+    protected $author_name = '';
 
     /**
      * A valid URL that will hyperlink the author_name text mentioned above.
@@ -60,7 +60,7 @@ class Attachment
      *
      * @var string
      */
-    protected $author_link;
+    protected $author_link = '';
 
     /**
      * A valid URL that displays a small 16x16px image to the left of the author_name text.
@@ -68,14 +68,14 @@ class Attachment
      *
      * @var string
      */
-    protected $author_icon;
+    protected $author_icon = '';
 
     /**
      * The title is displayed as larger, bold text near the top of a message attachment.
      *
      * @var string
      */
-    protected $title;
+    protected $title = '';
 
     /**
      * By passing a valid URL in the title_link parameter (optional), the title text
@@ -83,7 +83,7 @@ class Attachment
      *
      * @var string
      */
-    protected $title_link;
+    protected $title_link = '';
 
     /**
      * This is the main text in a message attachment, and can contain standard message
@@ -92,7 +92,7 @@ class Attachment
      *
      * @var string
      */
-    protected $text;
+    protected $text = '';
 
     /**
      * Fields are defined as an array, and hashes contained within it will be displayed
@@ -110,7 +110,7 @@ class Attachment
      *
      * @var string
      */
-    protected $image_url;
+    protected $image_url = '';
 
     /**
      * A valid URL to an image file that will be displayed as a thumbnail on the right
@@ -122,7 +122,7 @@ class Attachment
      *
      * @var string
      */
-    protected $thumb_url;
+    protected $thumb_url = '';
 
     /**
      * Constructor for an attachment.
@@ -141,7 +141,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getFallback()
+    public function getFallback() : string
     {
         return $this->fallback;
     }
@@ -157,7 +157,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getColor()
+    public function getColor() : string
     {
         return $this->color;
     }
@@ -173,7 +173,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getPretext()
+    public function getPretext() : string
     {
         return $this->pretext;
     }
@@ -189,7 +189,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getAuthorName()
+    public function getAuthorName() : string
     {
         return $this->author_name;
     }
@@ -205,7 +205,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getAuthorLink()
+    public function getAuthorLink() : string
     {
         return $this->author_link;
     }
@@ -221,7 +221,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getAuthorIcon()
+    public function getAuthorIcon() : string
     {
         return $this->author_icon;
     }
@@ -237,7 +237,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle() : string
     {
         return $this->title;
     }
@@ -253,7 +253,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getTitleLink()
+    public function getTitleLink() : string
     {
         return $this->title_link;
     }
@@ -269,7 +269,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getText()
+    public function getText() : string
     {
         return $this->text;
     }
@@ -285,7 +285,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl() : string
     {
         return $this->image_url;
     }
@@ -301,7 +301,7 @@ class Attachment
     /**
      * @return string
      */
-    public function getThumbUrl()
+    public function getThumbUrl() : string
     {
         return $this->thumb_url;
     }

@@ -9,8 +9,14 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
+
 /**
  * Class TellCommand.
+ *
+ * @property array helpCommands
+ * @property string commandName
  */
 class TellCommand extends AbstractCommand
 {
@@ -18,19 +24,22 @@ class TellCommand extends AbstractCommand
     const PRESENCE_AWAY = 'away';
 
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'tell';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help',
-        'tell [@to-user] about review:[Gerrit-ID]' => 'tell the target user about the given review',
-        'tell [@to-user] about forge:[Issue-ID]' => 'tell the target user about the given forge issue',
-        'tell [@to-user] [your message]' => 'tell the target user your message',
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'tell';
+        $this->helpCommands = [
+            'help' => 'shows this help',
+            'tell [@to-user] about review:[Gerrit-ID]' => 'tell the target user about the given review',
+            'tell [@to-user] about forge:[Issue-ID]' => 'tell the target user about the given forge issue',
+            'tell [@to-user] [your message]' => 'tell the target user your message',
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * @return bool|string
@@ -58,11 +67,14 @@ class TellCommand extends AbstractCommand
     public function processPresenceChange($user, $presence)
     {
         if ($presence === self::PRESENCE_ACTIVE) {
-            $notifications = $this->getDatabaseConnection()
-                ->fetchAll(
-                    'SELECT * FROM notifications WHERE to_user = ? AND delivered = ?',
-                    [$user, '0000-00-00 00:00:00']
-                );
+            $queryBuilder = $this->getDatabaseConnection()->createQueryBuilder();
+            $notifications = $queryBuilder
+                ->select('*')
+                ->from('notifications')
+                ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($user)))
+                ->andWhere($queryBuilder->expr()->eq('delivered', $queryBuilder->createNamedParameter('0000-00-00 00:00:00')))
+                ->execute()
+                ->fetchAll();
             foreach ($notifications as $notification) {
                 if (strpos($notification['message'], 'review:') === 0) {
                     $parts = explode(':', $notification['message']);
@@ -111,7 +123,7 @@ class TellCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function processTell()
+    protected function processTell() : string
     {
         $params = $this->params;
         array_shift($params);

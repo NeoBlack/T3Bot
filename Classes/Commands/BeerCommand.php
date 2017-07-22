@@ -9,26 +9,35 @@
  */
 namespace T3Bot\Commands;
 
+use Slack\Payload;
+use Slack\RealTimeClient;
+
 /**
  * Class BeerCommand.
+ *
+ * @property string commandName
+ * @property array helpCommands
  */
 class BeerCommand extends AbstractCommand
 {
     /**
-     * @var string
+     * AbstractCommand constructor.
+     *
+     * @param Payload        $payload
+     * @param RealTimeClient $client
      */
-    protected $commandName = 'beer';
-
-    /**
-     * @var array
-     */
-    protected $helpCommands = [
-        'help' => 'shows this help',
-        'stats [username]' => 'show beer counter for [username]',
-        'for [username]' => 'give [username] a T3Beer',
-        'all' => 'show all beer counter',
-        'top10' => 'show TOP 10',
-    ];
+    public function __construct(Payload $payload, RealTimeClient $client)
+    {
+        $this->commandName = 'beer';
+        $this->helpCommands = [
+            'help' => 'shows this help',
+            'stats [username]' => 'show beer counter for [username]',
+            'for [username]' => 'give [username] a T3Beer',
+            'all' => 'show all beer counter',
+            'top10' => 'show TOP 10',
+        ];
+        parent::__construct($payload, $client);
+    }
 
     /**
      * stats for all beer counter.
@@ -95,15 +104,21 @@ class BeerCommand extends AbstractCommand
         $username = trim($params[0]);
         if (strpos($username, '<') === 0 && $username[1] === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
-            $record = $this->getDatabaseConnection()->fetchAll(
-                'SELECT tstamp FROM beers WHERE to_user = ? AND from_user = ? ORDER BY tstamp DESC LIMIT 1', [
-                    $username, $from_user
-                ]
-            );
+            $queryBuilder = $this->getDatabaseConnection()
+                ->createQueryBuilder();
+            $record = $queryBuilder
+                ->select('tstamp')
+                ->from('beers')
+                ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($username)))
+                ->andWhere($queryBuilder->expr()->eq('from_user', $queryBuilder->createNamedParameter($from_user)))
+                ->orderBy('tstamp', 'DESC')
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
             $addBeer = false;
             if (empty($record)) {
                 $addBeer = true;
-            } elseif ($record[0]['tstamp'] + 86400 < time()) {
+            } elseif ($record['tstamp'] + 86400 < time()) {
                 $addBeer = true;
             }
             if ($addBeer) {
@@ -130,8 +145,14 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerCountByUsername($username) : int
     {
-        return count($this->getDatabaseConnection()
-            ->fetchAll('SELECT * FROM beers WHERE to_user = ?', [$username]));
+        $queryBuilder = $this->getDatabaseConnection()
+            ->createQueryBuilder();
+        return $queryBuilder
+            ->select('*')
+            ->from('beers')
+            ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($username)))
+            ->execute()
+            ->rowCount();
     }
 
     /**
@@ -141,8 +162,12 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerCountAll() : int
     {
-        return count($this->getDatabaseConnection()
-            ->fetchAll('SELECT * FROM beers'));
+        return $this->getDatabaseConnection()
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('beers')
+            ->execute()
+            ->rowCount();
     }
 
     /**
@@ -152,8 +177,14 @@ class BeerCommand extends AbstractCommand
      */
     protected function getBeerTop10() : array
     {
-        return $this->getDatabaseConnection()->fetchAll(
-            'SELECT count(*) as cnt, to_user as username FROM beers GROUP BY to_user ORDER BY cnt DESC LIMIT 10'
-        );
+        return $this->getDatabaseConnection()
+            ->createQueryBuilder()
+            ->select('count(*) AS cnt', 'to_user AS username')
+            ->from('beers')
+            ->groupBy('to_user')
+            ->orderBy('cnt', 'DESC')
+            ->setMaxResults(10)
+            ->execute()
+            ->fetchAll();
     }
 }

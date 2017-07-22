@@ -77,8 +77,10 @@ class WebHookController extends AbstractHookController
         $attachment->setFallback($json->text);
         $message->addAttachment($attachment);
 
-        foreach ($hookConfiguration['channels'] as $channel) {
-            $this->postToSlack($message, $channel);
+        if (is_array($hookConfiguration['channels'])) {
+            foreach ($hookConfiguration['channels'] as $channel) {
+                $this->postToSlack($message, $channel);
+            }
         }
     }
 }

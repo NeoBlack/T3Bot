@@ -47,10 +47,8 @@ class GerritHookController extends AbstractHookController
         switch ($hook) {
             case 'patchset-created':
                 if ($patchSet === 1 && $branch === 'master') {
-                    /** @var array $item */
                     $item = $this->queryGerrit('change:' . $patchId);
                     $item = $item[0];
-                    /* @var \stdClass $item */
                     $created = substr($item->created, 0, 19);
 
                     $message = new Message();
@@ -66,8 +64,10 @@ class GerritHookController extends AbstractHookController
                     $attachment->setFallback($text);
                     $message->addAttachment($attachment);
 
-                    foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                        $this->postToSlack($message, $channel);
+                    if (is_array($GLOBALS['config']['gerrit'][$hook]['channels'])) {
+                        foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+                            $this->postToSlack($message, $channel);
+                        }
                     }
                 }
                 break;
@@ -91,8 +91,10 @@ class GerritHookController extends AbstractHookController
                 $attachment->setFallback($text);
                 $message->addAttachment($attachment);
 
-                foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                    $this->postToSlack($message, $channel);
+                if (is_array($GLOBALS['config']['gerrit'][$hook]['channels'])) {
+                    foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
+                        $this->postToSlack($message, $channel);
+                    }
                 }
 
                 $files = $this->getFilesForPatch($patchId, $commit);
@@ -130,8 +132,10 @@ class GerritHookController extends AbstractHookController
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
                     }
-                    foreach ($GLOBALS['config']['gerrit']['rst-merged']['channels'] as $channel) {
-                        $this->postToSlack($message, $channel);
+                    if (is_array($GLOBALS['config']['gerrit']['rst-merged']['channels'])) {
+                        foreach ($GLOBALS['config']['gerrit']['rst-merged']['channels'] as $channel) {
+                            $this->postToSlack($message, $channel);
+                        }
                     }
                 }
                 break;
