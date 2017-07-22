@@ -18,7 +18,8 @@ $client->setToken($GLOBALS['config']['slack']['botAuthToken']);
 
 $client->on('message', function (Slack\Payload $payload) use ($client) {
     $user = $payload->getData()['user'];
-    if (in_array($user, $GLOBALS['config']['slack']['userBlacklist'], true)) {
+    $blackList = array_map('trim', explode(',', $GLOBALS['config']['slack']['userBlacklist']));
+    if (in_array($user, $blackList, true)) {
         $client->apiCall('im.open', ['user' => $user])
             ->then(function (Slack\Payload $response) use ($client) {
                 $channel = $response->getData()['channel']['id'];

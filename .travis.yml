@@ -31,7 +31,7 @@ before_script:
 - phpenv config-rm xdebug.ini
 - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 - mysql -e 'create database t3bot;'
-- cp config/config.example.php config/config.php
+- cp .env.example .env
 - composer install
 - ./bin/doctrine-migrations --no-interaction migrations:migrate
 

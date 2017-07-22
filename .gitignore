@@ -2,9 +2,7 @@
 .DS_Store
 
 ; Configuration file
-config/config.php
-config/config.*.php
-!config/config.example.php
+.env
 
 ; PHPStorm settings
 .idea/
