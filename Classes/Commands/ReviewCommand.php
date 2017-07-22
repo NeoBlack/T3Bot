@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 /**
@@ -49,15 +48,15 @@ class ReviewCommand extends AbstractCommand
         $countMinus2 = count($result);
 
         $returnString = '';
-        $returnString .= 'There are currently '.$this->bold($count).' open reviews for project '
-            .$this->italic($project).' and branch master on <https://review.typo3.org/#/q/project:'.$project
-            .'+status:open+branch:master|https://review.typo3.org>'."\n";
-        $returnString .= $this->bold($countMinus1).' of '.$this->bold($count).' open reviews voted with '
-            .$this->bold('-1').' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
-            .'master+project:'.$project.'|Check now> '."\n";
-        $returnString .= $this->bold($countMinus2).' of '.$this->bold($count).' open reviews voted with '
-            .$this->bold('-2').' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
-            .'master+project:'.$project.'|Check now>';
+        $returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project '
+            . $this->italic($project) . ' and branch master on <https://review.typo3.org/#/q/project:' . $project
+            . '+status:open+branch:master|https://review.typo3.org>' . "\n";
+        $returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with '
+            . $this->bold('-1') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
+            . 'master+project:' . $project . '|Check now> ' . "\n";
+        $returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with '
+            . $this->bold('-2') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
+            . 'master+project:' . $project . '|Check now>';
 
         return $returnString;
     }
@@ -88,9 +87,9 @@ class ReviewCommand extends AbstractCommand
         if ($username === null) {
             return 'hey, I need a username!';
         }
-        $results = $this->queryGerrit('is:open owner:"'.$username.'" project:'.$project);
+        $results = $this->queryGerrit('is:open owner:"' . $username . '" project:' . $project);
         if (count($results) > 0) {
-            $listOfItems = array('*Here are the results for '.$username.'*:');
+            $listOfItems = ['*Here are the results for ' . $username . '*:'];
             if (is_array($results)) {
                 foreach ($results as $item) {
                     $listOfItems[] = $this->buildReviewLine($item);
@@ -99,7 +98,7 @@ class ReviewCommand extends AbstractCommand
 
             return implode("\n", $listOfItems);
         } else {
-            return $username.' has no open reviews or username is unknown';
+            return $username . ' has no open reviews or username is unknown';
         }
     }
 
@@ -123,12 +122,12 @@ class ReviewCommand extends AbstractCommand
         $returnMessage = '';
         $paramsCount = count($this->params);
         if ($paramsCount > 2) {
-            $changeIds = array();
+            $changeIds = [];
             for ($i = 1; $i < $paramsCount; ++$i) {
-                $changeIds[] = 'change:'.$this->params[$i];
+                $changeIds[] = 'change:' . $this->params[$i];
             }
             $result = $this->queryGerrit(implode(' OR ', $changeIds));
-            $listOfItems = array();
+            $listOfItems = [];
             if (is_array($result)) {
                 foreach ($result as $item) {
                     $listOfItems[] = $this->buildReviewLine($item);
@@ -136,7 +135,7 @@ class ReviewCommand extends AbstractCommand
             }
             $returnMessage = implode("\n", $listOfItems);
         } else {
-            $result = $this->queryGerrit('change:'.$refId);
+            $result = $this->queryGerrit('change:' . $refId);
             if (!$result) {
                 return "{$refId} not found, sorry!";
             }
@@ -166,9 +165,9 @@ class ReviewCommand extends AbstractCommand
             return 'hey, I need a query!';
         }
 
-        $results = $this->queryGerrit('limit:50 '.$query);
+        $results = $this->queryGerrit('limit:50 ' . $query);
         if (count($results) > 0) {
-            $listOfItems = array("*Here are the results for {$query}*:");
+            $listOfItems = ["*Here are the results for {$query}*:"];
             if (is_array($results)) {
                 foreach ($results as $item) {
                     $listOfItems[] = $this->buildReviewLine($item);
@@ -196,7 +195,7 @@ class ReviewCommand extends AbstractCommand
 
         $cnt = count($result);
 
-        return 'Good job folks, since '.$date.' you merged *'.$cnt.'* patches into master';
+        return 'Good job folks, since ' . $date . ' you merged *' . $cnt . '* patches into master';
     }
 
     /**
@@ -208,6 +207,6 @@ class ReviewCommand extends AbstractCommand
      */
     protected function isDateFormatCorrect($date)
     {
-        return (preg_match('/[\d]{4}-[\d]{2}-[\d]{2}/', $date) === 1);
+        return preg_match('/[\d]{4}-[\d]{2}-[\d]{2}/', $date) === 1;
     }
 }

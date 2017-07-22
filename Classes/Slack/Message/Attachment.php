@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Slack\Message;
 
 /**
@@ -101,7 +100,7 @@ class Attachment
      *
      * @var array<\T3Bot\Slack\Message\Attachment\Field>
      */
-    protected $fields = array();
+    protected $fields = [];
 
     /**
      * A valid URL to an image file that will be displayed inside a message attachment.
@@ -130,7 +129,7 @@ class Attachment
      *
      * @param array $data
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         foreach ($data as $property => $value) {
             if (property_exists($this, $property)) {

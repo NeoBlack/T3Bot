@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 /**
@@ -48,8 +47,7 @@ class ForgeCommand extends AbstractCommand
         $result = $this->queryForge("issues/{$issueNumber}");
         if ($result) {
             return $this->buildIssueMessage($result->issue);
-        } else {
-            return 'Sorry not found!';
         }
+        return 'Sorry not found!';
     }
 }

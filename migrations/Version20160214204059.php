@@ -18,15 +18,15 @@ class Version20160214204059 extends AbstractMigration
     {
         // create beer table
         $beerTable = $schema->createTable('beers');
-        $beerTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
-        $beerTable->addColumn('from_user', Type::STRING, array('length' => 32));
-        $beerTable->addColumn('to_user', Type::STRING, array('length' => 32));
-        $beerTable->addColumn('tstamp', Type::INTEGER, array('unsigned' => true));
+        $beerTable->addColumn('id', Type::INTEGER, ['unsigned' => true])->setAutoincrement(true);
+        $beerTable->addColumn('from_user', Type::STRING, ['length' => 32]);
+        $beerTable->addColumn('to_user', Type::STRING, ['length' => 32]);
+        $beerTable->addColumn('tstamp', Type::INTEGER, ['unsigned' => true]);
         $beerTable->setPrimaryKey(['id']);
 
         // create messages table
         $messagesTable = $schema->createTable('messages');
-        $messagesTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
+        $messagesTable->addColumn('id', Type::INTEGER, ['unsigned' => true])->setAutoincrement(true);
         $messagesTable->addColumn('message', Type::TEXT);
         $messagesTable->setPrimaryKey(['id']);
     }

@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Tests\Unit\Commands;
 
 use T3Bot\Commands\ForgeCommand;
@@ -16,8 +15,6 @@ use T3Bot\Tests\Unit\BaseCommandTestCase;
 /**
  * Class ForgeCommandTest.
  */
-
-/** @noinspection LongInheritanceChainInspection */
 class ForgeCommandTest extends BaseCommandTestCase
 {
     /**
@@ -25,15 +22,15 @@ class ForgeCommandTest extends BaseCommandTestCase
      *
      * @return array
      */
-    public function showTestDataProvider()
+    public function showTestDataProvider() : array
     {
-        return array(
-            'forge:show 12345' => array('12345'),
-            'forge:show http://forge.typo3.org/issues/12345/' => array('http://forge.typo3.org/issues/12345/'),
-            'forge:show https://forge.typo3.org/issues/12345/' => array('https://forge.typo3.org/issues/12345/'),
-            'forge:show http://forge.typo3.org/issues/12345' => array('http://forge.typo3.org/issues/12345'),
-            'forge:show https://forge.typo3.org/issues/12345' => array('https://forge.typo3.org/issues/12345'),
-        );
+        return [
+            'forge:show 23456' => ['23456'],
+            'forge:show http://forge.typo3.org/issues/23456/' => ['http://forge.typo3.org/issues/23456/'],
+            'forge:show https://forge.typo3.org/issues/23456/' => ['https://forge.typo3.org/issues/23456/'],
+            'forge:show http://forge.typo3.org/issues/23456' => ['http://forge.typo3.org/issues/23456'],
+            'forge:show https://forge.typo3.org/issues/23456' => ['https://forge.typo3.org/issues/23456'],
+        ];
     }
 
     /**
@@ -85,9 +82,10 @@ class ForgeCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ForgeCommand::class, [
             'user' => 'U54321',
-            'text' => 'forge:show '.$issueNumber,
+            'text' => 'forge:show ' . $issueNumber,
         ]);
         $result = $this->command->process();
-        static::assertStringStartsWith('*[Feature] Preview of news records* by _Georg Ringer_', $result);
+
+        static::assertStringStartsWith('*[Bug] Cannot edit media links with IE8* by _Michael Gotzen_', $result);
     }
 }

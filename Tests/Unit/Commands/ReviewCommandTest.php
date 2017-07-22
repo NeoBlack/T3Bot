@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Tests\Unit\Commands;
 
 use T3Bot\Commands\AbstractCommand;
@@ -29,13 +28,13 @@ class ReviewCommandTest extends BaseCommandTestCase
      */
     public function showTestDataProvider()
     {
-        return array(
-            'review:show 47640' => array('47640'),
-            'review:show http://review.typo3.org/#/c/47640/' => array('http://review.typo3.org/#/c/47640/'),
-            'review:show https://review.typo3.org/#/c/47640/' => array('https://review.typo3.org/#/c/47640/'),
-            'review:show http://review.typo3.org/#/c/47640/1' => array('http://review.typo3.org/#/c/47640/1'),
-            'review:show https://review.typo3.org/#/c/47640/1' => array('https://review.typo3.org/#/c/47640/1'),
-        );
+        return [
+            'review:show 47640' => ['47640'],
+            'review:show http://review.typo3.org/#/c/47640/' => ['http://review.typo3.org/#/c/47640/'],
+            'review:show https://review.typo3.org/#/c/47640/' => ['https://review.typo3.org/#/c/47640/'],
+            'review:show http://review.typo3.org/#/c/47640/1' => ['http://review.typo3.org/#/c/47640/1'],
+            'review:show https://review.typo3.org/#/c/47640/1' => ['https://review.typo3.org/#/c/47640/1'],
+        ];
     }
 
     /**
@@ -152,7 +151,7 @@ class ReviewCommandTest extends BaseCommandTestCase
     {
         $this->initCommandWithPayload(ReviewCommand::class, [
             'user' => 'U54321',
-            'text' => 'review:show '.$refId,
+            'text' => 'review:show ' . $refId,
         ]);
         /** @var Message $result */
         $result = $this->command->process();
@@ -176,9 +175,9 @@ class ReviewCommandTest extends BaseCommandTestCase
         /** @var Message $result */
         $result = $this->command->process();
         $expectedString = '*[BUGFIX] Prevent fatal error when uploading file with invalid filename* '
-            .'<https://review.typo3.org/47640|Review #47640 now>'.chr(10);
+            . '<https://review.typo3.org/47640|Review #47640 now>' . chr(10);
         $expectedString .= '*[BUGFIX] Cast autoload and classAliasMap to Array* '
-            .'<https://review.typo3.org/23456|Review #23456 now>';
+            . '<https://review.typo3.org/23456|Review #23456 now>';
         static::assertEquals($expectedString, $result);
     }
 

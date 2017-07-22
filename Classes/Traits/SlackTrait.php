@@ -7,9 +7,11 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Traits;
 
+/**
+ * Trait SlackTrait
+ */
 trait SlackTrait
 {
     /**
@@ -19,9 +21,9 @@ trait SlackTrait
      *
      * @return string
      */
-    protected function bold($string)
+    protected function bold($string) : string
     {
-        return '*'.$string.'*';
+        return '*' . $string . '*';
     }
 
     /**
@@ -31,9 +33,9 @@ trait SlackTrait
      *
      * @return string
      */
-    protected function italic($string)
+    protected function italic($string) : string
     {
-        return '_'.$string.'_';
+        return '_' . $string . '_';
     }
 
     /**
@@ -43,10 +45,10 @@ trait SlackTrait
      *
      * @return string
      */
-    protected function buildReviewLine($item)
+    protected function buildReviewLine($item) : string
     {
-        return $this->bold($item->subject).' <https://review.typo3.org/'.$item->_number
-        .'|Review #'.$item->_number.' now>';
+        return $this->bold($item->subject) . ' <https://review.typo3.org/' . $item->_number
+        . '|Review #' . $item->_number . ' now>';
     }
 
     /**
@@ -54,19 +56,19 @@ trait SlackTrait
      *
      * @return string
      */
-    protected function buildIssueMessage($item)
+    protected function buildIssueMessage($item) : string
     {
         $created = substr($item->created_on, 0, 19);
         $updated = substr($item->updated_on, 0, 19);
-        $text = $this->bold('['.$item->tracker->name.'] '.$item->subject)
-            .' by '.$this->italic($item->author->name)."\n";
-        $text .= 'Project: '.$this->bold($item->project->name);
-        if ($item->category->name !== '') {
-            $text .= ' | Category: '.$this->bold($item->category->name);
+        $text = $this->bold('[' . $item->tracker->name . '] ' . $item->subject)
+            . ' by ' . $this->italic($item->author->name) . "\n";
+        $text .= 'Project: ' . $this->bold($item->project->name);
+        if (!empty($item->category->name)) {
+            $text .= ' | Category: ' . $this->bold($item->category->name);
         }
-        $text .= ' | Status: '.$this->bold($item->status->name)."\n";
-        $text .= ':calendar: Created: '.$this->bold($created).' | Last update: '.$this->bold($updated)."\n";
-        $text .= '<https://forge.typo3.org/issues/'.$item->id.'|:arrow_right: View on Forge>';
+        $text .= ' | Status: ' . $this->bold($item->status->name) . "\n";
+        $text .= ':calendar: Created: ' . $this->bold($created) . ' | Last update: ' . $this->bold($updated) . "\n";
+        $text .= '<https://forge.typo3.org/issues/' . $item->id . '|:arrow_right: View on Forge>';
 
         return $text;
     }

@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Slack;
 
 use T3Bot\Slack\Message\Attachment;
@@ -34,14 +33,14 @@ class Message
     /**
      * @var array<T3Bot\Slack\Message\Attachment>
      */
-    protected $attachments = array();
+    protected $attachments = [];
 
     /**
      * Constructor for a message.
      *
      * @param array $data
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         foreach ($data as $property => $value) {
             if (property_exists($this, $property)) {

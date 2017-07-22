@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Tests\Unit\Commands;
 
 use React\EventLoop\LoopInterface;
@@ -26,11 +25,11 @@ class TellCommandTest extends BaseCommandTestCase
     /**
      * @return array
      */
-    public function tellDataProvider()
+    public function tellDataProvider() : array
     {
         return [
             'tell <@U12345> about review:47640' => ['tell <@U12345> about review:47640', 'OK, I will tell <@U12345> about your message'],
-            'tell <@U12345> about forge:12345' => ['tell <@U12345> about forge:12345', 'OK, I will tell <@U12345> about your message'],
+            'tell <@U12345> about forge:23456' => ['tell <@U12345> about forge:23456', 'OK, I will tell <@U12345> about your message'],
             'tell <@U12345> you are so nice' => ['tell <@U12345> you are so nice', 'OK, I will tell <@U12345> about your message'],
         ];
     }
@@ -87,7 +86,8 @@ class TellCommandTest extends BaseCommandTestCase
         $client = $this->getMock(RealTimeClient::class, [], [$loop]);
         /** @var TellCommand|\PHPUnit_Framework_MockObject_MockObject $command */
         $command = $this->getMock(TellCommand::class, ['sendResponse'], [$payload, $client]);
-        $command->expects(static::exactly(3))
+        $command
+            ->expects(static::exactly(3))
             ->method('sendResponse');
         $command->processPresenceChange('U12345', 'active');
     }

@@ -18,9 +18,9 @@ class Version20160214210556 extends AbstractMigration
     {
         // create notifications table
         $notificationsTable = $schema->createTable('notifications');
-        $notificationsTable->addColumn('id', Type::INTEGER, array('unsigned' => true))->setAutoincrement(true);
-        $notificationsTable->addColumn('from_user', Type::STRING, array('length' => 32));
-        $notificationsTable->addColumn('to_user', Type::STRING, array('length' => 32));
+        $notificationsTable->addColumn('id', Type::INTEGER, ['unsigned' => true])->setAutoincrement(true);
+        $notificationsTable->addColumn('from_user', Type::STRING, ['length' => 32]);
+        $notificationsTable->addColumn('to_user', Type::STRING, ['length' => 32]);
         $notificationsTable->addColumn('message', Type::TEXT);
         $notificationsTable->addColumn('created', Type::DATETIME, [
             'columnDefinition' => 'timestamp default current_timestamp',

@@ -7,11 +7,11 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-$GLOBALS['config'] = array(
+$GLOBALS['config'] = [
     // project phase
     'projectPhase' => \T3Bot\Commands\AbstractCommand::PROJECT_PHASE_DEVELOPMENT,
     // slack config
-    'slack' => array(
+    'slack' => [
         // emoji icon as bot avatar
         'botAvatar' => '',
         // bot auth token
@@ -23,31 +23,31 @@ $GLOBALS['config'] = array(
             'channelCreated' => '#newChannel'
         ],
         'userBlacklist' => []
-    ),
-    'webhook' => array(
-        't3o-registrations' => array(
+    ],
+    'webhook' => [
+        't3o-registrations' => [
             'securityToken' => '',
-            'channels' => array('#t3o-registrations'),
-        ),
-    ),
-    'gerrit' => array(
+            'channels' => ['#t3o-registrations'],
+        ],
+    ],
+    'gerrit' => [
         // secret token, to ensure the request was received from gerrit
         'webhookToken' => '',
-        'change-merged' => array(
-            'channels' => array('#random'),
-        ),
-        'rst-merged' => array(
-            'channels' => array('#random'),
-        ),
-        'patchset-created' => array(
-            'channels' => array('#random'),
-        ),
-    ),
-    'db' => array(
+        'change-merged' => [
+            'channels' => ['#random'],
+        ],
+        'rst-merged' => [
+            'channels' => ['#random'],
+        ],
+        'patchset-created' => [
+            'channels' => ['#random'],
+        ],
+    ],
+    'db' => [
         'dbname' => 't3bot',
         'user' => 'root',
         'password' => '',
         'host' => '127.0.0.1',
         'driver' => 'pdo_mysql',
-    ),
-);
+    ],
+];

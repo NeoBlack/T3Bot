@@ -7,14 +7,13 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Tests\Unit\Commands;
 
 use Prophecy\Argument;
-use T3Bot\Slack\Message;
 use Slack\Payload;
 use Slack\RealTimeClient;
 use T3Bot\Commands\AbstractCommand;
+use T3Bot\Slack\Message;
 use T3Bot\Tests\Unit\BaseCommandTestCase;
 
 /**
@@ -91,25 +90,5 @@ class AbstractCommandTest extends BaseCommandTestCase
 
         $message->setAttachments([$attachment]);
         static::assertEquals([$attachment], $message->getAttachments());
-    }
-
-    /**
-     * @test
-     */
-    public function ensureSendResponseHandlingForStringResponseWithUser()
-    {
-        static::markTestSkipped('not implemented yet');
-        // @TODO: this method should test the same stuff like ensureSendResponseHandlingForStringResponse
-        // @TODO: but for a user (direct message, instead of channel message)
-    }
-
-    /**
-     * @test
-     */
-    public function ensureSendResponseHandlingForMessageResponseWithUser()
-    {
-        static::markTestSkipped('not implemented yet');
-        // @TODO: this method should test the same stuff like ensureSendResponseHandlingForMessageResponse
-        // @TODO: but for a user (direct message, instead of channel message)
     }
 }

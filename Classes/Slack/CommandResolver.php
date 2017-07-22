@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Slack;
 
 use Slack\Payload;
@@ -44,14 +43,14 @@ class CommandResolver
         $message = $this->payload->getData()['text'];
         $parts = explode(':', $message);
         $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\'.$command.'Command';
+        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client);
         }
 
         $parts = explode(' ', $message);
         $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\'.$command.'Command';
+        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client);
         }

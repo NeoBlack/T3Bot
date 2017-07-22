@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Tests\Unit;
 
 use React\EventLoop\LoopInterface;
@@ -28,10 +27,10 @@ class BaseCommandTestCase extends BaseTestCase
     protected $command;
 
     /**
-     * @param AbstractCommand $commandClass
-     * @param array           $payloadData
+     * @param string $commandClass
+     * @param array $payloadData
      */
-    protected function initCommandWithPayload($commandClass, $payloadData)
+    protected function initCommandWithPayload(string $commandClass, array $payloadData)
     {
         $loop = $this->getMock(LoopInterface::class);
         /** @var Payload $payload */

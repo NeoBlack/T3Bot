@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <?php
 
-function cmd($command) {
+function cmd($command)
+{
     exec($command, $output);
     return $output;
 }
@@ -69,13 +70,17 @@ switch ($action) {
                 <a href="index.php?action=start" class="btn btn-success col-lg-4">Start</a>
                 <a href="index.php?action=restart" class="btn btn-warning col-lg-4">Restart</a>
                 <a href="index.php?action=stop" class="btn btn-danger col-lg-4">Stop</a>
-                <?php if ($result !== null) { ?>
+                <?php if ($result !== null) {
+    ?>
                     <div class="result" style="text-align: left;">
-<pre><?php foreach ($result as $row) { ?>
+<pre><?php foreach ($result as $row) {
+        ?>
 <?= $row . "\n" ?>
-<?php } ?></pre>
+<?php 
+    } ?></pre>
                     </div>
-                <?php } ?>
+                <?php 
+} ?>
             </div>
             <div class="mastfoot">
                 <div class="inner">

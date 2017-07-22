@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 /**
@@ -68,9 +67,9 @@ class TellCommand extends AbstractCommand
                 if (strpos($notification['message'], 'review:') === 0) {
                     $parts = explode(':', $notification['message']);
                     $refId = (int) trim($parts[1]);
-                    $result = $this->queryGerrit('change:'.$refId);
-                    $msg = '*Hi <@'.$user.'>, <@'.$notification['from_user'].'>'
-                        .' ask you to look at this patch:*';
+                    $result = $this->queryGerrit('change:' . $refId);
+                    $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
+                        . ' ask you to look at this patch:*';
 
                     if (is_array($result)) {
                         foreach ($result as $item) {
@@ -84,16 +83,16 @@ class TellCommand extends AbstractCommand
                 } elseif (strpos($notification['message'], 'forge:') === 0) {
                     $parts = explode(':', $notification['message']);
                     $issueNumber = (int) trim($parts[1]);
-                    $result = $this->queryForge('issues/'.$issueNumber);
+                    $result = $this->queryForge('issues/' . $issueNumber);
                     if ($result) {
-                        $msg = '*Hi <@'.$user.'>, <@'.$notification['from_user'].'>'
-                            .' ask you to look at this issue:*';
-                        $this->sendResponse($msg."\n".$this->buildIssueMessage($result->issue), $user);
+                        $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
+                            . ' ask you to look at this issue:*';
+                        $this->sendResponse($msg . "\n" . $this->buildIssueMessage($result->issue), $user);
                     }
                 } else {
-                    $msg = '*Hi <@'.$user.'>, here is a message from <@'.$notification['from_user'].'>'
-                        .' for you:*';
-                    $this->sendResponse($msg."\n".$notification['message'], $user);
+                    $msg = '*Hi <@' . $user . '>, here is a message from <@' . $notification['from_user'] . '>'
+                        . ' for you:*';
+                    $this->sendResponse($msg . "\n" . $notification['message'], $user);
                 }
                 $now = new \DateTime();
                 $now->setTimestamp(time());
@@ -130,6 +129,6 @@ class TellCommand extends AbstractCommand
             'message' => $message,
         ]);
 
-        return 'OK, I will tell <@'.$toUser.'> about your message';
+        return 'OK, I will tell <@' . $toUser . '> about your message';
     }
 }

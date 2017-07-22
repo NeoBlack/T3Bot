@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 /**
@@ -38,9 +37,9 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function processAll()
+    protected function processAll() : string
     {
-        return 'Yeah, '.$this->getBeerCountAll().' :t3beer: spend to all people';
+        return 'Yeah, ' . $this->getBeerCountAll() . ' :t3beer: spend to all people';
     }
 
     /**
@@ -50,15 +49,15 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function processTop10()
+    protected function processTop10() : string
     {
         $rows = $this->getBeerTop10();
-        $text = array('*Yeah, here are the TOP 10*');
+        $text = ['*Yeah, here are the TOP 10*'];
         foreach ($rows as $row) {
-            $text[] = '<@'.$row['username'].'> has received '.$row['cnt'].' :t3beer:';
+            $text[] = '<@' . $row['username'] . '> has received ' . $row['cnt'] . ' :t3beer:';
         }
 
-        return implode("\n", $text);
+        return implode(chr(10), $text);
     }
 
     /**
@@ -68,7 +67,7 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function processStats()
+    protected function processStats() : string
     {
         $params = $this->params;
         array_shift($params);
@@ -76,10 +75,9 @@ class BeerCommand extends AbstractCommand
         if (strpos($username, '<') === 0 && $username[1] === '@') {
             $username = str_replace(['<', '>', '@'], '', $username);
 
-            return '<@'.$username.'> has received '.$this->getBeerCountByUsername($username).' :t3beer: so far';
-        } else {
-            return '*Sorry, a username must start with a @-sign:*';
+            return '<@' . $username . '> has received ' . $this->getBeerCountByUsername($username) . ' :t3beer: so far';
         }
+        return '*Sorry, a username must start with a @-sign:*';
     }
 
     /**
@@ -89,7 +87,7 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function processFor()
+    protected function processFor() : string
     {
         $from_user = $this->payload->getData()['user'];
         $params = $this->params;
@@ -102,24 +100,25 @@ class BeerCommand extends AbstractCommand
                     $username, $from_user
                 ]
             );
-            if (!empty($record)) {
-                if ($record[0]['tstamp'] + 86400 < time()) {
-                    $data = [
-                        'to_user' => $username,
-                        'from_user' => $from_user,
-                        'tstamp' => time()
-                    ];
-                    $this->getDatabaseConnection()->insert('beers', $data);
-                    return 'Yeah, one more :t3beer: for <@'.$username.'>'.chr(10).'<@'.$username.'> has received '
-                        . $this->getBeerCountByUsername($username).' :t3beer: so far';
-                } else {
-                    return 'You spend one :t3beer: to <@' . $username . '> within in last 24 hours. Too much beer is unhealthy ;)';
-                }
+            $addBeer = false;
+            if (empty($record)) {
+                $addBeer = true;
+            } elseif ($record[0]['tstamp'] + 86400 < time()) {
+                $addBeer = true;
             }
-
-        } else {
-            return '*Sorry, a username must start with a @-sign:*';
+            if ($addBeer) {
+                $data = [
+                    'to_user' => $username,
+                    'from_user' => $from_user,
+                    'tstamp' => time()
+                ];
+                $this->getDatabaseConnection()->insert('beers', $data);
+                return 'Yeah, one more :t3beer: for <@' . $username . '>' . chr(10) . '<@' . $username . '> has received '
+                    . $this->getBeerCountByUsername($username) . ' :t3beer: so far';
+            }
+            return 'You spend one :t3beer: to <@' . $username . '> within in last 24 hours. Too much beer is unhealthy ;)';
         }
+        return '*Sorry, a username must start with a @-sign:*';
     }
 
     /**
@@ -129,10 +128,10 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getBeerCountByUsername($username)
+    protected function getBeerCountByUsername($username) : int
     {
         return count($this->getDatabaseConnection()
-            ->fetchAll('SELECT * FROM beers WHERE to_user = ?', array($username)));
+            ->fetchAll('SELECT * FROM beers WHERE to_user = ?', [$username]));
     }
 
     /**
@@ -140,7 +139,7 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getBeerCountAll()
+    protected function getBeerCountAll() : int
     {
         return count($this->getDatabaseConnection()
             ->fetchAll('SELECT * FROM beers'));
@@ -151,7 +150,7 @@ class BeerCommand extends AbstractCommand
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getBeerTop10()
+    protected function getBeerTop10() : array
     {
         return $this->getDatabaseConnection()->fetchAll(
             'SELECT count(*) as cnt, to_user as username FROM beers GROUP BY to_user ORDER BY cnt DESC LIMIT 10'

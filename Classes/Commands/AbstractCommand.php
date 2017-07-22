@@ -7,10 +7,10 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 use /* @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Slack\Message\Attachment;
 use Slack\Payload;
@@ -41,12 +41,12 @@ abstract class AbstractCommand
     /**
      * @var array
      */
-    protected $helpCommands = array();
+    protected $helpCommands = [];
 
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @var Payload
@@ -76,7 +76,7 @@ abstract class AbstractCommand
     public function process()
     {
         $commandParts = explode(':', $this->payload->getData()['text']);
-        $params = array();
+        $params = [];
         if (!empty($commandParts[1])) {
             array_shift($commandParts);
             $params = explode(' ', preg_replace('/\s+/', ' ', implode(':', $commandParts)));
@@ -84,16 +84,16 @@ abstract class AbstractCommand
 
         $command = !empty($params[0]) ? $params[0] : 'help';
         $this->params = $params;
-        $method = 'process'.ucfirst(strtolower($command));
+        $method = 'process' . ucfirst(strtolower($command));
         if (method_exists($this, $method)) {
             return $this->{$method}();
-        } else {
-            return $this->getHelp();
         }
+
+        return $this->getHelp();
     }
 
     /**
-     * @param \T3Bot\Slack\Message|string $messageToSent
+     * @param Message|string $messageToSent
      * @param string $user
      * @param string $channel the channel id
      */
@@ -113,7 +113,7 @@ abstract class AbstractCommand
                         $data['channel'] = $channel;
                         $attachments = $messageToSent->getAttachments();
                         if (count($attachments)) {
-                            $data['attachments'] = array();
+                            $data['attachments'] = [];
                         }
                         /** @var \T3Bot\Slack\Message\Attachment $attachment */
                         foreach ($attachments as $attachment) {
@@ -145,7 +145,7 @@ abstract class AbstractCommand
                     }
                 });
         } else {
-            $channel = $channel !== null ? $channel : $this->payload->getData()['channel'];
+            $channel = $channel ?? $this->payload->getData()['channel'];
             if ($messageToSent instanceof Message) {
                 $data['unfurl_links'] = false;
                 $data['unfurl_media'] = false;
@@ -154,7 +154,7 @@ abstract class AbstractCommand
                 $data['channel'] = $channel;
                 $attachments = $messageToSent->getAttachments();
                 if (count($attachments)) {
-                    $data['attachments'] = array();
+                    $data['attachments'] = [];
                 }
                 /** @var \T3Bot\Slack\Message\Attachment $attachment */
                 foreach ($attachments as $attachment) {
@@ -191,7 +191,7 @@ abstract class AbstractCommand
      *
      * @return string
      */
-    public function getHelp()
+    public function getHelp() : string
     {
         $result = "*HELP*\n";
         foreach ($this->helpCommands as $command => $helpText) {
@@ -208,7 +208,7 @@ abstract class AbstractCommand
      *
      * @return Message
      */
-    protected function buildReviewMessage($item)
+    protected function buildReviewMessage($item) : Message
     {
         $created = substr($item->created, 0, 19);
         $branch = $item->branch;
@@ -239,11 +239,11 @@ abstract class AbstractCommand
                 break;
         }
         $attachment->setTitle($item->subject);
-        $attachment->setTitleLink('https://review.typo3.org/'.$item->_number);
+        $attachment->setTitleLink('https://review.typo3.org/' . $item->_number);
 
-        $text .= 'Branch: '.$this->bold($branch).' | :calendar: '.$this->bold($created)
-            .' | ID: '.$this->bold($item->_number)."\n";
-        $text .= '<https://review.typo3.org/'.$item->_number.'|:arrow_right: Goto Review>';
+        $text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
+            . ' | ID: ' . $this->bold($item->_number) . "\n";
+        $text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
 
         $attachment->setText($text);
         $attachment->setFallback($text);
@@ -254,14 +254,13 @@ abstract class AbstractCommand
     }
 
     /**
-     * @return \Doctrine\DBAL\Connection
+     * @return Connection
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getDatabaseConnection()
+    protected function getDatabaseConnection() : Connection
     {
         if (empty($GLOBALS['DB'])) {
-            /* @noinspection PhpInternalEntityUsedInspection */
             $config = new Configuration();
             $GLOBALS['DB'] = DriverManager::getConnection($GLOBALS['config']['db'], $config);
         }

@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Traits;
 
 trait GerritTrait
@@ -19,7 +18,7 @@ trait GerritTrait
      */
     protected function queryGerrit($query)
     {
-        return $this->remoteCall('https://review.typo3.org/changes/?q='.urlencode($query));
+        return $this->remoteCall('https://review.typo3.org/changes/?q=' . urlencode($query));
     }
 
     /**
@@ -52,7 +51,7 @@ trait GerritTrait
         $result = false;
         if (!curl_errno($ch)) {
             curl_close($ch);
-            $result = json_decode(str_replace(")]}'\n", '', $data), true);
+            $result = json_decode(str_replace(")]}'\n", '', $data));
         }
 
         return $result;

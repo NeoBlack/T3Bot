@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Commands;
 
 /**
@@ -46,6 +45,6 @@ class UtilCommand extends AbstractCommand
 
         $option = $options[mt_rand(0, count($options) - 1)];
 
-        return '*Botty says:* _'.$option.'_';
+        return '*Botty says:* _' . $option . '_';
     }
 }

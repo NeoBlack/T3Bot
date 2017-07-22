@@ -7,7 +7,6 @@
  * @link http://www.t3bot.de
  * @link http://wiki.typo3.org/T3Bot
  */
-
 namespace T3Bot\Controller;
 
 use Doctrine\DBAL\Configuration;
@@ -46,7 +45,7 @@ abstract class AbstractHookController
         $data['channel'] = $channel;
         $attachments = $payload->getAttachments();
         if (count($attachments)) {
-            $data['attachments'] = array();
+            $data['attachments'] = [];
         }
         /** @var \T3Bot\Slack\Message\Attachment $attachment */
         foreach ($attachments as $attachment) {
