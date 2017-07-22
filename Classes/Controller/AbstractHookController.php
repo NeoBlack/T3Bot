@@ -20,6 +20,21 @@ use T3Bot\Slack\Message;
 abstract class AbstractHookController
 {
     /**
+     * @var array
+     */
+    protected $configuration;
+
+    /**
+     * GerritHookController constructor.
+     *
+     * @param array $configuration
+     */
+    public function __construct(array $configuration = [])
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * public method to start processing the request.
      *
      * @param string $hook

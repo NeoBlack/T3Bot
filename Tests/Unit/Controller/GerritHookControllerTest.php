@@ -32,7 +32,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processChangeMergedWithValidJson()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('postToSlack');
@@ -46,7 +46,7 @@ class GerritHookControllerTest extends BaseTestCase
     {
         $mergeChannel = $GLOBALS['config']['gerrit']['change-merged']['channels'];
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = [];
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::any())
             ->method('postToSlack')
@@ -65,7 +65,7 @@ class GerritHookControllerTest extends BaseTestCase
     {
         $mergeChannel = $GLOBALS['config']['gerrit']['change-merged']['channels'];
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = [];
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::any())
             ->method('postToSlack')
@@ -84,7 +84,7 @@ class GerritHookControllerTest extends BaseTestCase
     {
         $mergeChannel = $GLOBALS['config']['gerrit']['change-merged']['channels'];
         $GLOBALS['config']['gerrit']['change-merged']['channels'] = [];
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::any())
             ->method('postToSlack')
@@ -101,7 +101,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processPatchsetCreatedWithValidJson()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('postToSlack');
@@ -113,7 +113,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processChangeMergedWithInvalidJson()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -125,7 +125,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processPatchsetCreatedWithInvalidJson()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -137,7 +137,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processChangeMergedWithInvalidToken()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -149,7 +149,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processPatchsetCreatedWithInvalidToken()
     {
-        $controller = $this->getMock(GerritHookController::class, ['postToSlack']);
+        $controller = $this->getMock(GerritHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -161,7 +161,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processChangeMergedWithValidJsonAddEntryToMessageQueue()
     {
-        $controller = $this->getMock(GerritHookController::class, ['addMessageToQueue']);
+        $controller = $this->getMock(GerritHookController::class, ['addMessageToQueue'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
@@ -173,7 +173,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function processPatchsetCreatedWithValidJsonAddEntryToMessageQueue()
     {
-        $controller = $this->getMock(GerritHookController::class, ['addMessageToQueue']);
+        $controller = $this->getMock(GerritHookController::class, ['addMessageToQueue'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
@@ -185,7 +185,7 @@ class GerritHookControllerTest extends BaseTestCase
      */
     public function addMessageToQueueCreatesEntryInDatabase()
     {
-        $controller = $this->getMock(GerritHookController::class);
+        $controller = $this->getMock(GerritHookController::class, [], [$GLOBALS['config']]);
         $testMessage = [
             'message' => 'addMessageToQueueCreatesEntryInDatabase-test',
             'test-id' => uniqid('addMessageToQueueCreatesEntryInDatabase-test', true),

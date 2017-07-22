@@ -32,7 +32,7 @@ class GerritHookController extends AbstractHookController
         $entityBody = file_get_contents($input);
         $json = json_decode($entityBody);
 
-        if ($GLOBALS['config']['gerrit']['webhookToken'] !== $json->token) {
+        if ($this->configuration['gerrit']['webhookToken'] !== $json->token) {
             return;
         }
         if ($json->project !== 'Packages/TYPO3.CMS') {
@@ -64,11 +64,7 @@ class GerritHookController extends AbstractHookController
                     $attachment->setFallback($text);
                     $message->addAttachment($attachment);
 
-                    if (is_array($GLOBALS['config']['gerrit'][$hook]['channels'])) {
-                        foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                            $this->postToSlack($message, $channel);
-                        }
-                    }
+                    $this->sendMessageToChannel($hook, $message);
                 }
                 break;
             case 'change-merged':
@@ -91,11 +87,7 @@ class GerritHookController extends AbstractHookController
                 $attachment->setFallback($text);
                 $message->addAttachment($attachment);
 
-                if (is_array($GLOBALS['config']['gerrit'][$hook]['channels'])) {
-                    foreach ($GLOBALS['config']['gerrit'][$hook]['channels'] as $channel) {
-                        $this->postToSlack($message, $channel);
-                    }
-                }
+                $this->sendMessageToChannel($hook, $message);
 
                 $files = $this->getFilesForPatch($patchId, $commit);
                 $rstFiles = [];
@@ -132,13 +124,24 @@ class GerritHookController extends AbstractHookController
                         $attachment->setFallback($text);
                         $message->addAttachment($attachment);
                     }
-                    if (is_array($GLOBALS['config']['gerrit']['rst-merged']['channels'])) {
-                        foreach ($GLOBALS['config']['gerrit']['rst-merged']['channels'] as $channel) {
-                            $this->postToSlack($message, $channel);
-                        }
-                    }
+                    $this->sendMessageToChannel('rst-merged', $message);
                 }
                 break;
+        }
+    }
+
+    /**
+     * @param string $hook
+     * @param Message $message
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function sendMessageToChannel(string $hook, Message $message)
+    {
+        if (is_array($this->configuration['gerrit'][$hook]['channels'])) {
+            foreach ($this->configuration['gerrit'][$hook]['channels'] as $channel) {
+                $this->postToSlack($message, $channel);
+            }
         }
     }
 }

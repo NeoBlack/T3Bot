@@ -1,0 +1,23 @@
+checks:
+  php: true
+
+filter:
+  excluded_paths:
+    - Tests/*
+    - vendor/*
+
+build:
+  project_setup:
+    before:
+      - mysql -e 'create database t3bot;'
+      - cp .env.example .env
+      - composer install
+      - ./bin/doctrine-migrations --no-interaction migrations:migrate
+
+  tests:
+    override:
+      -
+        command: './bin/phpunit -c Build/UnitTests.xml --coverage-clover=some-file'
+        coverage:
+          file: 'some-file'
+          format: 'clover'

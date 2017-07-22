@@ -12,6 +12,7 @@ namespace T3Bot\Commands;
 use /* @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Slack\DataObject;
 use Slack\Message\Attachment;
 use Slack\Payload;
 use Slack\RealTimeClient;
@@ -102,90 +103,15 @@ abstract class AbstractCommand
      */
     public function sendResponse($messageToSent, $user = null, $channel = null)
     {
-        $data = [];
         if ($user !== null) {
             $this->client->apiCall('im.open', ['user' => $user])
                 ->then(function (Payload $response) use ($messageToSent) {
                     $channel = $response->getData()['channel']['id'];
-                    if ($messageToSent instanceof Message) {
-                        $data = [];
-                        $data['unfurl_links'] = false;
-                        $data['unfurl_media'] = false;
-                        $data['parse'] = 'none';
-                        $data['text'] = $messageToSent->getText();
-                        $data['channel'] = $channel;
-                        $attachments = $messageToSent->getAttachments();
-                        if (count($attachments)) {
-                            $data['attachments'] = [];
-                        }
-                        /** @var \T3Bot\Slack\Message\Attachment $attachment */
-                        foreach ($attachments as $attachment) {
-                            $data['attachments'][] = Attachment::fromData([
-                                'title' => $attachment->getTitle(),
-                                'title_link' => $attachment->getTitleLink(),
-                                'text' => $attachment->getText(),
-                                'fallback' => $attachment->getFallback(),
-                                'color' => $attachment->getColor(),
-                                'pretext' => $attachment->getPretext(),
-                                'author_name' => $attachment->getAuthorName(),
-                                'author_icon' => $attachment->getAuthorIcon(),
-                                'author_link' => $attachment->getAuthorLink(),
-                                'image_url' => $attachment->getImageUrl(),
-                                'thumb_url' => $attachment->getThumbUrl(),
-                            ]);
-                        }
-                        $message = new \Slack\Message\Message($this->client, $data);
-                        $this->client->postMessage($message);
-                    } elseif (is_string($messageToSent)) {
-                        $data = [];
-                        $data['unfurl_links'] = false;
-                        $data['unfurl_media'] = false;
-                        $data['parse'] = 'none';
-                        $data['text'] = $messageToSent;
-                        $data['channel'] = $channel;
-                        $data['as_user'] = true;
-                        $this->client->apiCall('chat.postMessage', $data);
-                    }
+                    $this->postMessage($messageToSent, $channel);
                 });
         } else {
             $channel = $channel ?? $this->payload->getData()['channel'];
-            if ($messageToSent instanceof Message) {
-                $data['unfurl_links'] = false;
-                $data['unfurl_media'] = false;
-                $data['parse'] = 'none';
-                $data['text'] = $messageToSent->getText();
-                $data['channel'] = $channel;
-                $attachments = $messageToSent->getAttachments();
-                if (count($attachments)) {
-                    $data['attachments'] = [];
-                }
-                /** @var \T3Bot\Slack\Message\Attachment $attachment */
-                foreach ($attachments as $attachment) {
-                    $data['attachments'][] = Attachment::fromData([
-                        'title' => $attachment->getTitle(),
-                        'title_link' => $attachment->getTitleLink(),
-                        'text' => $attachment->getText(),
-                        'fallback' => $attachment->getFallback(),
-                        'color' => $attachment->getColor(),
-                        'pretext' => $attachment->getPretext(),
-                        'author_name' => $attachment->getAuthorName(),
-                        'author_icon' => $attachment->getAuthorIcon(),
-                        'author_link' => $attachment->getAuthorLink(),
-                        'image_url' => $attachment->getImageUrl(),
-                        'thumb_url' => $attachment->getThumbUrl(),
-                    ]);
-                }
-                $message = new \Slack\Message\Message($this->client, $data);
-                $this->client->postMessage($message);
-            } elseif (is_string($messageToSent)) {
-                $data['unfurl_links'] = false;
-                $data['unfurl_media'] = false;
-                $data['parse'] = 'none';
-                $data['text'] = $messageToSent;
-                $data['channel'] = $channel;
-                $data['as_user'] = true;
-                $this->client->apiCall('chat.postMessage', $data);
-            }
+            $this->postMessage($messageToSent, $channel);
         }
     }
 
@@ -254,6 +180,69 @@ abstract class AbstractCommand
         $message->addAttachment($attachment);
 
         return $message;
+    }
+
+    /**
+     * @param string $text
+     * @param string $channel
+     *
+     * @return array
+     */
+    protected function getBaseDataArray(string $text, string $channel) : array
+    {
+        $data = [];
+        $data['unfurl_links'] = false;
+        $data['unfurl_media'] = false;
+        $data['parse'] = 'none';
+        $data['text'] = $text;
+        $data['channel'] = $channel;
+        return $data;
+    }
+
+    /**
+     * @param Message\Attachment $attachment
+     *
+     * @return DataObject
+     */
+    protected function buildAttachment(Message\Attachment $attachment) : DataObject
+    {
+        return Attachment::fromData([
+            'title' => $attachment->getTitle(),
+            'title_link' => $attachment->getTitleLink(),
+            'text' => $attachment->getText(),
+            'fallback' => $attachment->getFallback(),
+            'color' => $attachment->getColor(),
+            'pretext' => $attachment->getPretext(),
+            'author_name' => $attachment->getAuthorName(),
+            'author_icon' => $attachment->getAuthorIcon(),
+            'author_link' => $attachment->getAuthorLink(),
+            'image_url' => $attachment->getImageUrl(),
+            'thumb_url' => $attachment->getThumbUrl(),
+        ]);
+    }
+
+    /**
+     * @param Message|string $messageToSent
+     * @param string $channel
+     */
+    protected function postMessage($messageToSent, string $channel)
+    {
+        if ($messageToSent instanceof Message) {
+            $data = $this->getBaseDataArray($messageToSent->getText(), $channel);
+            $attachments = $messageToSent->getAttachments();
+            if (count($attachments)) {
+                $data['attachments'] = [];
+            }
+            foreach ($attachments as $attachment) {
+                $data['attachments'][] = $this->buildAttachment($attachment);
+            }
+            $message = new \Slack\Message\Message($this->client, $data);
+            $this->client->postMessage($message);
+        } elseif (is_string($messageToSent)) {
+            $data = $this->getBaseDataArray($messageToSent, $channel);
+            $data['as_user'] = true;
+            $this->client->apiCall('chat.postMessage', $data);
+        }
     }
 
     /**

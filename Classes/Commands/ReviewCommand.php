@@ -60,10 +60,10 @@ class ReviewCommand extends AbstractCommand
         $returnString = '';
         $returnString .= 'There are currently ' . $this->bold($count) . ' open reviews for project '
             . $this->italic($project) . ' and branch master on <https://review.typo3.org/#/q/project:' . $project
-            . '+status:open+branch:master|https://review.typo3.org>' . "\n";
+            . '+status:open+branch:master|https://review.typo3.org>' . chr(10);
         $returnString .= $this->bold($countMinus1) . ' of ' . $this->bold($count) . ' open reviews voted with '
             . $this->bold('-1') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-1+is:open+branch:'
-            . 'master+project:' . $project . '|Check now> ' . "\n";
+            . 'master+project:' . $project . '|Check now> ' . chr(10);
         $returnString .= $this->bold($countMinus2) . ' of ' . $this->bold($count) . ' open reviews voted with '
             . $this->bold('-2') . ' <https://review.typo3.org/#/q/label:Code-Review%253D-2+is:open+branch:'
             . 'master+project:' . $project . '|Check now>';
@@ -106,7 +106,7 @@ class ReviewCommand extends AbstractCommand
                 }
             }
 
-            return implode("\n", $listOfItems);
+            return implode(chr(10), $listOfItems);
         }
         return $username . ' has no open reviews or username is unknown';
     }
@@ -119,45 +119,64 @@ class ReviewCommand extends AbstractCommand
     protected function processShow()
     {
         $urlPattern = '/http[s]*:\/\/review.typo3.org\/[#\/c]*([\d]*)(?:.*)/i';
-        $refId = $this->params[1] ?? null;
+        $refId = $this->params[1] ?? 0;
         if (preg_match_all($urlPattern, $refId, $matches)) {
             $refId = (int) $matches[1][0];
         } else {
             $refId = (int) $refId;
         }
-        if ($refId === null || $refId === 0) {
+        if ($refId === 0) {
             return 'hey, I need at least one change number!';
         }
-        $returnMessage = '';
         $paramsCount = count($this->params);
         if ($paramsCount > 2) {
-            $changeIds = [];
-            for ($i = 1; $i < $paramsCount; ++$i) {
-                $changeIds[] = 'change:' . $this->params[$i];
-            }
-            $result = $this->queryGerrit(implode(' OR ', $changeIds));
-            $listOfItems = [];
-            if (is_array($result)) {
-                foreach ($result as $item) {
-                    $listOfItems[] = $this->buildReviewLine($item);
-                }
-            }
-            $returnMessage = implode(chr(10), $listOfItems);
+            $returnMessage = $this->buildReviewLineOutput();
         } else {
-            $result = $this->queryGerrit('change:' . $refId);
-            if (!$result) {
-                return "{$refId} not found, sorry!";
-            }
-            if (is_array($result)) {
-                foreach ($result as $item) {
-                    if ($item->_number === $refId) {
-                        $returnMessage = $this->buildReviewMessage($item);
-                    }
-                }
-            }
+            $returnMessage = $this->buildReviewMessageOutput($refId);
         }
 
         return $returnMessage;
+    }
+
+    /**
+     * @return string
+     */
+    protected function buildReviewLineOutput() : string
+    {
+        $paramsCount = count($this->params);
+        $changeIds = [];
+        for ($i = 1; $i < $paramsCount; ++$i) {
+            $changeIds[] = 'change:' . $this->params[$i];
+        }
+        $result = $this->queryGerrit(implode(' OR ', $changeIds));
+        $listOfItems = [];
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                $listOfItems[] = $this->buildReviewLine($item);
+            }
+        }
+        return implode(chr(10), $listOfItems);
+    }
+
+    /**
+     * @param int $refId
+     *
+     * @return string|Message
+     */
+    protected function buildReviewMessageOutput(int $refId)
+    {
+        $result = $this->queryGerrit('change:' . $refId);
+        if (!$result) {
+            return "{$refId} not found, sorry!";
+        }
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                if ($item->_number === $refId) {
+                    return $this->buildReviewMessage($item);
+                }
+            }
+        }
+        return "{$refId} not found, sorry!";
     }
 
     /**

@@ -50,7 +50,7 @@ class WebHookControllerTest extends BaseTestCase
      */
     public function processWebhookWithUnknownHook()
     {
-        $controller = $this->getMock(WebHookController::class, ['postToSlack']);
+        $controller = $this->getMock(WebHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -63,7 +63,7 @@ class WebHookControllerTest extends BaseTestCase
      */
     public function processWebhookWithValidJson($jsonFile)
     {
-        $controller = $this->getMock(WebHookController::class, ['postToSlack']);
+        $controller = $this->getMock(WebHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('postToSlack');
@@ -75,7 +75,7 @@ class WebHookControllerTest extends BaseTestCase
      */
     public function processWebhookWithInvalidJson()
     {
-        $controller = $this->getMock(WebHookController::class, ['postToSlack']);
+        $controller = $this->getMock(WebHookController::class, ['postToSlack'], [$GLOBALS['config']]);
         $controller
             ->expects(static::never())
             ->method('postToSlack');
@@ -87,7 +87,7 @@ class WebHookControllerTest extends BaseTestCase
      */
     public function processChangeMergedWithValidJsonAddEntryToMessageQueue()
     {
-        $controller = $this->getMock(WebHookController::class, ['addMessageToQueue']);
+        $controller = $this->getMock(WebHookController::class, ['addMessageToQueue'], [$GLOBALS['config']]);
         $controller
             ->expects(static::once())
             ->method('addMessageToQueue');
@@ -99,7 +99,7 @@ class WebHookControllerTest extends BaseTestCase
      */
     public function addMessageToQueueCreatesEntryInDatabase()
     {
-        $controller = $this->getMock(WebHookController::class);
+        $controller = $this->getMock(WebHookController::class, [], [$GLOBALS['config']]);
         $testMessage = [
             'message' => 'addMessageToQueueCreatesEntryInDatabase-test',
             'test-id' => uniqid('addMessageToQueueCreatesEntryInDatabase-test', true),

@@ -34,10 +34,10 @@ class WebHookController extends AbstractHookController
      */
     public function process($hook, $input = 'php://input')
     {
-        if (empty($GLOBALS['config']['webhook'][$hook])) {
+        if (empty($this->configuration['webhook'][$hook])) {
             return;
         }
-        $hookConfiguration = $GLOBALS['config']['webhook'][$hook];
+        $hookConfiguration = $this->configuration['webhook'][$hook];
 
         $entityBody = file_get_contents($input);
         $json = json_decode($entityBody);

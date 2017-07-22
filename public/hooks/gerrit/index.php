@@ -12,7 +12,7 @@ require_once __DIR__.'/../../../config/config.php';
 
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hookCommandController = new \T3Bot\Controller\GerritHookController();
+    $hookCommandController = new \T3Bot\Controller\GerritHookController($GLOBALS['config']);
     switch ($_REQUEST['action']) {
         case 'change-merged':
         case '/var/gerrit/review/hooks/change-merged':

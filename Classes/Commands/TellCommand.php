@@ -77,34 +77,11 @@ class TellCommand extends AbstractCommand
                 ->fetchAll();
             foreach ($notifications as $notification) {
                 if (strpos($notification['message'], 'review:') === 0) {
-                    $parts = explode(':', $notification['message']);
-                    $refId = (int) trim($parts[1]);
-                    $result = $this->queryGerrit('change:' . $refId);
-                    $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
-                        . ' ask you to look at this patch:*';
-
-                    if (is_array($result)) {
-                        foreach ($result as $item) {
-                            if ((int) $item->_number === $refId) {
-                                $message = $this->buildReviewMessage($item);
-                                $message->setText($msg);
-                                $this->sendResponse($message, $user);
-                            }
-                        }
-                    }
+                    $this->processReviewMessage($notification, $user);
                 } elseif (strpos($notification['message'], 'forge:') === 0) {
-                    $parts = explode(':', $notification['message']);
-                    $issueNumber = (int) trim($parts[1]);
-                    $result = $this->queryForge('issues/' . $issueNumber);
-                    if ($result) {
-                        $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
-                            . ' ask you to look at this issue:*';
-                        $this->sendResponse($msg . "\n" . $this->buildIssueMessage($result->issue), $user);
-                    }
+                    $this->processForgeMessage($notification, $user);
                 } else {
-                    $msg = '*Hi <@' . $user . '>, here is a message from <@' . $notification['from_user'] . '>'
-                        . ' for you:*';
-                    $this->sendResponse($msg . "\n" . $notification['message'], $user);
+                    $this->processTextMessage($notification, $user);
                 }
                 $now = new \DateTime();
                 $now->setTimestamp(time());
@@ -116,6 +93,55 @@ class TellCommand extends AbstractCommand
                 );
             }
         }
+    }
+
+    /**
+     * @param array $notification
+     * @param string $user
+     */
+    protected function processReviewMessage(array $notification, string $user)
+    {
+        $parts = explode(':', $notification['message']);
+        $refId = (int) trim($parts[1]);
+        $result = $this->queryGerrit('change:' . $refId);
+        $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
+            . ' ask you to look at this patch:*';
+
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                if ((int) $item->_number === $refId) {
+                    $message = $this->buildReviewMessage($item);
+                    $message->setText($msg);
+                    $this->sendResponse($message, $user);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $notification
+     * @param string $user
+     */
+    protected function processForgeMessage(array $notification, string $user)
+    {
+        $parts = explode(':', $notification['message']);
+        $issueNumber = (int) trim($parts[1]);
+        $result = $this->queryForge('issues/' . $issueNumber);
+        if ($result) {
+            $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
+                . ' ask you to look at this issue:*';
+            $this->sendResponse($msg . "\n" . $this->buildIssueMessage($result->issue), $user);
+        }
+    }
+
+    /**
+     * @param array $notification
+     * @param string $user
+     */
+    protected function processTextMessage(array $notification, string $user)
+    {
+        $msg = '*Hi <@' . $user . '>, here is a message from <@' . $notification['from_user'] . '>' . ' for you:*';
+        $this->sendResponse($msg . chr(10) . $notification['message'], $user);
     }
 
     /**

@@ -12,6 +12,6 @@ require_once __DIR__.'/../../../config/config.php';
 
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hookCommandController = new \T3Bot\Controller\WebHookController();
+    $hookCommandController = new \T3Bot\Controller\WebHookController($GLOBALS['config']);
     $hookCommandController->process($_REQUEST['hook']);
 }

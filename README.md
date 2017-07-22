@@ -1,7 +1,7 @@
 Botty - The TYPO3 Slack Bot
 ===========================
 
-[![Build Status](https://travis-ci.org/NeoBlack/T3Bot.svg)](https://travis-ci.org/NeoBlack/T3Bot) [![GitHub version](https://badge.fury.io/gh/NeoBlack%2FT3Bot.svg)](http://badge.fury.io/gh/NeoBlack%2FT3Bot) [![Code Coverage](https://img.shields.io/badge/coverage-report-blue.svg)](https://htmlpreview.github.io/?https://github.com/NeoBlack/T3Bot/blob/master/docs/index.html) [![Support](https://img.shields.io/badge/support-slack-blue.svg)](https://typo3.slack.com/messages/t3bot/) [![Documentatiom](https://img.shields.io/badge/documentation-wiki-blue.svg)](https://wiki.typo3.org/T3Bot)
+[![Build Status](https://travis-ci.org/NeoBlack/T3Bot.svg)](https://travis-ci.org/NeoBlack/T3Bot) [![Build Status](https://scrutinizer-ci.com/g/NeoBlack/T3Bot/badges/build.png?b=master)](https://scrutinizer-ci.com/g/NeoBlack/T3Bot/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoBlack/T3Bot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoBlack/T3Bot/?branch=master) [![GitHub version](https://badge.fury.io/gh/NeoBlack%2FT3Bot.svg)](http://badge.fury.io/gh/NeoBlack%2FT3Bot) [![Code Coverage](https://img.shields.io/badge/coverage-report-blue.svg)](https://htmlpreview.github.io/?https://github.com/NeoBlack/T3Bot/blob/master/docs/index.html) [![Support](https://img.shields.io/badge/support-slack-blue.svg)](https://typo3.slack.com/messages/t3bot/) [![Documentatiom](https://img.shields.io/badge/documentation-wiki-blue.svg)](https://wiki.typo3.org/T3Bot)
 
 **Hi, I am Botty**
 I am in each channel on [typo3.slack.com](http://typo3.slack.com/), even if you do not see me. Talk to me by start a message with @T3Bot or with the command prefix.
