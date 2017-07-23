@@ -167,10 +167,7 @@ class ReviewCommand extends AbstractCommand
     protected function buildReviewMessageOutput(int $refId)
     {
         $result = $this->queryGerrit('change:' . $refId);
-        if (!$result) {
-            return "{$refId} not found, sorry!";
-        }
-        if (is_array($result)) {
+        if (!empty($result)) {
             foreach ($result as $item) {
                 if ($item->_number === $refId) {
                     return $this->buildReviewMessage($item);
@@ -187,20 +184,17 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processQuery() : string
     {
-        $queryParts = $this->params;
-        array_shift($queryParts);
-        $query = trim(implode(' ', $queryParts));
+        array_shift($this->params);
+        $query = trim(implode(' ', $this->params));
         if ($query === '') {
             return 'hey, I need a query!';
         }
 
         $results = $this->queryGerrit('limit:50 ' . $query);
-        if (count($results) > 0) {
+        if (!empty($results)) {
             $listOfItems = ["*Here are the results for {$query}*:"];
-            if (is_array($results)) {
-                foreach ($results as $item) {
-                    $listOfItems[] = $this->buildReviewLine($item);
-                }
+            foreach ($results as $item) {
+                $listOfItems[] = $this->buildReviewLine($item);
             }
             return implode(chr(10), $listOfItems);
         }

@@ -45,13 +45,12 @@ class ForgeCommand extends AbstractCommand
     protected function processShow() : string
     {
         $urlPattern = '/http[s]*:\/\/forge.typo3.org\/issues\/([\d]*)(?:.*)/i';
-        $issueNumber = !empty($this->params[1]) ? $this->params[1] : '';
-        if (preg_match_all($urlPattern, $issueNumber, $matches)) {
+        $value = $this->params[1] ?? 0;
+        if (preg_match_all($urlPattern, $value, $matches) > 0) {
             $issueNumber = (int) $matches[1][0];
-        } else {
-            $issueNumber = (int) $issueNumber;
         }
-        if ($issueNumber === null || $issueNumber === 0) {
+        $issueNumber = $issueNumber ?? $value;
+        if ((int)$issueNumber === 0) {
             return 'hey, I need an issue number!';
         }
         $result = $this->queryForge("issues/{$issueNumber}");

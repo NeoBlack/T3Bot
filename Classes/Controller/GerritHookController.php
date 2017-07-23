@@ -98,28 +98,40 @@ class GerritHookController extends AbstractHookController
             $message = new Message();
             $message->setText(' ');
             foreach ($rstFiles as $fileName => $changeInfo) {
-                $attachment = new Message\Attachment();
-                $status = $changeInfo['status'] ?? 'default';
-                $color = [
-                    'A' => Message\Attachment::COLOR_GOOD,
-                    'D' => Message\Attachment::COLOR_WARNING,
-                    'default' => Message\Attachment::COLOR_WARNING,
-                ];
-                $text = [
-                    'A' => 'A new documentation file has been added',
-                    'D' => 'A documentation file has been removed',
-                    'default' => 'A documentation file has been updated',
-                ];
-                $attachment->setColor($color[$status]);
-                $attachment->setTitle($text[$status]);
-
-                $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
-                $attachment->setText($text);
-                $attachment->setFallback($text);
+                $attachment = $this->buildFileAttachment($fileName, $changeInfo);
                 $message->addAttachment($attachment);
             }
             $this->sendMessageToChannel('rst-merged', $message);
         }
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $changeInfo
+     *
+     * @return Message\Attachment
+     */
+    protected function buildFileAttachment(string $fileName, array $changeInfo) : Message\Attachment
+    {
+        $attachment = new Message\Attachment();
+        $status = $changeInfo['status'] ?? 'default';
+        $color = [
+            'A' => Message\Attachment::COLOR_GOOD,
+            'D' => Message\Attachment::COLOR_WARNING,
+            'default' => Message\Attachment::COLOR_WARNING,
+        ];
+        $text = [
+            'A' => 'A new documentation file has been added',
+            'D' => 'A documentation file has been removed',
+            'default' => 'A documentation file has been updated',
+        ];
+        $attachment->setColor($color[$status]);
+        $attachment->setTitle($text[$status]);
+
+        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
+        $attachment->setText($text);
+        $attachment->setFallback($text);
+        return $attachment;
     }
 
     /**

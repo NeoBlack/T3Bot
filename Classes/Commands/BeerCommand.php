@@ -100,41 +100,44 @@ class BeerCommand extends AbstractCommand
     protected function processFor() : string
     {
         $from_user = $this->payload->getData()['user'];
-        $params = $this->params;
-        array_shift($params);
-        $username = trim($params[0]);
-        if (strpos($username, '<') === 0 && $username[1] === '@') {
+        $username = trim($this->params[1]);
+        if (strpos($username, '<@') === 0) {
             $username = str_replace(['<', '>', '@'], '', $username);
-            $queryBuilder = $this->getDatabaseConnection()
-                ->createQueryBuilder();
-            $record = $queryBuilder
-                ->select('tstamp')
-                ->from('beers')
-                ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($username)))
-                ->andWhere($queryBuilder->expr()->eq('from_user', $queryBuilder->createNamedParameter($from_user)))
-                ->orderBy('tstamp', 'DESC')
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch();
-            $addBeer = false;
-            if (empty($record)) {
-                $addBeer = true;
-            } elseif ($record['tstamp'] + 86400 < time()) {
-                $addBeer = true;
-            }
-            if ($addBeer) {
-                $data = [
+            if ($this->checkSpendingOfLastBeer($username, $from_user)) {
+                $this->getDatabaseConnection()->insert('beers', [
                     'to_user' => $username,
                     'from_user' => $from_user,
                     'tstamp' => time()
-                ];
-                $this->getDatabaseConnection()->insert('beers', $data);
+                ]);
                 return 'Yeah, one more :t3beer: for <@' . $username . '>' . chr(10) . '<@' . $username . '> has received '
                     . $this->getBeerCountByUsername($username) . ' :t3beer: so far';
             }
             return 'You spend one :t3beer: to <@' . $username . '> within in last 24 hours. Too much beer is unhealthy ;)';
         }
         return '*Sorry, a username must start with a @-sign:*';
+    }
+
+    /**
+     * @param string $username
+     * @param string $from_user
+     *
+     * @return bool
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function checkSpendingOfLastBeer(string $username, string $from_user) : bool
+    {
+        $queryBuilder = $this->getDatabaseConnection()
+            ->createQueryBuilder();
+        $record = $queryBuilder
+            ->select('tstamp')
+            ->from('beers')
+            ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($username)))
+            ->andWhere($queryBuilder->expr()->eq('from_user', $queryBuilder->createNamedParameter($from_user)))
+            ->orderBy('tstamp', 'DESC')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetch();
+        return empty($record) || $record['tstamp'] + 86400 < time();
     }
 
     /**

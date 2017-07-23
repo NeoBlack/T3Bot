@@ -11,14 +11,16 @@ namespace T3Bot\Controller;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
-use Slack\Message\Attachment;
 use T3Bot\Slack\Message;
+use T3Bot\Traits\SlackTrait;
 
 /**
  * Class AbstractHookController.
  */
 abstract class AbstractHookController
 {
+    use SlackTrait;
+
     /**
      * @var array
      */
@@ -52,38 +54,17 @@ abstract class AbstractHookController
      */
     protected function postToSlack(Message $payload, $channel)
     {
-        $data = [];
-        $data['unfurl_links'] = false;
-        $data['unfurl_media'] = false;
-        $data['parse'] = 'none';
-        $data['text'] = $payload->getText();
-        $data['channel'] = $channel;
+        $data = $this->getBaseDataArray($payload->getText(), $channel);
         $attachments = $payload->getAttachments();
         if (count($attachments)) {
             $data['attachments'] = [];
-        }
-        /** @var \T3Bot\Slack\Message\Attachment $attachment */
-        foreach ($attachments as $attachment) {
-            $data['attachments'][] = Attachment::fromData([
-                'title' => $attachment->getTitle(),
-                'title_link' => $attachment->getTitleLink(),
-                'text' => $attachment->getText(),
-                'fallback' => $attachment->getFallback(),
-                'color' => $attachment->getColor(),
-                'pretext' => $attachment->getPretext(),
-                'author_name' => $attachment->getAuthorName(),
-                'author_icon' => $attachment->getAuthorIcon(),
-                'author_link' => $attachment->getAuthorLink(),
-                'image_url' => $attachment->getImageUrl(),
-                'thumb_url' => $attachment->getThumbUrl(),
-            ]);
+            foreach ($attachments as $attachment) {
+                $data['attachments'][] = $this->buildAttachment($attachment);
+            }
         }
         if (!empty($this->configuration['slack']['botAvatar'])) {
             $data['icon_emoji'] = $this->configuration['slack']['botAvatar'];
         }
-
-        // since the bot is a real bot, we can't push directly to slack
-        // lets put the message into our messages pool
         $this->addMessageToQueue($data);
     }
 

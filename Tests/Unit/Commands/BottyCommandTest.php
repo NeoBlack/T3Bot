@@ -48,7 +48,7 @@ class BottyCommandTest extends BaseCommandTestCase
             'typo3' => ['typo3', ':typo3: TYPO3 CMS is the best open source CMS of the world!'],
             'dark' => ['dark', 'sure, we have cookies :cookie:'],
             //'cat' => ['cat', 'ok, here is some cat content '.$cats[array_rand($cats)]],
-            'love' => ['love', 'I love you too, ' . $username . ':kiss:'],
+            'love' => ['love', 'I love you too, ' . $username . ' :kiss:'],
             'no-matching' => ['foobar', null],
         ];
     }

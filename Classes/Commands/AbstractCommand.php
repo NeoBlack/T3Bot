@@ -12,8 +12,6 @@ namespace T3Bot\Commands;
 use /* @noinspection PhpInternalEntityUsedInspection */ Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Slack\DataObject;
-use Slack\Message\Attachment;
 use Slack\Payload;
 use Slack\RealTimeClient;
 use T3Bot\Slack\Message;
@@ -195,45 +193,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * @param string $text
-     * @param string $channel
-     *
-     * @return array
-     */
-    protected function getBaseDataArray(string $text, string $channel) : array
-    {
-        $data = [];
-        $data['unfurl_links'] = false;
-        $data['unfurl_media'] = false;
-        $data['parse'] = 'none';
-        $data['text'] = $text;
-        $data['channel'] = $channel;
-        return $data;
-    }
-
-    /**
-     * @param Message\Attachment $attachment
-     *
-     * @return DataObject
-     */
-    protected function buildAttachment(Message\Attachment $attachment) : DataObject
-    {
-        return Attachment::fromData([
-            'title' => $attachment->getTitle(),
-            'title_link' => $attachment->getTitleLink(),
-            'text' => $attachment->getText(),
-            'fallback' => $attachment->getFallback(),
-            'color' => $attachment->getColor(),
-            'pretext' => $attachment->getPretext(),
-            'author_name' => $attachment->getAuthorName(),
-            'author_icon' => $attachment->getAuthorIcon(),
-            'author_link' => $attachment->getAuthorLink(),
-            'image_url' => $attachment->getImageUrl(),
-            'thumb_url' => $attachment->getThumbUrl(),
-        ]);
-    }
-
-    /**
      * @param Message|string $messageToSent
      * @param string $channel
      */
@@ -244,9 +203,9 @@ abstract class AbstractCommand
             $attachments = $messageToSent->getAttachments();
             if (count($attachments)) {
                 $data['attachments'] = [];
-            }
-            foreach ($attachments as $attachment) {
-                $data['attachments'][] = $this->buildAttachment($attachment);
+                foreach ($attachments as $attachment) {
+                    $data['attachments'][] = $this->buildAttachment($attachment);
+                }
             }
             $message = new \Slack\Message\Message($this->client, $data);
             $this->client->postMessage($message);

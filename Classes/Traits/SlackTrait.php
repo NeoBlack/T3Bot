@@ -9,6 +9,9 @@
  */
 namespace T3Bot\Traits;
 
+use Slack\DataObject;
+use T3Bot\Slack\Message\Attachment;
+
 /**
  * Trait SlackTrait
  */
@@ -71,5 +74,44 @@ trait SlackTrait
         $text .= '<https://forge.typo3.org/issues/' . $item->id . '|:arrow_right: View on Forge>';
 
         return $text;
+    }
+
+    /**
+     * @param string $text
+     * @param string $channel
+     *
+     * @return array
+     */
+    protected function getBaseDataArray(string $text, string $channel) : array
+    {
+        $data = [];
+        $data['unfurl_links'] = false;
+        $data['unfurl_media'] = false;
+        $data['parse'] = 'none';
+        $data['text'] = $text;
+        $data['channel'] = $channel;
+        return $data;
+    }
+
+    /**
+     * @param Attachment $attachment
+     *
+     * @return DataObject
+     */
+    protected function buildAttachment(Attachment $attachment) : DataObject
+    {
+        return \Slack\Message\Attachment::fromData([
+            'title' => $attachment->getTitle(),
+            'title_link' => $attachment->getTitleLink(),
+            'text' => $attachment->getText(),
+            'fallback' => $attachment->getFallback(),
+            'color' => $attachment->getColor(),
+            'pretext' => $attachment->getPretext(),
+            'author_name' => $attachment->getAuthorName(),
+            'author_icon' => $attachment->getAuthorIcon(),
+            'author_link' => $attachment->getAuthorLink(),
+            'image_url' => $attachment->getImageUrl(),
+            'thumb_url' => $attachment->getThumbUrl(),
+        ]);
     }
 }

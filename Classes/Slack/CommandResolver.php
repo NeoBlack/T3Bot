@@ -43,25 +43,27 @@ class CommandResolver
     public function resolveCommand(array $configuration = null)
     {
         $message = $this->payload->getData()['text'];
-        $parts = explode(':', $message);
-        $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
+        $commandClass = $this->detectCommandClass($message);
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client, $configuration);
         }
 
-        $parts = explode(' ', $message);
-        $command = ucfirst(strtolower($parts[0]));
-        $commandClass = '\\T3Bot\\Commands\\' . $command . 'Command';
-        if (class_exists($commandClass)) {
-            return new $commandClass($this->payload, $this->client, $configuration);
-        }
-
-        $resultCommand = false;
         if (strpos($message, 'botty') !== false || strpos($message, $configuration['slack']['botId']) !== false) {
-            $resultCommand = new BottyCommand($this->payload, $this->client, $configuration);
+            return new BottyCommand($this->payload, $this->client, $configuration);
         }
 
-        return $resultCommand;
+        return false;
+    }
+
+    /**
+     * @param string $message
+     *
+     * @return string
+     */
+    protected function detectCommandClass(string $message) : string
+    {
+        $delimiter = strpos($message, ':') !== false ? ':' : ' ';
+        $parts = explode($delimiter, $message);
+        return '\\T3Bot\\Commands\\' . ucfirst(strtolower($parts[0])) . 'Command';
     }
 }
