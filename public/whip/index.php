@@ -1,25 +1,15 @@
 <!DOCTYPE html>
 <?php
+    function cmd($command)
+    {
+        exec($command, $output);
+        return $output;
+    }
 
-function cmd($command)
-{
-    exec($command, $output);
-    return $output;
-}
-$action = !empty($_GET['action']) ? $_GET['action'] : null;
-switch ($action) {
-    case 'start':
-        $result = cmd('sudo /etc/init.d/botty start');
-        break;
-    case 'stop':
-        $result = cmd('sudo /etc/init.d/botty stop');
-        break;
-    case 'restart':
-        $result = cmd('sudo /etc/init.d/botty restart');
-        break;
-    default:
-        $result = null;
-}
+    $action = $_GET['action'] ?? null;
+    if (in_array($action, ['start', 'stop', 'restart'], true)) {
+        $result = cmd('sudo /etc/init.d/botty ' . $action);
+    }
 ?>
 <html lang="en">
 <head>

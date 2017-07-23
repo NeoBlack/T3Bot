@@ -12,15 +12,10 @@ require_once __DIR__.'/../../../config/config.php';
 
 // if we receive a POST request, it is for our bot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hookCommandController = new \T3Bot\Controller\GerritHookController($GLOBALS['config']);
-    switch ($_REQUEST['action']) {
-        case 'change-merged':
-        case '/var/gerrit/review/hooks/change-merged':
-            $hookCommandController->process('change-merged');
-            break;
-        case 'patchset-created':
-        case '/var/gerrit/review/hooks/patchset-created':
-            $hookCommandController->process('patchset-created');
-            break;
-    }
+    // action could contains the path /var/gerrit/review/hooks/, remove it
+    $action = str_replace('/var/gerrit/review/hooks/', '', $_REQUEST['action']);
+
+    (new \T3Bot\Controller\GerritHookController($GLOBALS['config']))
+        ->process($action);
 }
+
