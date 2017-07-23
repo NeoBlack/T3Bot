@@ -45,18 +45,24 @@ class WebHookController extends AbstractHookController
      */
     public function process($hook, $input = 'php://input')
     {
-        if (empty($this->configuration['webhook'][$hook])) {
-            return;
-        }
-        $hookConfiguration = $this->configuration['webhook'][$hook];
-
         $entityBody = file_get_contents($input);
         $json = json_decode($entityBody);
+        $hookConfiguration = $this->configuration['webhook'][$hook] ?? [];
 
-        if ($hookConfiguration['securityToken'] !== $json->securityToken) {
+        if (empty($hookConfiguration) || $hookConfiguration['securityToken'] !== $json->securityToken) {
             return;
         }
+        $this->sendMessage($json, $hookConfiguration);
+    }
 
+    /**
+     * @param \stdClass $json
+     * @param array $hookConfiguration
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function sendMessage(\stdClass $json, array $hookConfiguration)
+    {
         $color = $this->colorMap[$json->color] ?? $json->color;
 
         $message = new Message();

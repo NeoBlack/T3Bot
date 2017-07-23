@@ -60,14 +60,6 @@ class BottyCommand extends AbstractCommand
      */
     public function process() : string
     {
-        return $this->processMessage();
-    }
-
-    /**
-     * @return string
-     */
-    public function processMessage() : string
-    {
         $message = strtolower($this->payload->getData()['text']);
         $username = '<@' . $this->payload->getData()['user'] . '>';
 

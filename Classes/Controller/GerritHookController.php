@@ -103,15 +103,14 @@ class GerritHookController extends AbstractHookController
                     $rstFiles[$fileName] = $changeInfo;
                 }
             }
-        }
-        if (!empty($rstFiles)) {
-            $message = new Message();
-            $message->setText(' ');
-            foreach ($rstFiles as $fileName => $changeInfo) {
-                $attachment = $this->buildFileAttachment($fileName, $changeInfo);
-                $message->addAttachment($attachment);
+            if (!empty($rstFiles)) {
+                $message = new Message();
+                $message->setText(' ');
+                foreach ($rstFiles as $fileName => $changeInfo) {
+                    $message->addAttachment($this->buildFileAttachment($fileName, $changeInfo));
+                }
+                $this->sendMessageToChannel('rst-merged', $message);
             }
-            $this->sendMessageToChannel('rst-merged', $message);
         }
     }
 

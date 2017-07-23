@@ -93,20 +93,17 @@ class ReviewCommand extends AbstractCommand
      */
     protected function processUser() : string
     {
-        $username = !empty($this->params[1]) ? $this->params[1] : null;
-        $project = !empty($this->params[2]) ? $this->params[2] : 'Packages/TYPO3.CMS';
+        $username = $this->params[1] ?? null;
+        $project = $this->params[2] ?? 'Packages/TYPO3.CMS';
         if ($username === null) {
             return 'hey, I need a username!';
         }
         $results = $this->queryGerrit('is:open owner:"' . $username . '" project:' . $project);
-        if (count($results) > 0) {
+        if (!empty($results)) {
             $listOfItems = ['*Here are the results for ' . $username . '*:'];
-            if (is_array($results)) {
-                foreach ($results as $item) {
-                    $listOfItems[] = $this->buildReviewLine($item);
-                }
+            foreach ($results as $item) {
+                $listOfItems[] = $this->buildReviewLine($item);
             }
-
             return implode(chr(10), $listOfItems);
         }
         return $username . ' has no open reviews or username is unknown';

@@ -68,14 +68,7 @@ class TellCommand extends AbstractCommand
     public function processPresenceChange($user, $presence)
     {
         if ($presence === self::PRESENCE_ACTIVE) {
-            $queryBuilder = $this->getDatabaseConnection()->createQueryBuilder();
-            $notifications = $queryBuilder
-                ->select('*')
-                ->from('notifications')
-                ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($user)))
-                ->andWhere($queryBuilder->expr()->eq('delivered', $queryBuilder->createNamedParameter('0000-00-00 00:00:00')))
-                ->execute()
-                ->fetchAll();
+            $notifications = $this->getNotificationsForUser($user);
             foreach ($notifications as $notification) {
                 if (strpos($notification['message'], 'review:') === 0) {
                     $this->processReviewMessage($notification, $user);
@@ -84,16 +77,44 @@ class TellCommand extends AbstractCommand
                 } else {
                     $this->processTextMessage($notification, $user);
                 }
-                $now = new \DateTime();
-                $now->setTimestamp(time());
-                $this->getDatabaseConnection()->update(
-                    'notifications',
-                    ['delivered' => $now],
-                    ['id' => $notification['id']],
-                    ['datetime']
-                );
+                $this->markNotificationAsDelivered($notification['id']);
             }
         }
+    }
+
+    /**
+     * @param string $user
+     *
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function getNotificationsForUser(string $user) : array
+    {
+        $queryBuilder = $this->getDatabaseConnection()->createQueryBuilder();
+        return $queryBuilder
+            ->select('*')
+            ->from('notifications')
+            ->where($queryBuilder->expr()->eq('to_user', $queryBuilder->createNamedParameter($user)))
+            ->andWhere($queryBuilder->expr()->eq('delivered', $queryBuilder->createNamedParameter('0000-00-00 00:00:00')))
+            ->execute()
+            ->fetchAll();
+    }
+
+    /**
+     * @param int $id
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function markNotificationAsDelivered(int $id)
+    {
+        $now = new \DateTime();
+        $now->setTimestamp(time());
+        $this->getDatabaseConnection()->update(
+            'notifications',
+            ['delivered' => $now],
+            ['id' => $id],
+            ['datetime']
+        );
     }
 
     /**

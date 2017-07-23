@@ -71,6 +71,26 @@ abstract class AbstractCommand
     protected $databaseConnection;
 
     /**
+     * @var array
+     */
+    protected $colors = [
+        self::PROJECT_PHASE_STABILISATION => Message\Attachment::COLOR_WARNING,
+        self::PROJECT_PHASE_SOFT_FREEZE => Message\Attachment::COLOR_DANGER,
+        self::PROJECT_PHASE_CODE_FREEZE => Message\Attachment::COLOR_DANGER,
+        self::PROJECT_PHASE_FEATURE_FREEZE => Message\Attachment::COLOR_DANGER,
+    ];
+
+    /**
+     * @var array
+     */
+    protected $preTexts = [
+        self::PROJECT_PHASE_STABILISATION => ':warning: *stabilisation phase*',
+        self::PROJECT_PHASE_SOFT_FREEZE => ':no_entry: *soft merge freeze*',
+        self::PROJECT_PHASE_CODE_FREEZE => ':no_entry: *merge freeze*',
+        self::PROJECT_PHASE_FEATURE_FREEZE => ':no_entry: *FEATURE FREEZE*',
+    ];
+
+    /**
      * AbstractCommand constructor.
      *
      * @param Payload $payload
@@ -151,36 +171,18 @@ abstract class AbstractCommand
     {
         $created = substr($item->created, 0, 19);
         $branch = $item->branch;
-        $text = '';
+
+        $color = $this->colors[$this->configuration['projectPhase']] ?? Message\Attachment::COLOR_NOTICE;
+        $preText = $this->preTexts[$this->configuration['projectPhase']] ?? '';
 
         $message = new Message();
         $attachment = new Message\Attachment();
-        switch ($this->configuration['projectPhase']) {
-            case self::PROJECT_PHASE_STABILISATION:
-                $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                $attachment->setPretext(':warning: *stabilisation phase*');
-                break;
-            case self::PROJECT_PHASE_SOFT_FREEZE:
-                $attachment->setColor(Message\Attachment::COLOR_DANGER);
-                $attachment->setPretext(':no_entry: *soft merge freeze*');
-                break;
-            case self::PROJECT_PHASE_CODE_FREEZE:
-                $attachment->setColor(Message\Attachment::COLOR_DANGER);
-                $attachment->setPretext(':no_entry: *merge freeze*');
-                break;
-            case self::PROJECT_PHASE_FEATURE_FREEZE:
-                $attachment->setColor(Message\Attachment::COLOR_DANGER);
-                $attachment->setPretext(':no_entry: *FEATURE FREEZE*');
-                break;
-            case self::PROJECT_PHASE_DEVELOPMENT:
-            default:
-                $attachment->setColor(Message\Attachment::COLOR_NOTICE);
-                break;
-        }
+        $attachment->setColor($color);
+        $attachment->setPretext($preText);
         $attachment->setTitle($item->subject);
         $attachment->setTitleLink('https://review.typo3.org/' . $item->_number);
 
-        $text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
+        $text = 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
             . ' | ID: ' . $this->bold($item->_number) . chr(10);
         $text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
 
