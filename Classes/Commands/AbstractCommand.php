@@ -63,7 +63,7 @@ abstract class AbstractCommand
     protected $client;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $configuration;
 
