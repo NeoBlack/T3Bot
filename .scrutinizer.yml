@@ -3,23 +3,23 @@ checks:
 
 filter:
   excluded_paths:
-    - public/whip/*
-    - Tests/*
-    - Resources/*
-    - vendor/*
+  - public/whip/*
+  - Tests/*
+  - Resources/Privat/Scripts/*
+  - vendor/*
 
 build:
   project_setup:
     before:
-      - mysql -e 'create database t3bot;'
-      - cp .env.example .env
-      - composer install
-      - ./bin/doctrine-migrations --no-interaction --configuration=Build/migrations.xml --db-configuration=Build/migrations-db.php migrations:migrate
+    - mysql -e 'create database t3bot;'
+    - cp .env.example .env
+    - composer install
+    - ./bin/doctrine-migrations --no-interaction --configuration=Build/migrations.xml --db-configuration=Build/migrations-db.php migrations:migrate
 
   tests:
     override:
-      -
-        command: './bin/phpunit -c Build/UnitTests.xml --coverage-clover=some-file'
-        coverage:
-          file: 'some-file'
-          format: 'clover'
+    -
+      command: './bin/phpunit -c Build/UnitTests.xml --coverage-clover=some-file'
+      coverage:
+        file: 'some-file'
+        format: 'clover'
