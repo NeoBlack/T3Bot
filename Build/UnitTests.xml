@@ -19,13 +19,11 @@
 			<exclude>
 				<directory suffix=".php">../Build</directory>
 				<directory suffix=".php">../config</directory>
-				<directory suffix=".php">../public/hooks</directory>
-				<directory suffix=".php">../public/whip</directory>
 				<directory suffix=".php">../migrations</directory>
+				<directory suffix=".php">../public</directory>
+				<directory suffix=".php">../Resources</directory>
 				<directory suffix=".php">../Tests</directory>
 				<directory suffix=".php">../vendor</directory>
-				<file>../botty.php</file>
-				<file>../migrations-db.php</file>
 			</exclude>
 		</whitelist>
 	</filter>
