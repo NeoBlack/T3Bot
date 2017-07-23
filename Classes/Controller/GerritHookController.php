@@ -44,33 +44,18 @@ class GerritHookController extends AbstractHookController
         $commit = $json->commit;
         $branch = $json->branch;
 
-        switch ($hook) {
-            case 'patchset-created':
-                if ($patchSet === 1 && $branch === 'master') {
-                    $item = $this->queryGerrit('change:' . $patchId);
-                    $item = $item[0];
-                    $created = substr($item->created, 0, 19);
-
-                    $text = "Branch: *{$branch}* | :calendar: _{$created}_ | ID: {$item->_number}\n";
-                    $text .= ":link: <https://review.typo3.org/{$item->_number}|Review now>";
-
-                    $message = $this->buildMessage('[NEW] ' . $item->subject, $text);
-                    $this->sendMessageToChannel($hook, $message);
-                }
-                break;
-            case 'change-merged':
-                $item = $this->queryGerrit('change:' . $patchId);
-                $item = $item[0];
-                $created = substr($item->created, 0, 19);
-
-                $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
-                $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
-
-                $message = $this->buildMessage(':white_check_mark: [MERGED] ' . $item->subject, $text, Message\Attachment::COLOR_GOOD);
-                $this->sendMessageToChannel($hook, $message);
-
-                $this->checkFiles($patchId, $commit);
-                break;
+        $item = $this->queryGerrit('change:' . $patchId);
+        $item = $item[0];
+        $created = substr($item->created, 0, 19);
+        $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
+        $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
+        if ($hook === 'patchset-created' && $patchSet === 1 && $branch === 'master') {
+            $message = $this->buildMessage('[NEW] ' . $item->subject, $text);
+            $this->sendMessageToChannel($hook, $message);
+        } elseif ($hook === 'change-merged') {
+            $message = $this->buildMessage(':white_check_mark: [MERGED] ' . $item->subject, $text, Message\Attachment::COLOR_GOOD);
+            $this->sendMessageToChannel($hook, $message);
+            $this->checkFiles($patchId, $commit);
         }
     }
 
@@ -113,26 +98,25 @@ class GerritHookController extends AbstractHookController
                 }
             }
         }
-        if (count($rstFiles) > 0) {
+        if (!empty($rstFiles)) {
             $message = new Message();
             $message->setText(' ');
             foreach ($rstFiles as $fileName => $changeInfo) {
                 $attachment = new Message\Attachment();
-                $status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
-                switch ($status) {
-                    case 'A':
-                        $attachment->setColor(Message\Attachment::COLOR_GOOD);
-                        $attachment->setTitle('A new documentation file has been added');
-                        break;
-                    case 'D':
-                        $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                        $attachment->setTitle('A documentation file has been removed');
-                        break;
-                    default:
-                        $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                        $attachment->setTitle('A documentation file has been updated');
-                        break;
-                }
+                $status = $changeInfo['status'] ?? 'default';
+                $color = [
+                    'A' => Message\Attachment::COLOR_GOOD,
+                    'D' => Message\Attachment::COLOR_WARNING,
+                    'default' => Message\Attachment::COLOR_WARNING,
+                ];
+                $text = [
+                    'A' => 'A new documentation file has been added',
+                    'D' => 'A documentation file has been removed',
+                    'default' => 'A documentation file has been updated',
+                ];
+                $attachment->setColor($color[$status]);
+                $attachment->setTitle($text[$status]);
+
                 $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
                 $attachment->setText($text);
                 $attachment->setFallback($text);
