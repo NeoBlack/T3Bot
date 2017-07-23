@@ -29,33 +29,29 @@ class GerritHookController extends AbstractHookController
      */
     public function process($hook, $input = 'php://input')
     {
-        $entityBody = file_get_contents($input);
-        $json = json_decode($entityBody);
+        $json = json_decode(file_get_contents($input));
 
-        if ($this->configuration['gerrit']['webhookToken'] !== $json->token) {
-            return;
-        }
-        if ($json->project !== 'Packages/TYPO3.CMS') {
-            // only core patches please...
+        if (
+            $json->project !== 'Packages/TYPO3.CMS' ||
+            $json->token !== $this->configuration['gerrit']['webhookToken']
+        ) {
             return;
         }
         $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
         $patchSet = property_exists($json, 'patchset') ? (int) $json->patchset : 0;
-        $commit = $json->commit;
-        $branch = $json->branch;
 
         $item = $this->queryGerrit('change:' . $patchId);
         $item = $item[0];
         $created = substr($item->created, 0, 19);
-        $text = "Branch: {$branch} | :calendar: {$created} | ID: {$item->_number}\n";
+        $text = "Branch: {$json->branch} | :calendar: {$created} | ID: {$item->_number}\n";
         $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
-        if ($hook === 'patchset-created' && $patchSet === 1 && $branch === 'master') {
+        if ($hook === 'patchset-created' && $patchSet === 1 && $json->branch === 'master') {
             $message = $this->buildMessage('[NEW] ' . $item->subject, $text);
             $this->sendMessageToChannel($hook, $message);
         } elseif ($hook === 'change-merged') {
             $message = $this->buildMessage(':white_check_mark: [MERGED] ' . $item->subject, $text, Message\Attachment::COLOR_GOOD);
             $this->sendMessageToChannel($hook, $message);
-            $this->checkFiles($patchId, $commit);
+            $this->checkFiles($patchId, $json->commit);
         }
     }
 
