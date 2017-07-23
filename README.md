@@ -22,6 +22,19 @@ If you want to contribute, fork this repository and send a pull request.
 
 This project requires PHP 7.0 
 
+## Setup
+
+```
+# copy env file and adjust 
+cp .env.example .env
+
+# composer install
+composer install
+
+# database mgiration
+./bin/doctrine-migrations --configuration=Build/migrations.xml --db-configuration=Build/migrations-db.php migrations:migrate
+```
+
 ## Unit Test
 
 ```
