@@ -37,11 +37,21 @@ class GerritHookController extends AbstractHookController
         ) {
             return;
         }
+        $this->processHook($hook, $json);
+    }
+
+    /**
+     * @param string $hook
+     * @param \stdClass $json
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function processHook(string $hook, \stdClass $json)
+    {
         $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
         $patchSet = property_exists($json, 'patchset') ? (int) $json->patchset : 0;
 
-        $item = $this->queryGerrit('change:' . $patchId);
-        $item = $item[0];
+        $item = $this->queryGerrit('change:' . $patchId)[0];
         $created = substr($item->created, 0, 19);
         $text = "Branch: {$json->branch} | :calendar: {$created} | ID: {$item->_number}" . chr(10);
         $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
