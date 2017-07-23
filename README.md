@@ -31,6 +31,6 @@ This project requires PHP 7.0
 ## Coverage report
 
 ```
-rm -rf docs
-./bin/phpunit -c Build/UnitTests.xml --coverage-html docs
+rm -rf public/docs
+./bin/phpunit -c Build/UnitTests.xml --coverage-html public/docs
 ```

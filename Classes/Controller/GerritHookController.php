@@ -97,7 +97,7 @@ class GerritHookController extends AbstractHookController
     {
         $files = $this->getFilesForPatch($patchId, $commit);
         $rstFiles = [];
-        if (is_array($files)) {
+        if (!empty($files)) {
             foreach ($files as $fileName => $changeInfo) {
                 if ($this->endsWith(strtolower($fileName), '.rst')) {
                     $rstFiles[$fileName] = $changeInfo;
@@ -116,14 +116,14 @@ class GerritHookController extends AbstractHookController
 
     /**
      * @param string $fileName
-     * @param array $changeInfo
+     * @param \stdClass $changeInfo
      *
      * @return Message\Attachment
      */
-    protected function buildFileAttachment(string $fileName, array $changeInfo) : Message\Attachment
+    protected function buildFileAttachment(string $fileName, \stdClass $changeInfo) : Message\Attachment
     {
         $attachment = new Message\Attachment();
-        $status = $changeInfo['status'] ?? 'default';
+        $status = $changeInfo->status ?? 'default';
         $color = [
             'A' => Message\Attachment::COLOR_GOOD,
             'D' => Message\Attachment::COLOR_WARNING,

@@ -88,4 +88,18 @@ class ForgeCommandTest extends BaseCommandTestCase
 
         static::assertStringStartsWith('*[Bug] Cannot edit media links with IE8* by _Michael Gotzen_', $result);
     }
+
+    /**
+     * @test
+     */
+    public function processShowReturnsCorrectResponseForValidIssueNumberInclusiveCategory()
+    {
+        $this->initCommandWithPayload(ForgeCommand::class, [
+            'user' => 'U54321',
+            'text' => 'forge:show 3097',
+        ]);
+        $result = $this->command->process();
+
+        static::assertContains('Category: *t3editor*', $result);
+    }
 }

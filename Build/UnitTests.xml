@@ -19,7 +19,8 @@
 			<exclude>
 				<directory suffix=".php">../Build</directory>
 				<directory suffix=".php">../config</directory>
-				<directory suffix=".php">../hooks</directory>
+				<directory suffix=".php">../public/hooks</directory>
+				<directory suffix=".php">../public/whip</directory>
 				<directory suffix=".php">../migrations</directory>
 				<directory suffix=".php">../Tests</directory>
 				<directory suffix=".php">../vendor</directory>
