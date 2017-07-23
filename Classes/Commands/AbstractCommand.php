@@ -77,7 +77,7 @@ abstract class AbstractCommand
      *
      * @param Payload $payload
      * @param RealTimeClient $client
-     * @param array $configuration
+     * @param array|null $configuration
      */
     public function __construct(Payload $payload, RealTimeClient $client, array $configuration = null)
     {

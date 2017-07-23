@@ -17,6 +17,17 @@ use T3Bot\Slack\Message;
 class WebHookController extends AbstractHookController
 {
     /**
+     * @var array
+     */
+    protected $colorMap = [
+        'info' => Message\Attachment::COLOR_INFO,
+        'ok' => Message\Attachment::COLOR_GOOD,
+        'warning' => Message\Attachment::COLOR_WARNING,
+        'danger' => Message\Attachment::COLOR_DANGER,
+        'notice' => Message\Attachment::COLOR_NOTICE,
+    ];
+
+    /**
      * public method to start processing the request.
      *
      * @param string $hook
@@ -46,26 +57,7 @@ class WebHookController extends AbstractHookController
             return;
         }
 
-        switch ($json->color) {
-            case 'info':
-                $color = Message\Attachment::COLOR_INFO;
-                break;
-            case 'ok':
-                $color = Message\Attachment::COLOR_GOOD;
-                break;
-            case 'warning':
-                $color = Message\Attachment::COLOR_WARNING;
-                break;
-            case 'danger':
-                $color = Message\Attachment::COLOR_DANGER;
-                break;
-            case 'notice':
-                $color = Message\Attachment::COLOR_NOTICE;
-                break;
-            default:
-                $color = $json->color;
-                break;
-        }
+        $color = $this->colorMap[$json->color] ?? $json->color;
 
         $message = new Message();
         $message->setText(' ');

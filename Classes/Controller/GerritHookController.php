@@ -69,42 +69,7 @@ class GerritHookController extends AbstractHookController
                 $message = $this->buildMessage(':white_check_mark: [MERGED] ' . $item->subject, $text, Message\Attachment::COLOR_GOOD);
                 $this->sendMessageToChannel($hook, $message);
 
-                $files = $this->getFilesForPatch($patchId, $commit);
-                $rstFiles = [];
-                if (is_array($files)) {
-                    foreach ($files as $fileName => $changeInfo) {
-                        if ($this->endsWith(strtolower($fileName), '.rst')) {
-                            $rstFiles[$fileName] = $changeInfo;
-                        }
-                    }
-                }
-                if (count($rstFiles) > 0) {
-                    $message = new Message();
-                    $message->setText(' ');
-                    foreach ($rstFiles as $fileName => $changeInfo) {
-                        $attachment = new Message\Attachment();
-                        $status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
-                        switch ($status) {
-                            case 'A':
-                                $attachment->setColor(Message\Attachment::COLOR_GOOD);
-                                $attachment->setTitle('A new documentation file has been added');
-                                break;
-                            case 'D':
-                                $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                                $attachment->setTitle('A documentation file has been removed');
-                                break;
-                            default:
-                                $attachment->setColor(Message\Attachment::COLOR_WARNING);
-                                $attachment->setTitle('A documentation file has been updated');
-                                break;
-                        }
-                        $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
-                        $attachment->setText($text);
-                        $attachment->setFallback($text);
-                        $message->addAttachment($attachment);
-                    }
-                    $this->sendMessageToChannel('rst-merged', $message);
-                }
+                $this->checkFiles($patchId, $commit);
                 break;
         }
     }
@@ -129,6 +94,52 @@ class GerritHookController extends AbstractHookController
         $attachment->setFallback($text);
         $message->addAttachment($attachment);
         return $message;
+    }
+
+    /**
+     * @param int $patchId
+     * @param int $commit
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function checkFiles($patchId, $commit)
+    {
+        $files = $this->getFilesForPatch($patchId, $commit);
+        $rstFiles = [];
+        if (is_array($files)) {
+            foreach ($files as $fileName => $changeInfo) {
+                if ($this->endsWith(strtolower($fileName), '.rst')) {
+                    $rstFiles[$fileName] = $changeInfo;
+                }
+            }
+        }
+        if (count($rstFiles) > 0) {
+            $message = new Message();
+            $message->setText(' ');
+            foreach ($rstFiles as $fileName => $changeInfo) {
+                $attachment = new Message\Attachment();
+                $status = !empty($changeInfo['status']) ? $changeInfo['status'] : null;
+                switch ($status) {
+                    case 'A':
+                        $attachment->setColor(Message\Attachment::COLOR_GOOD);
+                        $attachment->setTitle('A new documentation file has been added');
+                        break;
+                    case 'D':
+                        $attachment->setColor(Message\Attachment::COLOR_WARNING);
+                        $attachment->setTitle('A documentation file has been removed');
+                        break;
+                    default:
+                        $attachment->setColor(Message\Attachment::COLOR_WARNING);
+                        $attachment->setTitle('A documentation file has been updated');
+                        break;
+                }
+                $text = ':link: <https://git.typo3.org/Packages/TYPO3.CMS.git/blob/HEAD:/' . $fileName . '|' . $fileName . '>';
+                $attachment->setText($text);
+                $attachment->setFallback($text);
+                $message->addAttachment($attachment);
+            }
+            $this->sendMessageToChannel('rst-merged', $message);
+        }
     }
 
     /**
