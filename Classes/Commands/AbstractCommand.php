@@ -134,9 +134,9 @@ abstract class AbstractCommand
      */
     public function getHelp() : string
     {
-        $result = "*HELP*\n";
+        $result = '*HELP*' . chr(10);
         foreach ($this->helpCommands as $command => $helpText) {
-            $result .= "*{$this->commandName}:{$command}*: {$helpText} \n";
+            $result .= "*{$this->commandName}:{$command}*: {$helpText}" . chr(10);
         }
 
         return $result;
@@ -183,7 +183,7 @@ abstract class AbstractCommand
         $attachment->setTitleLink('https://review.typo3.org/' . $item->_number);
 
         $text .= 'Branch: ' . $this->bold($branch) . ' | :calendar: ' . $this->bold($created)
-            . ' | ID: ' . $this->bold($item->_number) . "\n";
+            . ' | ID: ' . $this->bold($item->_number) . chr(10);
         $text .= '<https://review.typo3.org/' . $item->_number . '|:arrow_right: Goto Review>';
 
         $attachment->setText($text);

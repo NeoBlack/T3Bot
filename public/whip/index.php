@@ -75,8 +75,8 @@ switch ($action) {
                     <div class="result" style="text-align: left;">
 <pre><?php foreach ($result as $row) {
         ?>
-<?= $row . "\n" ?>
-<?php 
+<?= $row . chr(10) ?>
+<?php
     } ?></pre>
                     </div>
                 <?php 

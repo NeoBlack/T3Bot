@@ -131,7 +131,7 @@ class TellCommand extends AbstractCommand
         if ($result) {
             $msg = '*Hi <@' . $user . '>, <@' . $notification['from_user'] . '>'
                 . ' ask you to look at this issue:*';
-            $this->sendResponse($msg . "\n" . $this->buildIssueMessage($result->issue), $user);
+            $this->sendResponse($msg . chr(10) . $this->buildIssueMessage($result->issue), $user);
         }
     }
 

@@ -51,7 +51,7 @@ trait GerritTrait
         $result = false;
         if (!curl_errno($ch)) {
             curl_close($ch);
-            $result = json_decode(str_replace(")]}'\n", '', $data));
+            $result = json_decode(str_replace(")]}'" . chr(10), '', $data));
         }
 
         return $result;

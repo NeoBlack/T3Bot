@@ -43,7 +43,7 @@ class GerritHookController extends AbstractHookController
         $item = $this->queryGerrit('change:' . $patchId);
         $item = $item[0];
         $created = substr($item->created, 0, 19);
-        $text = "Branch: {$json->branch} | :calendar: {$created} | ID: {$item->_number}\n";
+        $text = "Branch: {$json->branch} | :calendar: {$created} | ID: {$item->_number}" . chr(10);
         $text .= ":link: <https://review.typo3.org/{$item->_number}|Goto Review>";
         if ($hook === 'patchset-created' && $patchSet === 1 && $json->branch === 'master') {
             $message = $this->buildMessage('[NEW] ' . $item->subject, $text);
