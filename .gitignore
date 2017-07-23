@@ -10,3 +10,6 @@
 ; composer stuff
 vendor/
 bin/
+
+: Project
+public/docs
