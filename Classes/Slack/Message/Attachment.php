@@ -52,7 +52,7 @@ class Attachment
      *
      * @var string
      */
-    protected $author_name = '';
+    protected $authorName = '';
 
     /**
      * A valid URL that will hyperlink the author_name text mentioned above.
@@ -60,7 +60,7 @@ class Attachment
      *
      * @var string
      */
-    protected $author_link = '';
+    protected $authorLink = '';
 
     /**
      * A valid URL that displays a small 16x16px image to the left of the author_name text.
@@ -68,7 +68,7 @@ class Attachment
      *
      * @var string
      */
-    protected $author_icon = '';
+    protected $authorIcon = '';
 
     /**
      * The title is displayed as larger, bold text near the top of a message attachment.
@@ -83,7 +83,7 @@ class Attachment
      *
      * @var string
      */
-    protected $title_link = '';
+    protected $titleLink = '';
 
     /**
      * This is the main text in a message attachment, and can contain standard message
@@ -110,7 +110,7 @@ class Attachment
      *
      * @var string
      */
-    protected $image_url = '';
+    protected $imageUrl = '';
 
     /**
      * A valid URL to an image file that will be displayed as a thumbnail on the right
@@ -122,7 +122,7 @@ class Attachment
      *
      * @var string
      */
-    protected $thumb_url = '';
+    protected $thumbUrl = '';
 
     /**
      * Constructor for an attachment.
@@ -191,15 +191,15 @@ class Attachment
      */
     public function getAuthorName() : string
     {
-        return $this->author_name;
+        return $this->authorName;
     }
 
     /**
-     * @param string $author_name
+     * @param string $authorName
      */
-    public function setAuthorName($author_name)
+    public function setAuthorName($authorName)
     {
-        $this->author_name = $author_name;
+        $this->authorName = $authorName;
     }
 
     /**
@@ -207,15 +207,15 @@ class Attachment
      */
     public function getAuthorLink() : string
     {
-        return $this->author_link;
+        return $this->authorLink;
     }
 
     /**
-     * @param string $author_link
+     * @param string $authorLink
      */
-    public function setAuthorLink($author_link)
+    public function setAuthorLink($authorLink)
     {
-        $this->author_link = $author_link;
+        $this->authorLink = $authorLink;
     }
 
     /**
@@ -223,15 +223,15 @@ class Attachment
      */
     public function getAuthorIcon() : string
     {
-        return $this->author_icon;
+        return $this->authorIcon;
     }
 
     /**
-     * @param string $author_icon
+     * @param string $authorIcon
      */
-    public function setAuthorIcon($author_icon)
+    public function setAuthorIcon($authorIcon)
     {
-        $this->author_icon = $author_icon;
+        $this->authorIcon = $authorIcon;
     }
 
     /**
@@ -255,15 +255,15 @@ class Attachment
      */
     public function getTitleLink() : string
     {
-        return $this->title_link;
+        return $this->titleLink;
     }
 
     /**
-     * @param string $title_link
+     * @param string $titleLink
      */
-    public function setTitleLink($title_link)
+    public function setTitleLink($titleLink)
     {
-        $this->title_link = $title_link;
+        $this->titleLink = $titleLink;
     }
 
     /**
@@ -287,15 +287,15 @@ class Attachment
      */
     public function getImageUrl() : string
     {
-        return $this->image_url;
+        return $this->imageUrl;
     }
 
     /**
-     * @param string $image_url
+     * @param string $imageUrl
      */
-    public function setImageUrl($image_url)
+    public function setImageUrl($imageUrl)
     {
-        $this->image_url = $image_url;
+        $this->imageUrl = $imageUrl;
     }
 
     /**
@@ -303,14 +303,14 @@ class Attachment
      */
     public function getThumbUrl() : string
     {
-        return $this->thumb_url;
+        return $this->thumbUrl;
     }
 
     /**
-     * @param string $thumb_url
+     * @param string $thumbUrl
      */
-    public function setThumbUrl($thumb_url)
+    public function setThumbUrl($thumbUrl)
     {
-        $this->thumb_url = $thumb_url;
+        $this->thumbUrl = $thumbUrl;
     }
 }

@@ -48,7 +48,7 @@ class GerritHookController extends AbstractHookController
      */
     protected function processHook(string $hook, \stdClass $json)
     {
-        $patchId = (int) str_replace('https://review.typo3.org/', '', $json->{'change-url'});
+        $patchId = (int) $this->resolvePatchIdFromUrl($json->{'change-url'});
         $patchSet = property_exists($json, 'patchset') ? (int) $json->patchset : 0;
 
         $item = $this->queryGerrit('change:' . $patchId)[0];

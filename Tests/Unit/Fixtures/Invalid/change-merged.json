@@ -1,7 +1,7 @@
 {
   "action": "\/var\/gerrit\/review\/hooks\/change-merged",
   "change": "Icbe78ca2e3082e9eb9aa7a2b70c362d0aaa43934",
-  "change-url": "https:\/\/review.typo3.org\/46737",
+  "change-url": "https:\/\/review.typo3.org\/c\/Packages\/TYPO3.CMS\/+\/46737",
   "change-owner": "Wouter Wolters (typo3@wouterwolters.nl)",
   "project": "Packages\/TYPO3.CMS.INVALID",
   "branch": "TYPO3_7-6",

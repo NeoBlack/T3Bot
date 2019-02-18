@@ -35,6 +35,17 @@ trait GerritTrait
     }
 
     /**
+     * Resolve patch ID from URL
+     * @param string $url
+     * @return string
+     */
+    protected function resolvePatchIdFromUrl($url): string {
+        $re = '@https://review\.typo3\.org/c/Packages/TYPO3\.CMS/\+/([0-9]*)@m';
+        preg_match_all($re, $url, $matches, PREG_SET_ORDER, 0);
+        return $matches[0][1];
+    }
+
+    /**
      * @param string $url
      *
      * @return bool|mixed
