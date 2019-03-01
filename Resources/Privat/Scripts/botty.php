@@ -27,7 +27,10 @@ $client = new Slack\RealTimeClient($loop);
 $client->setToken($GLOBALS['config']['slack']['botAuthToken']);
 
 $client->on('message', function (Slack\Payload $payload) use ($client) {
-    $user = $payload->getData()['user'];
+    $user = $payload->getData()['user'] ?? '';
+    if ($user === '') {
+        return;
+    }
     $blackList = array_map('trim', explode(',', $GLOBALS['config']['slack']['userBlacklist']));
     if (in_array($user, $blackList, true)) {
         $client->apiCall('im.open', ['user' => $user])
@@ -42,9 +45,8 @@ $client->on('message', function (Slack\Payload $payload) use ($client) {
                 $client->postMessage($message);
             });
     } else {
-        if ($payload->getData()['user'] !== $GLOBALS['config']['slack']['botId']) {
-            $commandResolver = new CommandResolver($payload, $client);
-            $command = $commandResolver->resolveCommand($GLOBALS['config']);
+        if ($user !== $GLOBALS['config']['slack']['botId']) {
+            $command = (new CommandResolver($payload, $client))->resolveCommand($GLOBALS['config']);
             if ($command instanceof AbstractCommand) {
                 $result = $command->process();
                 if ($result !== false) {

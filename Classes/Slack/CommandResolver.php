@@ -42,7 +42,10 @@ class CommandResolver
      */
     public function resolveCommand(array $configuration = null)
     {
-        $message = $this->payload->getData()['text'];
+        $message = $this->payload->getData()['text'] ?? '';
+        if ($message === '') {
+            return false;
+        }
         $commandClass = $this->detectCommandClass($message);
         if (class_exists($commandClass)) {
             return new $commandClass($this->payload, $this->client, $configuration);
