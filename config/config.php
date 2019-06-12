@@ -46,6 +46,10 @@ $GLOBALS['config'] = [
         'host' => getenv('DB_HOST'),
         'driver' => 'pdo_mysql',
     ],
+    'log' => [
+        'file' => getenv('LOG_FILE'),
+        'level' => getenv('LOG_LEVEL'),
+    ]
 ];
 
 // change avatar of bot from 1.12. to 26.12.

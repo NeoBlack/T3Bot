@@ -11,6 +11,7 @@ namespace T3Bot\Controller;
 
 use T3Bot\Slack\Message;
 use T3Bot\Traits\GerritTrait;
+use T3Bot\Traits\LoggerTrait;
 
 /**
  * Class GerritHookController.
@@ -18,6 +19,7 @@ use T3Bot\Traits\GerritTrait;
 class GerritHookController extends AbstractHookController
 {
     use GerritTrait;
+    use LoggerTrait;
 
     /**
      * public method to start processing the request.
@@ -26,9 +28,11 @@ class GerritHookController extends AbstractHookController
      * @param string $input
      *
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
     public function process($hook, $input = 'php://input')
     {
+        $this->getLogger()->debug(file_get_contents($input));
         $json = json_decode(file_get_contents($input));
 
         if (

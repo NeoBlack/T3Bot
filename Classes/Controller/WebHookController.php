@@ -10,12 +10,15 @@
 namespace T3Bot\Controller;
 
 use T3Bot\Slack\Message;
+use T3Bot\Traits\LoggerTrait;
 
 /**
  * Class WebHookController.
  */
 class WebHookController extends AbstractHookController
 {
+    use LoggerTrait;
+
     /**
      * @var array
      */
@@ -42,10 +45,13 @@ class WebHookController extends AbstractHookController
      * }
      *
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
     public function process($hook, $input = 'php://input')
     {
         $entityBody = file_get_contents($input);
+        $this->getLogger()->debug($entityBody);
+
         $json = json_decode($entityBody);
         $hookConfiguration = $this->configuration['webhook'][$hook] ?? [];
 
