@@ -30,12 +30,14 @@ LOGFILE="/var/log/${NAME}.log"
 # CHANGE this to your PHP path
 DAEMON="/usr/bin/php"
 # CHANGE this to your bot path
+DAEMON_HELPER="/var/www/t3bot.de/botty.sh"
 DAEMON_OPTS="/var/www/t3bot.de/botty.php"
 
-START_OPTS="--start --background --make-pidfile --pidfile ${PIDFILE} --exec ${DAEMON} ${DAEMON_OPTS}"
+START_OPTS="--start --background --make-pidfile --pidfile ${PIDFILE} --exec ${DAEMON_HELPER} ${NAME} ${PIDFILE} ${DAEMON} ${DAEMON_OPTS}"
 STOP_OPTS="--stop --pidfile ${PIDFILE}"
 
 test -x $DAEMON || exit 0
+test -x $DAEMON_HELPER || exit 0
 
 set -e
 
