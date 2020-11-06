@@ -102,4 +102,13 @@ $loop->addPeriodicTimer(5, function () use ($client, $db) {
     }
 });
 
+$loop->addPeriodicTimer(60, function () use ($client) {
+    $client->disconnect()->then(function () {
+        echo "Disconnected!\n";
+    });
+    $client->connect()->then(function () {
+        echo "Connected!\n";
+    });
+});
+
 $loop->run();
